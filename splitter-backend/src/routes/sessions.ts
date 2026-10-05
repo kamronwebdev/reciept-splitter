@@ -5,7 +5,7 @@ import type { Prisma } from "@prisma/client";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
 import { parseReceipt, ReceiptParseError } from "../services/receiptParser.js";
 import { computeSplit, currencyDecimals, fromMinor, toMinor, type FeeMode, type LineKind, type SplitLine } from "../utils/split.js";
-import { sendError } from "../utils/errors.js";
+import { sendError, logRouteError } from "../utils/errors.js";
 import { resolveAvatarUrl } from "../utils/avatar.js";
 
 const router = Router();
@@ -412,22 +412,22 @@ router.post(
       const decimals = currencyDecimals(currency);
       const feeMode: FeeMode = req.body?.feeMode === "equal" ? "equal" : "proportional";
       if (!Number.isFinite(Number(sessionId))) {
-        return res.status(400).json({ error: "sessionId required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "sessionId required");
       }
       if (!Array.isArray(participants) || participants.length === 0) {
-        return res.status(400).json({ error: "participants array required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "participants array required");
       }
       if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ error: "items array required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "items array required");
       }
 
       const session = await prisma.session.findUnique({
         where: { id: Number(sessionId) },
         select: { id: true, creatorId: true, createdAt: true },
       });
-      if (!session) return res.status(404).json({ error: "Session not found" });
+      if (!session) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
       if (session.creatorId !== req.user.id) {
-        return res.status(403).json({ error: "Forbidden" });
+        return sendError(res, 403, "SESSION_FORBIDDEN", "This receipt belongs to another account");
       }
 
       // canonical participant order (first occurrence wins): both the app and the server use it
@@ -438,7 +438,7 @@ router.post(
           pList.push({ uniqueId, username: String(p?.username || uniqueId) });
         }
       }
-      if (pList.length === 0) return res.status(400).json({ error: "participants array required" });
+      if (pList.length === 0) return sendError(res, 400, "VALIDATION_ERROR", "participants array required");
       const known = new Set(pList.map((p) => p.uniqueId));
 
       const lines: SplitLine[] = [];
@@ -471,9 +471,7 @@ router.post(
 
       const result = computeSplit(lines, pList.map((p) => p.uniqueId), feeMode);
       if (!result.complete) {
-        return res.status(400).json({
-          error: "Every item must be fully assigned before finalizing",
-          code: "ITEM_NOT_ASSIGNED",
+        return sendError(res, 400, "ITEM_NOT_ASSIGNED", "Every item must be fully assigned before finalizing", {
           itemIds: result.incompleteItemIds,
         });
       }
@@ -556,8 +554,8 @@ router.post(
 
       return res.json(responsePayload);
     } catch (err) {
-      console.error("POST /sessions/finalize error:", (err as Error)?.message);
-      return res.status(500).json({ error: "Server error" });
+      logRouteError("POST /sessions/finalize error:", err);
+      return sendError(res, 500, "SERVER_ERROR", "Server error");
     }
   }
 );
@@ -673,5 +671,24 @@ router.get(
     }
   }
 );
+
+/**
+ * GET /sessions/:id — lightweight ownership/state check. The app uses it to detect a saved draft whose
+ * session was deleted or belongs to another account (404 SESSION_NOT_FOUND / 403 SESSION_FORBIDDEN).
+ */
+router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
+    const session = await prisma.session.findUnique({ where: { id }, select: { id: true, creatorId: true, status: true } });
+    if (!session) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
+    if (session.creatorId !== req.user.id) return sendError(res, 403, "SESSION_FORBIDDEN", "This receipt belongs to another account");
+    return res.json({ id: session.id, status: session.status });
+  } catch (err) {
+    logRouteError("GET /sessions/:id error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
 
 export default router;

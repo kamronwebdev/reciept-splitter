@@ -352,7 +352,9 @@
       "NETWORK": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
       "CANCELLED": "Bekor qilindi.",
       "SERVER_ERROR": "Serverda muammo bo'ldi. Birozdan keyin qayta urinib ko'ring.",
-      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring."
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "SESSION_NOT_FOUND": "Bu chek serverda topilmadi (eski qoralama bo'lishi mumkin). Yangi chek boshlang.",
+      "SESSION_FORBIDDEN": "Bu chek boshqa akkauntga tegishli. Yangi chek boshlang."
     },
     "scan": {
       "hint": "Butun chekni kadrga joylang, yorug'lik yaxshi bo'lsin",
@@ -456,7 +458,9 @@
       "unassigned": "Taqsimlanmagan: {{amount}}",
       "allAssigned": "Hammasi taqsimlandi",
       "finishHint": "Tugatish uchun har bir mahsulotni taqsimlang ({{count}} ta qoldi).",
-      "finish": "Tugatish"
+      "finish": "Tugatish",
+      "newReceipt": "Yangi chek boshlash",
+      "itemsLeft": "Ba'zi mahsulotlarga hali odam tanlanmagan. Ular pastda belgilangan."
     },
     "summary": {
       "total": "Jami",

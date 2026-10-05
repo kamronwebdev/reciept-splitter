@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
@@ -14,7 +14,7 @@ import { formatMoney } from '@/features/receipt/lib/money';
 import { runSplit } from '@/features/receipt/lib/draft';
 import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { errorCodeOf } from '@/features/auth/model/auth-errors';
-import { receiptErrorMessage } from '@/features/receipt/model/receipt-errors';
+import { isStaleSession, receiptErrorMessage, unassignedItemIds } from '@/features/receipt/model/receipt-errors';
 import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import ItemSplitCard from '@/features/receipt/ui/split/ItemSplitCard';
 import TotalsBar from '@/features/receipt/ui/split/TotalsBar';
@@ -38,7 +38,13 @@ export default function SplitScreen() {
   const finalize = useReceiptSessionStore((s) => s.finalize);
 
   const [finishing, setFinishing] = useState(false);
-  const [error, setError] = useState<{ message: string; network: boolean } | null>(null);
+  const [error, setError] = useState<{ message: string; network: boolean; stale: boolean } | null>(null);
+  // items the server reported as not assigned (shown highlighted like the local "Not assigned" state)
+  const [serverUnassigned, setServerUnassigned] = useState<string[]>([]);
+  const reset = useReceiptSessionStore((s) => s.reset);
+
+  // any edit makes the server's old verdict obsolete
+  useEffect(() => setServerUnassigned([]), [items]);
 
   const dec = currencyDecimals(currency);
   const ids = useMemo(() => participants.map((p) => p.uniqueId), [participants]);
@@ -46,7 +52,7 @@ export default function SplitScreen() {
 
   const purchased = items.filter((i) => i.kind === 'item');
   const adjustments = items.filter((i) => i.kind !== 'item');
-  const incomplete = new Set(result.incompleteItemIds);
+  const incomplete = new Set([...result.incompleteItemIds, ...serverUnassigned]);
 
   // per-item share preview: itemId -> uniqueId -> major units
   const sharesByItem = useMemo(() => {
@@ -67,14 +73,26 @@ export default function SplitScreen() {
     if (!canFinish) return;
     setFinishing(true);
     setError(null);
+    setServerUnassigned([]);
     try {
       await finalize();
       router.replace('/tabs/receipt/summary');
     } catch (e) {
-      setError({ message: receiptErrorMessage(t, e), network: errorCodeOf(e) === 'NETWORK' });
+      const missing = unassignedItemIds(e);
+      if (missing.length) setServerUnassigned(missing);
+      setError({
+        message: missing.length ? t('receipt.split.itemsLeft') : receiptErrorMessage(t, e),
+        network: errorCodeOf(e) === 'NETWORK',
+        stale: isStaleSession(e),
+      });
     } finally {
       setFinishing(false);
     }
+  };
+
+  const startNew = () => {
+    reset();
+    router.replace('/tabs/scan-receipt');
   };
 
   return (
@@ -87,7 +105,11 @@ export default function SplitScreen() {
             <Banner
               kind="error"
               message={error.message}
-              {...(error.network ? { actionLabel: t('common.retry', 'Retry'), onAction: finish, actionLoading: finishing } : {})}
+              {...(error.network
+                ? { actionLabel: t('common.retry', 'Retry'), onAction: finish, actionLoading: finishing }
+                : error.stale
+                  ? { actionLabel: t('receipt.split.newReceipt', 'Start a new receipt'), onAction: startNew }
+                  : {})}
             />
           )}
           {!result.complete && (

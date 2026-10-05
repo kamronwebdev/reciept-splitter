@@ -110,6 +110,11 @@ export const ReceiptApi = {
     return data;
   },
 
+  /** Resolves when the session exists and belongs to the signed-in user; rejects with SESSION_NOT_FOUND / SESSION_FORBIDDEN. */
+  async checkSession(id: number): Promise<void> {
+    await apiClient.get(`/sessions/${id}`, { timeout: 15_000 });
+  },
+
   async finalize(payload: FinalizeReceiptRequest): Promise<FinalizeReceiptResponse> {
     const { data } = await apiClient.post<FinalizeReceiptResponse>('/sessions/finalize', payload);
     return data;

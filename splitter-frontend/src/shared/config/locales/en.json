@@ -363,7 +363,9 @@
       "NETWORK": "Check your internet connection and try again.",
       "CANCELLED": "Cancelled.",
       "SERVER_ERROR": "The server had a problem. Please try again in a moment.",
-      "UNKNOWN": "Something went wrong. Please try again."
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "SESSION_NOT_FOUND": "This receipt no longer exists on the server (it may be an old draft). Start a new receipt.",
+      "SESSION_FORBIDDEN": "This receipt belongs to another account. Start a new receipt."
     },
     "scan": {
       "hint": "Fit the whole receipt in the frame, good light",
@@ -467,7 +469,9 @@
       "unassigned": "Unassigned: {{amount}}",
       "allAssigned": "Everything is assigned",
       "finishHint": "Assign every item to finish ({{count}} left).",
-      "finish": "Finish"
+      "finish": "Finish",
+      "newReceipt": "Start a new receipt",
+      "itemsLeft": "Some items still need people. They are highlighted below."
     },
     "summary": {
       "total": "Total",

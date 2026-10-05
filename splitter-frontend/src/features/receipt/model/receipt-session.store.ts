@@ -10,6 +10,7 @@ import {
 } from '../api/receipt.api';
 import { makeItem, lineTotal, remainingUnits, type DraftItem } from '../lib/draft';
 import type { FeeMode } from '../lib/split';
+import { isStaleSession } from './receipt-errors';
 
 export type ReceiptSource = 'gemini' | 'mock' | 'manual';
 export type ReceiptStep = 'scan' | 'items' | 'people' | 'split' | 'summary';
@@ -54,6 +55,8 @@ interface ReceiptActions {
   clearAssignments: () => void;
 
   finalize: () => Promise<FinalizeReceiptResponse>;
+  /** Drops a restored draft whose session is gone or belongs to another account. Network problems keep the draft. */
+  validateDraft: () => Promise<void>;
   reset: () => void;
 }
 
@@ -241,11 +244,24 @@ export const useReceiptSessionStore = create<ReceiptDraftState & ReceiptActions>
         return response;
       },
 
+      async validateDraft() {
+        const { active, sessionId, finalized } = get();
+        if (!active || !sessionId || finalized) return;
+        try {
+          await ReceiptApi.checkSession(sessionId);
+        } catch (e) {
+          // only a definite "not yours / not found" resets; offline etc. must never wipe a draft
+          if (isStaleSession(e)) get().reset();
+        }
+      },
+
       reset: () => set({ ...INITIAL }),
     }),
     {
       name: 'receipt-draft',
-      version: 1,
+      // v1 drafts (older app builds) may point at sessions in an old format: start clean
+      version: 2,
+      migrate: () => ({ ...INITIAL }) as ReceiptDraftState & ReceiptActions,
       storage: createJSONStorage(() => AsyncStorage),
       // keep everything except functions (zustand does that) — the photo is only a file URI, never base64
       partialize: (s) => ({

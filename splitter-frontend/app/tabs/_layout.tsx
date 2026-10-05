@@ -14,7 +14,7 @@ import { useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import Banner from '@/shared/ui/Banner';
 import { confirmAction } from '@/shared/lib/utils/confirm';
-import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
+import { useReceiptHydrated, useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
@@ -190,6 +190,14 @@ export default function TabLayout() {
   const scanReceiptTitle = t('navigation.scanReceipt', 'Scan Receipt');
   const historyTitle = t('navigation.history', 'Recent bills');
   const historyDetailsTitle = t('navigation.historyDetails', 'Bill details');
+
+  // A draft restored from storage may point at a session that was deleted or belongs to another account
+  // (older app version, other user signed in before): verify it once per sign-in and reset it if so.
+  const draftHydrated = useReceiptHydrated();
+  const userId = user?.id;
+  useEffect(() => {
+    if (draftHydrated && token && userId !== undefined) void useReceiptSessionStore.getState().validateDraft();
+  }, [draftHydrated, token, userId]);
 
   // Signed-out (or expired) sessions can never stay inside the tabs.
   if (isInitialized && !token) return <Redirect href="/" />;

@@ -7,6 +7,8 @@ export type ReceiptErrorCode =
   | 'NOT_A_RECEIPT'
   | 'IMAGE_UNREADABLE'
   | 'ITEM_NOT_ASSIGNED'
+  | 'SESSION_NOT_FOUND'
+  | 'SESSION_FORBIDDEN'
   | 'RATE_LIMITED'
   | 'UNAUTHORIZED'
   | 'SESSION_REVOKED'
@@ -21,6 +23,8 @@ const KNOWN = new Set<string>([
   'NOT_A_RECEIPT',
   'IMAGE_UNREADABLE',
   'ITEM_NOT_ASSIGNED',
+  'SESSION_NOT_FOUND',
+  'SESSION_FORBIDDEN',
   'RATE_LIMITED',
   'UNAUTHORIZED',
   'SESSION_REVOKED',
@@ -39,6 +43,18 @@ export function receiptErrorCode(error: unknown): ReceiptErrorCode {
 }
 
 /** Friendly, translated message for scan / finalize errors (never raw server text). */
+/** The saved receipt no longer matches a session of this account: the only way forward is a new receipt. */
+export function isStaleSession(error: unknown): boolean {
+  const code = receiptErrorCode(error);
+  return code === 'SESSION_NOT_FOUND' || code === 'SESSION_FORBIDDEN';
+}
+
+/** Ids of the items the server says are not (fully) assigned (ITEM_NOT_ASSIGNED). */
+export function unassignedItemIds(error: unknown): string[] {
+  const ids = error instanceof ApiError ? error.data?.itemIds : undefined;
+  return Array.isArray(ids) ? ids.map(String) : [];
+}
+
 export function receiptErrorMessage(t: TFunction, error: unknown): string {
   return t(`receipt.errors.${receiptErrorCode(error)}`) as string;
 }
