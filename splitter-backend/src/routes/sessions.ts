@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma.js";
 import type { Prisma } from "@prisma/client";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
 import { parseReceipt } from "../services/receiptParser.js";
+import { round2 } from "../utils/money.js";
 
 const router = Router();
 
@@ -456,10 +457,6 @@ router.post(
       const allocs: any[] = [];
       // We'll derive totals AFTER generating allocations to have a single source of truth.
       const itemMeta = new Map<string, { name: string; kind?: string }>();
-
-      function round2(n: number) {
-        return Math.round(n * 100) / 100;
-      }
 
       if (process.env.DEBUG_PARSE === "1") {
         console.log(

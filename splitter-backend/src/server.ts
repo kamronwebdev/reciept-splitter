@@ -90,7 +90,10 @@ app.use("/groups", groupsRoutes);
 app.use("/sessions", sessionsRoutes);
 app.use("/users", usersRoutes);
 app.use("/uploads", uploadsRoutes);
-app.use("/debug", debugRoutes);
+// Debug probes expose provider details; never mount them in production unless explicitly enabled.
+if (process.env.NODE_ENV !== "production" || process.env.ENABLE_DEBUG_ROUTES === "1") {
+  app.use("/debug", debugRoutes);
+}
 
 // Health check
 app.get("/health", (req, res) => {
@@ -114,9 +117,11 @@ app.listen(PORT, () => {
   );
 });
 
-console.log("DEBUG ENV:", {
-  PORT: process.env.PORT,
-  DATABASE_URL: process.env.DATABASE_URL ? "OK" : "MISSING",
-  JWT_SECRET: process.env.JWT_SECRET ? "OK" : "MISSING",
-  JSON_BODY_LIMIT: JSON_LIMIT,
-});
+if (process.env.DEBUG_ENV === "1") {
+  console.log("DEBUG ENV:", {
+    PORT: process.env.PORT,
+    DATABASE_URL: process.env.DATABASE_URL ? "OK" : "MISSING",
+    JWT_SECRET: process.env.JWT_SECRET ? "OK" : "MISSING",
+    JSON_BODY_LIMIT: JSON_LIMIT,
+  });
+}

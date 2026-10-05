@@ -10,6 +10,12 @@ TypeScript + ESM Express API with Prisma (PostgreSQL), JWT auth, and Swagger doc
 - JWT auth middleware + request logging for `/auth/*`
 - Swagger UI at `/api-docs`
 
+## Tests
+
+```bash
+npm test   # node:test via ts-node (money/rounding helpers)
+```
+
 ## Requirements
 
 - Node.js 18+
@@ -40,6 +46,8 @@ Env variables (minimum):
 - `CORS_ORIGINS` — comma-separated allowlist for production (e.g. `http://localhost:5173,http://localhost:3000`)
 - `ALLOW_ALL_CORS=1` — permissive mode (`Access-Control-Allow-Origin: *`, credentials disabled)
 - `DEBUG_AUTH=1` — verbose JWT verification logs
+- `DEBUG_ENV=1` — print env-presence summary on startup
+- `ENABLE_DEBUG_ROUTES=1` — mount `/debug/*` in production (always on outside production)
 - `DEFAULT_AVATAR_URL` — fallback avatar URL (optional)
 
 Receipt parsing (Gemini) optional:
