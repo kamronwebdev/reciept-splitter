@@ -5,6 +5,7 @@ import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/shared/ui/Input';
 
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 type Props = {
   label?: string;
   placeholder?: string;
@@ -45,18 +46,19 @@ export default function PasswordInput({
   textInputProps,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const [show, setShow] = useState(false);
 
   const eye = (
     <Pressable
       onPress={() => setShow((s) => !s)}
       hitSlop={6}
-      android_ripple={{ color: 'rgba(0,0,0,0.08)', borderless: true }}
+      android_ripple={{ color: colors.shadow, borderless: true }}
       style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
       accessibilityRole="button"
       accessibilityLabel={show ? t('auth.hidePassword', 'Hide password') : t('auth.showPassword', 'Show password')}
     >
-      {show ? <EyeOff size={18} color="rgba(0,0,0,0.7)" /> : <Eye size={18} color="rgba(0,0,0,0.7)" />}
+      {show ? <EyeOff size={18} color="$textMuted" /> : <Eye size={18} color="$textMuted" />}
     </Pressable>
   );
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Pressable } from 'react-native';
 import { XStack, View } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
 
 interface LanguageSegmentedControlProps {
@@ -16,6 +17,7 @@ export function LanguageSegmentedControl({
   onChange,
   getLabel,
 }: LanguageSegmentedControlProps) {
+  const { colors } = useAppTheme();
   const options = LANGUAGE_OPTIONS;
   const selectedIndex = Math.max(0, options.findIndex((o) => o.code === value));
 
@@ -24,7 +26,7 @@ export function LanguageSegmentedControl({
   const count = options.length;
   const gap = 6;       // расстояние между сегментами
   const padding = 6;   // внутренние отступы контейнера
-  const height = 40;   // высота сегмента
+  const height = 44;   // высота сегмента
   const thumbAnim = useRef(new Animated.Value(0)).current;
 
   // ширина одного сегмента (равномерно)
@@ -55,7 +57,7 @@ export function LanguageSegmentedControl({
         onLayout={onLayout}
         position="relative"
         ai="center"
-        bg="$gray3"
+        bg="$surfaceAlt"
         br="$10"
         padding={padding}
         height={height + padding * 2}
@@ -69,12 +71,12 @@ export function LanguageSegmentedControl({
               height,
               width: segmentWidth,
               borderRadius: 999,
-              backgroundColor: 'white',
+              backgroundColor: colors.surface,
               transform: [{ translateX: thumbAnim }],
               // тонкая рамка и тень для объёма
               borderWidth: 1,
-              borderColor: '#D4D4D8',
-              shadowColor: '#000',
+              borderColor: colors.border,
+              shadowColor: colors.shadow,
               shadowOpacity: 0.06,
               shadowRadius: 8,
               shadowOffset: { width: 0, height: 4 },
@@ -108,7 +110,7 @@ export function LanguageSegmentedControl({
                 fontSize={13}
                 fontWeight="700"
                 // цвета читаемые и контрастные
-                color={active ? '$gray12' : '$gray11'}
+                color={active ? '$text' : '$textMuted'}
               >
                 {label}
               </Text>

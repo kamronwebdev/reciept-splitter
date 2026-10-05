@@ -29,7 +29,7 @@ export default function TextLink({ title, onPress, highlight, align = 'center', 
     >
       <Text
         fontSize="$3"
-        color="#2ECC71"
+        color="$primaryText"
         fontWeight={highlight ? '800' : '600'}
         textDecorationLine={highlight ? 'underline' : 'none'}
       >

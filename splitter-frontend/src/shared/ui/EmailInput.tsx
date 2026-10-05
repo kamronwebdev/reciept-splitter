@@ -68,7 +68,7 @@ export default function EmailInput({
       accessibilityRole="button"
       accessibilityLabel={t('auth.clearEmail', 'Clear email')}
     >
-      <X size={18} color="rgba(0,0,0,0.55)" />
+      <X size={18} color="$textSubtle" />
     </Pressable>
   );
 
@@ -107,9 +107,9 @@ export default function EmailInput({
           accessibilityLabel={t('auth.didYouMean', { email: suggestion, defaultValue: 'Did you mean {{email}}?' })}
           style={{ minHeight: 44, justifyContent: 'center' }}
         >
-          <Text fontSize="$3" color="$gray11">
+          <Text fontSize="$3" color="$textMuted">
             {t('auth.didYouMeanPrefix', 'Did you mean')}{' '}
-            <Text fontSize="$3" color="#2ECC71" fontWeight="700" textDecorationLine="underline">
+            <Text fontSize="$3" color="$primaryText" fontWeight="700" textDecorationLine="underline">
               {suggestion}
             </Text>
             ?

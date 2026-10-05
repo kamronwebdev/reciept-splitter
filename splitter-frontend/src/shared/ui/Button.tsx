@@ -1,10 +1,11 @@
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
+import { useAppTheme } from '@/shared/theme/useAppTheme'
 import { Button as TamaguiButton, Text } from '@/shared/ui/typography';
 
 interface CustomButtonProps {
   title: string
-  variant?: 'primary' | 'secondary' | 'outline'
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger'
   size?: 'small' | 'medium' | 'large'
   disabled?: boolean
   /** shows a spinner and blocks presses */
@@ -22,6 +23,7 @@ export const Button: React.FC<CustomButtonProps> = ({
   accessibilityLabel,
   onPress,
 }) => {
+  const { colors } = useAppTheme()
   const isDisabled = disabled || loading
   const getStyles = () => {
     const baseStyles = {
@@ -37,19 +39,23 @@ export const Button: React.FC<CustomButtonProps> = ({
 
     const variantStyles = {
       primary: {
-        backgroundColor: isDisabled && !loading ? '$gray8' : '#2ECC71',
-        color: '#FFFFFF',
+        backgroundColor: isDisabled && !loading ? '$surfaceAlt' : '$primary',
+        color: isDisabled && !loading ? '$textSubtle' : '$onPrimary',
       },
       secondary: {
-        backgroundColor: '$gray4',
-        color: '$gray12',
+        backgroundColor: '$surfaceAlt',
+        color: isDisabled ? '$textSubtle' : '$text',
       },
       outline: {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: disabled ? '$gray8' : '$green10',
-        color: disabled ? '$gray8' : '$green10',
-      }
+        borderColor: isDisabled ? '$borderColor' : '$primary',
+        color: isDisabled ? '$textSubtle' : '$primaryText',
+      },
+      danger: {
+        backgroundColor: isDisabled && !loading ? '$surfaceAlt' : '$danger',
+        color: isDisabled && !loading ? '$textSubtle' : '$background',
+      },
     }
 
     return {
@@ -71,7 +77,7 @@ export const Button: React.FC<CustomButtonProps> = ({
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       minHeight={44}
     >
-      {loading && <ActivityIndicator color={variant === 'primary' ? '#FFFFFF' : '#2ECC71'} style={{ marginRight: 8 }} />}
+      {loading && <ActivityIndicator color={variant === 'primary' ? colors.onPrimary : colors.primary} style={{ marginRight: 8 }} />}
       <Text 
         color={styles.color}
         fontWeight="600"

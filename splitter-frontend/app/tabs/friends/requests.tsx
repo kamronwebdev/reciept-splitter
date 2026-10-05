@@ -15,8 +15,8 @@ const ROW_H = 60;
 const TAB_W = 171;
 const TAB_H = 37;
 
-const TINT_REJECT = '#E74C3C1A';
-const TINT_ACCEPT = '#2ECC711A';
+const TINT_REJECT = '$dangerSoft';
+const TINT_ACCEPT = '$primarySoft';
 
 function useAutoNotice() {
   const [text, setText] = useState<string | undefined>();
@@ -455,14 +455,14 @@ export default function FriendsRequestsUnified() {
                         onPress={() => reject(fromId, name, uid)}
                         disabled={isBusy}
                       >
-                        <CircleX size={16} color="#E74C3C" />
+                        <CircleX size={16} color="$danger" />
                       </IconPill>
                       <IconPill
                         tint={TINT_ACCEPT}
                         onPress={() => accept(fromId, name, uid)}
                         disabled={isBusy}
                       >
-                        <CircleCheck size={16} color="#2ECC71" />
+                        <CircleCheck size={16} color="$primaryText" />
                       </IconPill>
                     </XStack>
                   }

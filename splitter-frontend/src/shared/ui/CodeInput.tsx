@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { Text } from '@/shared/ui/typography';
 
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 type Props = {
   value: string;
   onChange: (v: string) => void;
@@ -26,6 +27,7 @@ export default function CodeInput({
   accessibilityLabel,
 }: Props) {
   const ref = useRef<TextInput>(null);
+  const { colors } = useAppTheme();
   const digits = value.split('');
 
   return (
@@ -47,8 +49,8 @@ export default function CodeInput({
                 height: 56,
                 borderRadius: 10,
                 borderWidth: active ? 2 : 1,
-                borderColor: error ? '#E5484D' : active ? '#2ECC71' : '#D1D5DB',
-                backgroundColor: '#FFFFFF',
+                borderColor: error ? colors.danger : active ? colors.primary : colors.border,
+                backgroundColor: colors.surface,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

@@ -27,9 +27,9 @@ function DotBadge({ value }: { value?: number }) {
       w={20} h={20}
       br={999}
       ai="center" jc="center"
-      backgroundColor="#2ECC71"
+      backgroundColor="$primary"
     >
-      <Text color="white" fontSize={10} fontWeight="700">
+      <Text color="$onPrimary" fontSize={10} fontWeight="700">
         {value}
       </Text>
     </View>

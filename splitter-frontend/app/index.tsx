@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
 import { Button } from '@/shared/ui/Button';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { ScreenContainer } from '@/shared/ui/ScreenContainer';
 import { ScanLine } from '@tamagui/lucide-icons';
 
@@ -17,6 +18,7 @@ const languages = LANGUAGE_OPTIONS.map((option) => ({
 }));
 
 export default function Welcome() {
+  const { colors } = useAppTheme();
   const token = useAppStore((state) => state.token);
   const isInitialized = useAppStore((state) => state.isInitialized);
   const sessionExpired = useAppStore((state) => state.sessionExpired);
@@ -29,7 +31,7 @@ export default function Welcome() {
     return (
       <ScreenContainer>
         <YStack flex={1} justifyContent="center" alignItems="center">
-          <ActivityIndicator size="large" color="#2ECC71" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </YStack>
       </ScreenContainer>
     );
@@ -56,7 +58,7 @@ export default function Welcome() {
             {languages.map((lang) => (
               <YStack
                 key={lang.code}
-                backgroundColor={currentLanguage === lang.code ? "#2ECC71" : "transparent"}
+                backgroundColor={currentLanguage === lang.code ? "$primary" : "transparent"}
                 borderRadius="$6"
                 paddingHorizontal="$3"
                 paddingVertical="$2"
@@ -66,7 +68,7 @@ export default function Welcome() {
                 <Text 
                   fontSize="$2" 
                   fontWeight="600"
-                  color={currentLanguage === lang.code ? "#FFFFFF" : "$gray11"}
+                  color={currentLanguage === lang.code ? "$onPrimary" : "$gray11"}
                 >
                   {lang.name}
                 </Text>
@@ -82,7 +84,7 @@ export default function Welcome() {
           <YStack alignItems="center" space="$5">
             <Circle 
               size={120}
-              backgroundColor="#2ECC71"
+              backgroundColor="$primary"
               alignItems="center" 
               justifyContent="center"
               shadowColor="$shadowColor"
@@ -91,7 +93,7 @@ export default function Welcome() {
               shadowRadius={12}
               elevation={8}
             >
-              <ScanLine size={48} color="#FFFFFF" />
+              <ScanLine size={48} color="$onPrimary" />
             </Circle>
             
             <YStack alignItems="center" space="$3">

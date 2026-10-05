@@ -87,7 +87,7 @@ function AvatarStack({ participantIds }: { participantIds: string[] }) {
           br={14}
           backgroundColor="$gray3"
           borderWidth={2}
-          borderColor="white"
+          borderColor="$background"
           ml={shown.length === 0 ? 0 : -8}
           ai="center"
           jc="center"
@@ -129,7 +129,7 @@ function BillCard({
         borderWidth={1}
         borderColor="$gray6"
         p="$3"
-        backgroundColor="white"
+        backgroundColor="$surface"
       >
         <XStack jc="space-between" ai="center">
           <YStack>
@@ -140,7 +140,7 @@ function BillCard({
               {sub}
             </Text>
           </YStack>
-          <Text fontSize={14} lineHeight={22} fontWeight="700" color="#2ECC71">
+          <Text fontSize={14} lineHeight={22} fontWeight="700" color="$primaryText">
             {amountLabel}
           </Text>
         </XStack>
@@ -198,11 +198,11 @@ export default function HomePage() {
 
   return (
     <ScreenContainer>
-      <YStack f={1} ai="center" bg="white">
+      <YStack f={1} ai="center" bg="$surface">
         <YStack ai="center" mt="$6" mb="$4">
           <Pressable onPress={onScan}>
-            <Circle size={64} bg="#2ECC71" ai="center" jc="center" elevationAndroid={4}>
-              <ScanLine size={26} color="white" />
+            <Circle size={64} bg="$primary" ai="center" jc="center" elevationAndroid={4}>
+              <ScanLine size={26} color="$onPrimary" />
             </Circle>
           </Pressable>
           <Text mt="$2" color="$gray10" fontSize={13}>
@@ -241,7 +241,7 @@ export default function HomePage() {
             </Pressable>
 
             <Pressable onPress={openAllSessions}>
-              <Text color="#2ECC71">
+              <Text color="$primaryText">
                 {t('home.recent.showMore', 'Show more')}
               </Text>
             </Pressable>

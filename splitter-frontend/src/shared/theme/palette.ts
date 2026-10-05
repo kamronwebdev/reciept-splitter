@@ -69,3 +69,22 @@ export const palettes: Record<Scheme, Palette> = {
     shadow: 'rgba(0,0,0,0.5)',
   },
 };
+
+/**
+ * The camera preview is dark in BOTH themes, so UI drawn over it uses these fixed colors.
+ * (They are intentionally not theme dependent.)
+ */
+export const CAMERA = {
+  black: '#000000',
+  topScrim: 'rgba(0,0,0,0.25)',
+  pill: 'rgba(0,0,0,0.85)',
+  pillSoft: 'rgba(0,0,0,0.55)',
+  pillLight: 'rgba(0,0,0,0.45)',
+  modalScrim: 'rgba(0,0,0,0.6)',
+  onCamera: '#FFFFFF',
+  onCameraSoft: 'rgba(255,255,255,0.1)',
+  onCameraBorder: 'rgba(255,255,255,0.25)',
+  onCameraBorderStrong: 'rgba(255,255,255,0.5)',
+  warn: '#FF6B6B',
+  warnBg: 'rgba(255,99,71,0.18)',
+} as const;

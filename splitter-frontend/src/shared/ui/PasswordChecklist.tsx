@@ -30,8 +30,8 @@ export default function PasswordChecklist({ password }: { password: string }) {
             accessible
             accessibilityLabel={`${text}: ${ok ? t('auth.ruleMet', 'met') : t('auth.ruleNotMet', 'not met')}`}
           >
-            {ok ? <Check size={16} color="#2ECC71" /> : <Circle size={16} color="$gray8" />}
-            <Text fontSize="$3" color={ok ? '#1E9E55' : '$gray10'} fontWeight={ok ? '600' : '400'}>
+            {ok ? <Check size={16} color="$primaryText" /> : <Circle size={16} color="$textSubtle" />}
+            <Text fontSize="$3" color={ok ? '$primaryText' : '$textMuted'} fontWeight={ok ? '600' : '400'}>
               {text}
             </Text>
           </XStack>

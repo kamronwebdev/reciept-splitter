@@ -62,7 +62,7 @@ function AvatarStack({
           jc="center"
           ml={hasMembers || placeholderCount > 0 ? -10 : 0}
         >
-          <Paragraph size="$1" col="white">
+          <Paragraph size="$1" col="$onPrimary">
             +{extra}
           </Paragraph>
         </View>

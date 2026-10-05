@@ -14,9 +14,9 @@ type Props = {
 };
 
 const COLORS = {
-  error: { bg: '$red2', border: '$red7', fg: '$red11', icon: '#E5484D' },
-  success: { bg: '$green2', border: '$green7', fg: '$green11', icon: '#2ECC71' },
-  info: { bg: '$gray2', border: '$gray7', fg: '$gray12', icon: '#6B7280' },
+  error: { bg: '$dangerSoft', border: '$danger', fg: '$text', icon: '$danger' },
+  success: { bg: '$primarySoft', border: '$primary', fg: '$text', icon: '$success' },
+  info: { bg: '$surfaceAlt', border: '$borderColor', fg: '$text', icon: '$textMuted' },
 } as const;
 
 export default function Banner({ kind, message, actionLabel, onAction, actionLoading }: Props) {

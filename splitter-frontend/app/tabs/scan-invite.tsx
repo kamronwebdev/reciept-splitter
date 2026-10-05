@@ -12,6 +12,8 @@ import { parseInviteFromScan } from '@/shared/lib/utils/invite';
 import { FriendsApi } from '@/features/friends/api/friends.api';
 import { GroupsApi } from '@/features/groups/api/groups.api';
 
+import { CAMERA, BRAND } from '@/shared/theme/palette';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 type FromParam = 'friends-requests' | 'groups-index' | undefined;
 
 interface UserData {
@@ -22,6 +24,7 @@ interface UserData {
 }
 
 export default function ScanInviteScreen() {
+  const { colors } = useAppTheme();
   const [perm, requestPerm] = useCameraPermissions();
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -116,12 +119,12 @@ export default function ScanInviteScreen() {
             h={28}
             chromeless
             onPress={goBack}
-            icon={<ChevronLeft size={18} color="white" />}
-            color="white"
+            icon={<ChevronLeft size={18} color={CAMERA.onCamera} />}
+            color={CAMERA.onCamera}
           >
             Back
           </Button>
-          <Paragraph fow="700" fos="$6" col="white">Scan invite</Paragraph>
+          <Paragraph fow="700" fos="$6" col={CAMERA.onCamera}>Scan invite</Paragraph>
           <YStack w={54} />
         </XStack>
       </View>
@@ -149,8 +152,8 @@ export default function ScanInviteScreen() {
       {status === 'loading' && (
         <View style={S.overlay}>
           <YStack ai="center" gap="$2">
-            <ActivityIndicator color="white" />
-            <Paragraph col="white">Connecting…</Paragraph>
+            <ActivityIndicator color={CAMERA.onCamera} />
+            <Paragraph col={CAMERA.onCamera}>Connecting…</Paragraph>
           </YStack>
         </View>
       )}
@@ -158,7 +161,7 @@ export default function ScanInviteScreen() {
       {/* Error статус */}
       {status === 'error' && (
         <View style={S.overlay}>
-          <Paragraph col="white">Error 😕</Paragraph>
+          <Paragraph col={CAMERA.onCamera}>Error 😕</Paragraph>
         </View>
       )}
 
@@ -173,6 +176,7 @@ export default function ScanInviteScreen() {
           <Animated.View
             style={[
               S.successModal,
+              { backgroundColor: colors.surface },
               {
                 opacity: fadeAnim,
                 transform: [{ scale: scaleAnim }],
@@ -181,7 +185,7 @@ export default function ScanInviteScreen() {
           >
             {/* Галочка успеха */}
             <View style={S.checkmark}>
-              <Paragraph fos={24} fow="bold" col="white">✓</Paragraph>
+              <Paragraph fos={24} fow="bold" col={CAMERA.onCamera}>✓</Paragraph>
             </View>
 
             {/* Аватар */}
@@ -193,8 +197,8 @@ export default function ScanInviteScreen() {
                   resizeMode="cover"
                 />
               ) : (
-                <View style={[S.avatar, S.avatarPlaceholder]}>
-                  <Paragraph fos={32} col="$gray8">
+                <View style={[S.avatar, S.avatarPlaceholder, { backgroundColor: colors.surfaceAlt }]}>
+                  <Paragraph fos={32} col="$textSubtle">
                     {userData?.name?.[0]?.toUpperCase() || '?'}
                   </Paragraph>
                 </View>
@@ -203,10 +207,10 @@ export default function ScanInviteScreen() {
 
             {/* Информация о пользователе */}
             <YStack ai="center" px="$4" pt="$2" gap="$1">
-              <Paragraph fos={20} fow="700" col="#1a1a1a" ta="center">
+              <Paragraph fos={20} fow="700" col="$text" ta="center">
                 {userData?.name || 'User'}
               </Paragraph>
-              <Paragraph fos={14} col="#666" ta="center">
+              <Paragraph fos={14} col="$textMuted" ta="center">
                 {userData?.username || '@user'}
               </Paragraph>
             </YStack>
@@ -214,7 +218,7 @@ export default function ScanInviteScreen() {
             {/* Био */}
             {userData?.bio && (
               <YStack px="$6" pt="$4">
-                <Paragraph fos={14} col="#333" ta="center" lh={20}>
+                <Paragraph fos={14} col="$text" ta="center" lh={20}>
                   {userData.bio}
                 </Paragraph>
               </YStack>
@@ -231,7 +235,7 @@ export default function ScanInviteScreen() {
 const S = StyleSheet.create({
   root: { 
     flex: 1, 
-    backgroundColor: '#000' 
+    backgroundColor: CAMERA.black 
   },
   headerAbs: {
     position: 'absolute',
@@ -240,11 +244,11 @@ const S = StyleSheet.create({
     right: 0,
     zIndex: 10,
     paddingTop: 8,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: CAMERA.topScrim,
   },
   cameraWrap: { 
     flex: 1, 
-    backgroundColor: '#000' 
+    backgroundColor: CAMERA.black 
   },
   camera: { 
     flex: 1 
@@ -253,27 +257,26 @@ const S = StyleSheet.create({
     position: 'absolute',
     bottom: 40,
     alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: CAMERA.pill,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: CAMERA.modalScrim,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
   },
   successModal: {
     width: 358,
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2ECC71',
+    borderColor: BRAND,
     // Для Android/iOS тени используем elevation + shadowColor
     elevation: 10,
-    shadowColor: '#2ECC71',
+    shadowColor: BRAND,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
     shadowRadius: 20,
@@ -286,13 +289,13 @@ const S = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#2ECC71',
+    backgroundColor: BRAND,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
     // Тень для галочки
     elevation: 5,
-    shadowColor: '#2ECC71',
+    shadowColor: BRAND,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -307,10 +310,9 @@ const S = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 2,
-    borderColor: '#2ECC71',
+    borderColor: BRAND,
   },
   avatarPlaceholder: {
-    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
   },
