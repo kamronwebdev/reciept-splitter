@@ -1,17 +1,57 @@
 import axios, { AxiosError } from 'axios';
-import { getToken } from '@/shared/lib/utils/token-storage';
+import { getToken, saveToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+import { resolveApiUrl } from '@/shared/api/api-url';
+
+/** Current API base URL (re-resolved each time). */
+export const getApiUrl = resolveApiUrl;
+
+/** Error thrown by the API client; keeps the HTTP status for callers. */
+export class ApiError extends Error {
+  status?: number;
+  /** machine-readable code from the backend (e.g. EMAIL_IN_USE) */
+  code?: string;
+  /** extra data from the backend (e.g. attemptsLeft) */
+  data?: Record<string, any>;
+  constructor(message: string, status?: number, code?: string, data?: Record<string, any>) {
+    super(message);
+    this.name = 'ApiError';
+    if (status !== undefined) this.status = status;
+    if (code) this.code = code;
+    if (data) this.data = data;
+  }
+  /** true when no HTTP response was received (offline, timeout, server unreachable) */
+  get isNetwork(): boolean {
+    return this.status === undefined;
+  }
+}
 
 export const apiClient = axios.create({
-  baseURL: API_URL,
-  timeout: 500000,
+  baseURL: resolveApiUrl(),
+  // Free hosting (Render) can take up to ~60s to wake up; do not hang forever.
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 });
 
+/** Never print passwords to the dev console. */
+function redact(data: unknown): unknown {
+  if (data && typeof data === 'object' && !Array.isArray(data) && typeof (data as any).append !== 'function') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(data as Record<string, unknown>)) {
+      out[k] = /password/i.test(k) ? '***' : v;
+    }
+    return out;
+  }
+  return data;
+}
+
 apiClient.interceptors.request.use(async (config) => {
+  config.baseURL = resolveApiUrl();
   try {
-    const token = await getToken();
+    const existing =
+      (config.headers as any)?.Authorization ??
+      (typeof (config.headers as any)?.get === 'function' ? (config.headers as any).get('Authorization') : undefined);
+    const token = existing ? null : await getToken();
     if (token) {
       const headers: any = config.headers ?? {};
       if (typeof headers.set === 'function') {
@@ -45,15 +85,7 @@ apiClient.interceptors.request.use(async (config) => {
     const url = `${config.baseURL}${config.url}`;
     console.log(`[API] ${method} ${url}`);
     if (config.params) console.log('[API] Params:', config.params);
-    if (config.data) console.log('[API] Request data:', config.data);
-    const hasAppend = !!(config.data && typeof (config.data as any).append === 'function');
-    console.log('[API] Request isFormData by append:', hasAppend);
-    try {
-      const ct = (config.headers && (config.headers as any)['Content-Type']) || (config.headers && typeof (config.headers as any).get === 'function' && (config.headers as any).get('Content-Type'));
-      console.log('[API] Request Content-Type header (interceptor):', ct);
-    } catch (e) {
-      console.warn('[API] cannot read Content-Type header in interceptor', e);
-    }
+    if (config.data) console.log('[API] Request data:', redact(config.data));
   }
 
   return config;
@@ -84,25 +116,31 @@ apiClient.interceptors.response.use(
       const serverMsg: string | undefined =
         typeof data === 'string' ? data : data?.message || data?.error;
 
-      switch (status) {
-        case 401:
-          emitUnauthorized();
-          throw new Error(serverMsg || 'Authorization failed');
-        case 422:
-          throw new Error(serverMsg || 'Validation error');
-        case 500:
-          throw new Error(serverMsg || 'Server error. Please try again later.');
-        default:
-          throw new Error(serverMsg || `Request failed (${status})`);
+      const code: string | undefined = typeof data?.code === 'string' ? data.code : undefined;
+      const extra = data && typeof data === 'object' ? data : undefined;
+
+      if (status === 401) {
+        // Only a rejected *authenticated* request means the session is dead.
+        // A wrong password on /auth/login must not log the user out or redirect.
+        const url = String(error.config?.url || '');
+        const hadToken = !!(error.config?.headers as any)?.Authorization ||
+          typeof (error.config?.headers as any)?.get === 'function' &&
+            !!(error.config?.headers as any).get('Authorization');
+        const isCredentialCall = /\/auth\/(login|register)$/.test(url);
+        if (hadToken && !isCredentialCall) emitUnauthorized();
+        throw new ApiError(serverMsg || 'Authorization failed', status, code, extra);
       }
+      if (status >= 500) {
+        throw new ApiError(serverMsg || 'Server error. Please try again later.', status, code ?? 'SERVER_ERROR', extra);
+      }
+      throw new ApiError(serverMsg || `Request failed (${status})`, status, code, extra);
+    } else if (error.code === 'ECONNABORTED') {
+      throw new ApiError(`Cannot reach the server (${getApiUrl()}). Make sure the backend is running and your phone is on the same Wi-Fi as the computer.`);
     } else if (error.request) {
-      if (String(error.message).toLowerCase().includes('network')) {
-        throw new Error('Network error. Please check your connection.');
-      }
-      throw new Error('No response received. Possible CORS issue.');
+      throw new ApiError(`Cannot reach the server (${getApiUrl()}). Check your connection and the server address.`);
     }
 
-    throw new Error('Unexpected error while performing the request.');
+    throw new ApiError('Unexpected error while performing the request.');
   }
 );
 export interface LoginRequest {
@@ -127,6 +165,20 @@ export interface AuthResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface VerifyResetCodeRequest {
+  email: string;
+  code: string;
+}
+
+export interface ResetPasswordRequest {
+  resetToken: string;
+  newPassword: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -149,48 +201,34 @@ export async function register(payload: RegisterRequest): Promise<AuthResponse> 
   return data;
 }
 
-/**
- * GET /auth/me
- * Параметр token не обязателен — интерсептор и так подставит.
- * Оставлен для обратной совместимости: если передан, мы явно проставим header.
- */
-export async function getCurrentUser(token?: string): Promise<User> {
-  const { data } = await apiClient.get<User>('/auth/me', {
-    headers: token
-      ? (h => {
-          // тот же трюк с AxiosHeaders
-          if (typeof (h as any).set === 'function') {
-            (h as any).set('Authorization', `Bearer ${token}`);
-            return h;
-          }
-          return { ...(h || {}), Authorization: `Bearer ${token}` };
-        })((apiClient.defaults.headers.common as any) ?? {})
-      : undefined,
-  });
+/** POST /auth/forgot-password (always succeeds for valid emails; does not reveal if the account exists) */
+export async function forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
+  await apiClient.post('/auth/forgot-password', payload);
+}
+
+/** POST /auth/verify-reset-code -> short-lived single-use reset token */
+export async function verifyResetCode(payload: VerifyResetCodeRequest): Promise<{ resetToken: string }> {
+  const { data } = await apiClient.post<{ resetToken: string }>('/auth/verify-reset-code', payload);
+  return data;
+}
+
+/** POST /auth/reset-password -> signs the user in */
+export async function resetPassword(payload: ResetPasswordRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>('/auth/reset-password', payload);
   return data;
 }
 
 /**
- * POST /auth/logout (если у бэка нет — можно удалять этот метод)
- * Параметр token не обязателен — интерсептор и так подставит.
+ * GET /auth/me
+ * If `token` is passed it is used explicitly (e.g. right after login, before it is persisted).
  */
-export async function logout(token?: string): Promise<void> {
-  await apiClient.post(
-    '/auth/logout',
-    {},
-    {
-      headers: token
-        ? (h => {
-            if (typeof (h as any).set === 'function') {
-              (h as any).set('Authorization', `Bearer ${token}`);
-              return h;
-            }
-            return { ...(h || {}), Authorization: `Bearer ${token}` };
-          })((apiClient.defaults.headers.common as any) ?? {})
-        : undefined,
-    }
-  );
+export async function getCurrentUser(token?: string): Promise<User> {
+  const { data } = await apiClient.get<User>('/auth/me', {
+    ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+  });
+  return data;
 }
+
 /**
  * POST /uploads/avatar
  * Uploads a new avatar file and returns the CDN URL.
@@ -263,8 +301,11 @@ export interface ChangePasswordPayload {
  * PATCH /user/password
  * Changes the current user's password.
  */
-export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
-  await apiClient.patch('/user/password', payload);
+export async function changePassword(payload: ChangePasswordPayload): Promise<{ token?: string }> {
+  // The backend revokes all other sessions on password change and returns a fresh token for this device.
+  const { data } = await apiClient.patch<{ success: boolean; token?: string }>('/user/password', payload);
+  if (data?.token) await saveToken(data.token);
+  return { ...(data?.token ? { token: data.token } : {}) };
 }
 
 /**

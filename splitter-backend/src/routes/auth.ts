@@ -1,12 +1,14 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma.js";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
 import {
   isStrongPassword,
   PASSWORD_POLICY_MESSAGE,
 } from "../utils/validation.js";
+import { sendError } from "../utils/errors.js";
+import { signAuthToken, EMAIL_REGEX } from "../utils/authToken.js";
+import { authLimiter } from "../middleware/rateLimit.js";
 
 const router = Router();
 
@@ -64,10 +66,9 @@ function generateUniqueId() {
  *       415:
  *         description: Неверный Content-Type (нужен application/json)
  */
-router.post("/register", async (req, res) => {
+router.post("/register", authLimiter, async (req, res) => {
   const ct = String(req.headers["content-type"] || "");
   console.log("/auth/register content-type:", ct);
-  console.log("/auth/register body:", req.body);
   try {
     if (!ct.includes("application/json")) {
       return res
@@ -107,10 +108,12 @@ router.post("/register", async (req, res) => {
       typeof passwordVal !== "string" ||
       typeof usernameVal !== "string"
     ) {
-      return res.status(400).json({
-        error:
-          "Invalid field types: expected strings for email, password, username",
-      });
+      return sendError(
+        res,
+        400,
+        "VALIDATION_ERROR",
+        "Invalid field types: expected strings for email, password, username"
+      );
     }
 
     const cleanEmail = emailVal.trim().toLowerCase();
@@ -118,23 +121,28 @@ router.post("/register", async (req, res) => {
     const cleanPassword = passwordVal;
 
     if (!cleanEmail || !cleanPassword || !cleanUsername) {
-      return res
-        .status(400)
-        .json({ error: "Please provide email, password, and username" });
+      return sendError(
+        res,
+        400,
+        "VALIDATION_ERROR",
+        "Please provide email, password, and username"
+      );
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      return res.status(400).json({ error: "Invalid email format" });
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return sendError(res, 400, "INVALID_EMAIL", "Invalid email format");
+    }
+    if (cleanUsername.length < 2 || cleanUsername.length > 30) {
+      return sendError(res, 400, "INVALID_USERNAME", "Username must be 2-30 characters");
     }
     if (!isStrongPassword(cleanPassword)) {
-      return res.status(400).json({ error: PASSWORD_POLICY_MESSAGE });
+      return sendError(res, 400, "WEAK_PASSWORD", PASSWORD_POLICY_MESSAGE);
     }
 
     const existingUser = await prisma.user.findUnique({
       where: { email: cleanEmail },
     });
     if (existingUser) {
-      return res.status(409).json({ error: "Email already in use" });
+      return sendError(res, 409, "EMAIL_IN_USE", "Email already in use");
     }
 
     const hashedPassword = await bcrypt.hash(cleanPassword, 10);
@@ -164,16 +172,12 @@ router.post("/register", async (req, res) => {
     } catch (e: any) {
       if (e?.code === "P2002") {
         // unique constraint conflict
-        return res.status(409).json({ error: "Email already in use" });
+        return sendError(res, 409, "EMAIL_IN_USE", "Email already in use");
       }
       throw e;
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "7d" }
-    );
+    const token = signAuthToken(user);
 
     console.log("/auth/register success:", { id: user.id });
     res.json({
@@ -183,11 +187,12 @@ router.post("/register", async (req, res) => {
         email: user.email,
         username: user.username,
         uniqueId: user.uniqueId,
+        avatarUrl: user.avatarUrl ?? null,
       },
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    sendError(res, 500, "SERVER_ERROR", "Server error");
   }
 });
 
@@ -254,8 +259,7 @@ router.post("/register", async (req, res) => {
  *       415:
  *         description: Неверный Content-Type (нужен application/json)
  */
-router.post("/login", async (req, res) => {
-  console.log("/auth/login body:", req.body);
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const ct = String(req.headers["content-type"] || "");
     if (!ct.includes("application/json")) {
@@ -280,30 +284,26 @@ router.post("/login", async (req, res) => {
         : password;
 
     if (typeof emailVal !== "string" || typeof passwordVal !== "string") {
-      return res.status(400).json({ error: "Invalid field types" });
+      return sendError(res, 400, "VALIDATION_ERROR", "Invalid field types");
     }
 
     const cleanEmail = emailVal.trim().toLowerCase();
     const cleanPassword = passwordVal;
     if (!cleanEmail || !cleanPassword) {
-      return res.status(400).json({ error: "Please fill all fields" });
+      return sendError(res, 400, "VALIDATION_ERROR", "Please fill all fields");
     }
 
     const user = await prisma.user.findUnique({ where: { email: cleanEmail } });
     if (!user) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return sendError(res, 400, "INVALID_CREDENTIALS", "Invalid email or password");
     }
 
     const isValid = await bcrypt.compare(cleanPassword, user.password);
     if (!isValid) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return sendError(res, 400, "INVALID_CREDENTIALS", "Invalid email or password");
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "7d" }
-    );
+    const token = signAuthToken(user);
 
     console.log("/auth/login success:", { id: user.id });
     res.json({
@@ -318,7 +318,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    sendError(res, 500, "SERVER_ERROR", "Server error");
   }
 });
 
@@ -362,7 +362,7 @@ router.post("/login", async (req, res) => {
 router.get("/me", authenticateToken, async (req: AuthRequest, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return sendError(res, 401, "UNAUTHORIZED", "Unauthorized");
     }
 
     const user = await prisma.user.findUnique({
@@ -377,13 +377,13 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return sendError(res, 404, "USER_NOT_FOUND", "User not found");
     }
 
     return res.json(user);
   } catch (err) {
     console.error("/auth/me error:", err);
-    return res.status(500).json({ error: "Server error" });
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
   }
 });
 

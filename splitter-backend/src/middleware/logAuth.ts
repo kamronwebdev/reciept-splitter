@@ -6,7 +6,7 @@ function maskSecrets(value: unknown): unknown {
     const src = value as Record<string, unknown>;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(src)) {
-      if (k.toLowerCase() === "password") out[k] = "***";
+      if (/password|token|code|secret/i.test(k)) out[k] = "***";
       else out[k] = maskSecrets(v);
     }
     return out;

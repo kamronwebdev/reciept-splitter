@@ -2,14 +2,14 @@
 
 ## 1. Платформа и стек
 
-* **Платформа:** React Native + Expo SDK 53 с поддержкой Expo Go.
-* **Языки:** TypeScript 5.8.3.
+* **Платформа:** React Native + Expo SDK 57 с поддержкой Expo Go.
+* **Языки:** TypeScript 5.9.
 * **Сборка и публикация:** EAS Build + OTA Updates.
-* **Навигация:** expo-router v5.1.4 (stack, tabs, modals), deep links.
+* **Навигация:** expo-router ~57.0 (stack, tabs, modals), deep links.
 * **Стейт:** Zustand v5.0.7 (глобальный стейт) + React Query v5.85.3 (серверные данные, кэш, офлайн-режим).
 * **Формы и валидация:** React Hook Form v7.62.0 + Zod v4.0.17.
-* **Стилизация:** Собственная система стилей на основе StyleSheet, дизайн-токены, поддержка light/dark themes.
-* **Локализация:** react-i18next v15.6.1 + expo-localization v16.1.6, поддержка ja/en, конфигурация в `src/shared/config/i18n.ts`.
+* **Стилизация:** Tamagui (`tamagui.config.ts`) + общие UI-компоненты в `src/shared/ui`, дизайн-токены, поддержка light/dark themes.
+* **Локализация:** react-i18next v17 + expo-localization ~57.0, поддержка uz/en/ja, конфигурация в `src/shared/config/i18n.ts`.
 * **Сеть:** Axios v1.11.0 с интерсепторами (auth, lang header, cancellation, retry).
 * **Тестирование:** Jest + React Native Testing Library; e2e (Detox или Maestro при необходимости).
 
@@ -17,20 +17,20 @@
 
 ```json
 {
-  "expo": "~53.0.20",
-  "react": "19.0.0", 
-  "react-native": "0.79.5",
-  "expo-router": "~5.1.4",
+  "expo": "^57.0.0",
+  "react": "19.2.3", 
+  "react-native": "0.86.3",
+  "expo-router": "~57.0.20",
   "zustand": "^5.0.7",
   "@tanstack/react-query": "^5.85.3",
   "react-hook-form": "^7.62.0",
   "zod": "^4.0.17",
-  "react-i18next": "^15.6.1",
-  "i18next": "^25.3.6",
-  "expo-localization": "^16.1.6",
+  "react-i18next": "^17.0.13",
+  "i18next": "^26.4.2",
+  "expo-localization": "~57.0.1",
   "axios": "^1.11.0",
-  "expo-secure-store": "^14.2.3",
-  "typescript": "^5.8.3"
+  "expo-secure-store": "~57.0.3",
+  "typescript": "~5.9.2"
 }
 ```
 

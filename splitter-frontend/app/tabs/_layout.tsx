@@ -1,7 +1,7 @@
 // app/tabs/_layout.tsx
 
 import React, { useCallback, useEffect } from 'react';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, Redirect, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, View } from 'tamagui';
@@ -11,6 +11,7 @@ import { AppState } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
+import Banner from '@/shared/ui/Banner';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 
@@ -109,8 +110,28 @@ function GlobalTabsHeader(props: any) {
   );
 }
 
+/** One-shot success message (e.g. "Password updated") shown above the tabs for a few seconds. */
+function FlashMessage() {
+  const message = useAppStore((s) => s.flashMessage);
+  const setFlashMessage = useAppStore((s) => s.setFlashMessage);
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (!message) return;
+    const id = setTimeout(() => setFlashMessage(null), 5000);
+    return () => clearTimeout(id);
+  }, [message, setFlashMessage]);
+
+  if (!message) return null;
+  return (
+    <View position="absolute" top={insets.top + 8} left={16} right={16} zIndex={1000}>
+      <Banner kind="success" message={message} />
+    </View>
+  );
+}
+
 export default function TabLayout() {
-  const { user } = useAppStore();
+  const { user, token, isInitialized } = useAppStore();
   const { t } = useTranslation();
 
   const greetingName = user?.username || t('home.header.friendFallback', 'friend');
@@ -131,7 +152,12 @@ export default function TabLayout() {
   const historyTitle = t('navigation.history', 'Recent bills');
   const historyDetailsTitle = t('navigation.historyDetails', 'Bill details');
 
+  // Signed-out (or expired) sessions can never stay inside the tabs.
+  if (isInitialized && !token) return <Redirect href="/" />;
+
   return (
+    <>
+    <FlashMessage />
     <Tabs
       screenOptions={{
         header: (props) => <GlobalTabsHeader {...props} />,
@@ -188,5 +214,6 @@ export default function TabLayout() {
       <Tabs.Screen name="sessions/history/[historyId]" options={{ href: null, title: historyDetailsTitle }} />
 
     </Tabs>
+    </>
   );
 }

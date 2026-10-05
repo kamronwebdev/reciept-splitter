@@ -1,3 +1,5 @@
+import { confirmLogout } from '@/features/auth/lib/confirm-logout';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Alert } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,7 +19,8 @@ type Props = {
 export default function TopBar({ title, greeting = false }: Props) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user, logout } = useAppStore();
+  const { t } = useTranslation();
+  const { user } = useAppStore();
   const userInitial = (user?.username?.[0] ?? 'U').toUpperCase();
 
   // безопасно читаем количество заявок (без жёстких типов)
@@ -43,18 +46,7 @@ export default function TopBar({ title, greeting = false }: Props) {
         {
           text: 'Log out',
           style: 'destructive',
-          onPress: () =>
-            Alert.alert('Log out?', undefined, [
-              { text: 'Cancel', style: 'cancel' },
-              {
-                text: 'Log out',
-                style: 'destructive',
-                onPress: async () => {
-                  await logout();
-                  router.replace('/');
-                },
-              },
-            ]),
+          onPress: () => confirmLogout(t, router),
         },
         { text: 'Close', style: 'cancel' },
       ]
