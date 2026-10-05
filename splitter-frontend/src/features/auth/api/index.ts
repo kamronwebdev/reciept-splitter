@@ -3,7 +3,8 @@ import { getToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
 import { resolveApiUrl } from '@/shared/api/api-url';
 
-export const API_URL = resolveApiUrl();
+/** Current API base URL (re-resolved each time). */
+export const getApiUrl = resolveApiUrl;
 
 /** Error thrown by the API client; keeps the HTTP status for callers. */
 export class ApiError extends Error {
@@ -16,7 +17,7 @@ export class ApiError extends Error {
 }
 
 export const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: resolveApiUrl(),
   // Free hosting (Render) can take up to ~60s to wake up; do not hang forever.
   timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
@@ -35,6 +36,7 @@ function redact(data: unknown): unknown {
 }
 
 apiClient.interceptors.request.use(async (config) => {
+  config.baseURL = resolveApiUrl();
   try {
     const existing =
       (config.headers as any)?.Authorization ??
@@ -120,9 +122,9 @@ apiClient.interceptors.response.use(
       }
       throw new ApiError(serverMsg || `Request failed (${status})`, status);
     } else if (error.code === 'ECONNABORTED') {
-      throw new ApiError(`Cannot reach the server (${API_URL}). Make sure the backend is running and your phone is on the same Wi-Fi as the computer.`);
+      throw new ApiError(`Cannot reach the server (${getApiUrl()}). Make sure the backend is running and your phone is on the same Wi-Fi as the computer.`);
     } else if (error.request) {
-      throw new ApiError(`Cannot reach the server (${API_URL}). Check your connection and the server address.`);
+      throw new ApiError(`Cannot reach the server (${getApiUrl()}). Check your connection and the server address.`);
     }
 
     throw new ApiError('Unexpected error while performing the request.');
