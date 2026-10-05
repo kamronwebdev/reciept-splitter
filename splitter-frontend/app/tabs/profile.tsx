@@ -12,6 +12,7 @@ import UserAvatar from '@/shared/ui/UserAvatar';
 import Input from '@/shared/ui/Input';
 import PasswordInput from '@/shared/ui/PasswordInput';
 import { useAppStore } from '@/shared/lib/stores/app-store';
+import { confirmLogout } from '@/features/auth/lib/confirm-logout';
 import { changePassword, resetAvatar, updateEmail, updateUsername, uploadAvatar } from '@/features/auth/api';
 import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
 import { LanguageSegmentedControl } from '@/shared/ui/LanguageSegmentedControl';
@@ -677,7 +678,8 @@ export default function ProfileScreen() {
 
     try {
       setIsChangingPassword(true);
-      await changePassword({ currentPassword, newPassword });
+      const changed = await changePassword({ currentPassword, newPassword });
+      if (changed.token) useAppStore.getState().setToken(changed.token);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -702,15 +704,8 @@ export default function ProfileScreen() {
   ]);
 
   const handleLogout = useCallback(() => {
-    logout()
-      .then(() => router.replace({ pathname: '/' }))
-      .catch(() =>
-        Alert.alert(
-          t('common.error', 'Error'),
-          t('profile.alerts.logoutFailed', 'Could not log out. Please try again.')
-        )
-      );
-  }, [logout, router, t]);
+    confirmLogout(t, router);
+  }, [router, t]);
 
   const isResetDisabled = isResettingAvatar || (!user?.avatarUrl && !previewUri);
 

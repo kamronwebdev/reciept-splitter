@@ -31,7 +31,79 @@
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
-    "haveAccount": "Hisobingiz bormi?"
+    "haveAccount": "Hisobingiz bormi?",
+    "hidePassword": "Parolni yashirish",
+    "showPassword": "Parolni ko'rsatish",
+    "clearEmail": "Emailni tozalash",
+    "didYouMeanPrefix": "Shuni nazarda tutdingizmi:",
+    "didYouMean": "Shuni nazarda tutdingizmi: {{email}}?",
+    "passwordRequirements": "Parol talablari",
+    "ruleMet": "bajarilgan",
+    "ruleNotMet": "bajarilmagan",
+    "passwordRules": {
+      "length": "Kamida 8 ta belgi",
+      "upper": "Bitta bosh harf",
+      "lower": "Bitta kichik harf",
+      "number": "Bitta raqam",
+      "special": "Bitta maxsus belgi"
+    },
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "Parol o'ylab toping",
+    "usernameRule": "2-30 ta belgi",
+    "logInInstead": "Kirish sahifasiga o'tish",
+    "backToLogin": "Kirishga qaytish",
+    "sessionExpired": "Sessiyangiz tugadi, qaytadan kiring",
+    "logout": {
+      "title": "Chiqasizmi?",
+      "message": "Ilovadan foydalanish uchun qaytadan kirishingiz kerak bo'ladi.",
+      "confirm": "Chiqish"
+    },
+    "forgot": {
+      "title": "Parolni unutdingizmi?",
+      "desc": "Emailingizni kiriting, parolni tiklash uchun 6 xonali kod yuboramiz.",
+      "send": "Kod yuborish"
+    },
+    "reset": {
+      "codeTitle": "Kodni kiriting",
+      "codeDesc": "{{email}} manziliga 6 xonali kod yubordik. U 15 daqiqa amal qiladi.",
+      "codeLabel": "Tasdiqlash kodi",
+      "codeSent": "Yangi kod yuborildi.",
+      "verify": "Davom etish",
+      "resend": "Kodni qayta yuborish",
+      "resendIn": "Kodni qayta yuborish: {{seconds}} soniya",
+      "changeEmail": "Emailni o'zgartirish",
+      "newPasswordTitle": "Yangi parol tanlang",
+      "newPasswordDesc": "Ilgari ishlatmagan kuchli parolni tanlang.",
+      "submit": "Parolni yangilash",
+      "success": "Parol yangilandi. Siz tizimga kirdingiz.",
+      "startOver": "Boshidan boshlash"
+    },
+    "errors": {
+      "emailRequired": "Emailni kiriting",
+      "passwordRequired": "Parolni kiriting",
+      "NETWORK": "Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "VALIDATION_ERROR": "Kiritilgan ma'lumotlarni tekshiring.",
+      "INVALID_EMAIL": "To'g'ri email kiriting",
+      "INVALID_USERNAME": "Foydalanuvchi nomi 2-30 ta belgidan iborat bo'lishi kerak",
+      "EMAIL_IN_USE": "Bu email allaqachon ro'yxatdan o'tgan",
+      "INVALID_CREDENTIALS": "Email yoki parol noto'g'ri",
+      "WEAK_PASSWORD": "Parol talablarga javob bermaydi",
+      "INVALID_CODE": "Kod noto'g'ri. Qayta urinib ko'ring.",
+      "CODE_EXPIRED": "Kod muddati tugagan. Yangi kod so'rang.",
+      "TOO_MANY_ATTEMPTS": "Juda ko'p noto'g'ri urinish. Yangi kod so'rang.",
+      "INVALID_RESET_TOKEN": "Tiklash sessiyasi tugagan. Boshidan boshlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Davom etish uchun tizimga kiring.",
+      "TOKEN_EXPIRED": "Sessiyangiz tugadi, qaytadan kiring",
+      "TOKEN_INVALID": "Sessiyangiz tugadi, qaytadan kiring",
+      "SESSION_REVOKED": "Sessiyangiz tugadi, qaytadan kiring",
+      "USER_NOT_FOUND": "Hisob topilmadi",
+      "WRONG_CURRENT_PASSWORD": "Joriy parol noto'g'ri",
+      "SERVER_ERROR": "Server xatosi. Keyinroq qayta urinib ko'ring."
+    },
+    "loginError": "Kirishda xatolik yuz berdi",
+    "registerError": "Ro'yxatdan o'tishda xatolik yuz berdi"
   },
   "common": {
     "welcome": "Xush kelibsiz",
@@ -41,7 +113,8 @@
     "cancel": "Bekor qilish",
     "confirm": "Tasdiqlash",
     "continue": "Davom etish",
-    "back": "Orqaga"
+    "back": "Orqaga",
+    "retry": "Qayta urinish"
   },
   "home": {
     "header": {

@@ -1,4 +1,5 @@
 import React from 'react'
+import { ActivityIndicator } from 'react-native'
 import { Button as TamaguiButton, Text } from 'tamagui'
 
 interface CustomButtonProps {
@@ -6,6 +7,9 @@ interface CustomButtonProps {
   variant?: 'primary' | 'secondary' | 'outline'
   size?: 'small' | 'medium' | 'large'
   disabled?: boolean
+  /** shows a spinner and blocks presses */
+  loading?: boolean
+  accessibilityLabel?: string
   onPress?: () => void
 }
 
@@ -14,8 +18,11 @@ export const Button: React.FC<CustomButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   disabled = false,
+  loading = false,
+  accessibilityLabel,
   onPress,
 }) => {
+  const isDisabled = disabled || loading
   const getStyles = () => {
     const baseStyles = {
       borderRadius: '$4',
@@ -30,7 +37,7 @@ export const Button: React.FC<CustomButtonProps> = ({
 
     const variantStyles = {
       primary: {
-        backgroundColor: disabled ? '$gray8' : '#2ECC71',
+        backgroundColor: isDisabled && !loading ? '$gray8' : '#2ECC71',
         color: '#FFFFFF',
       },
       secondary: {
@@ -57,9 +64,14 @@ export const Button: React.FC<CustomButtonProps> = ({
   return (
     <TamaguiButton
       {...styles}
-      disabled={disabled}
-      onPress={onPress}
+      disabled={isDisabled}
+      onPress={isDisabled ? undefined : onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      minHeight={44}
     >
+      {loading && <ActivityIndicator color={variant === 'primary' ? '#FFFFFF' : '#2ECC71'} style={{ marginRight: 8 }} />}
       <Text 
         color={styles.color}
         fontWeight="600"

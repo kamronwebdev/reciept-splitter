@@ -26,6 +26,10 @@ interface AppStore {
   isLoading: boolean;
   /** true once the stored token has been checked on app start */
   isInitialized: boolean;
+  /** set when the server rejected our session; the login screen shows a friendly message */
+  sessionExpired: boolean;
+  /** one-shot success message shown at the top of the app (e.g. after a password reset) */
+  flashMessage: string | null;
   
   // App settings
   theme: 'light' | 'dark';
@@ -37,6 +41,8 @@ interface AppStore {
   setAuth: (token: string, user: User) => void;
   logout: () => Promise<void>;
   initializeAuth: () => Promise<void>;
+  setSessionExpired: (value: boolean) => void;
+  setFlashMessage: (message: string | null) => void;
   setTheme: (theme: 'light' | 'dark') => void;
   setLanguage: (language: LanguageCode) => void;
 }
@@ -62,6 +68,8 @@ export const useAppStore = create<AppStore>()(
       user: null,
       isLoading: false,
       isInitialized: false,
+      sessionExpired: false,
+      flashMessage: null,
       theme: 'light',
       language: DEFAULT_LANGUAGE,
 
@@ -107,7 +115,7 @@ export const useAppStore = create<AppStore>()(
             if (error instanceof ApiError && error.status === 401) {
               // Token expired / invalid: drop it.
               await removeToken().catch(() => undefined);
-              set({ token: null, user: null });
+              set({ token: null, user: null, sessionExpired: true });
             } else {
               // Offline or server down: keep the session, profile will load later.
               set({ token, user: get().user });
@@ -120,6 +128,9 @@ export const useAppStore = create<AppStore>()(
           set({ isLoading: false, isInitialized: true });
         }
       },
+
+      setSessionExpired: (sessionExpired) => set({ sessionExpired }),
+      setFlashMessage: (flashMessage) => set({ flashMessage }),
 
       // App settings actions
       setTheme: (theme) => set({ theme }),
@@ -147,6 +158,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const initializeAuth = useAppStore((s) => s.initializeAuth);
   const logout = useAppStore((s) => s.logout);
   const router = useRouter();
+  const markSessionExpired = () => useAppStore.getState().setSessionExpired(true);
   
   useEffect(() => {
     initializeAuth();
@@ -157,7 +169,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       // Several parallel requests can fail with 401 at once; handle the first only.
       if (!useAppStore.getState().token) return;
       await logout();
-      router.replace('/');
+      markSessionExpired();
+      router.replace('/login');
     });
     return unsubscribe;
   }, [logout, router]);

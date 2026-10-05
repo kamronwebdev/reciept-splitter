@@ -18,6 +18,7 @@ const languages = LANGUAGE_OPTIONS.map((option) => ({
 export default function Welcome() {
   const token = useAppStore((state) => state.token);
   const isInitialized = useAppStore((state) => state.isInitialized);
+  const sessionExpired = useAppStore((state) => state.sessionExpired);
   const { t } = useTranslation();
   const currentLanguage = useAppStore((state) => state.language);
   const setLanguage = useAppStore((state) => state.setLanguage);
@@ -35,6 +36,9 @@ export default function Welcome() {
 
   // Если уже залогинен — сразу в табы
   if (token) return <Redirect href="/tabs" />;
+
+  // The stored session was rejected by the server: explain it on the login screen
+  if (sessionExpired) return <Redirect href="/login" />;
 
   const changeLanguage = (langCode: LanguageCode) => {
     if (langCode === currentLanguage) return;

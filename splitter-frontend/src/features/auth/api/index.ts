@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { getToken } from '@/shared/lib/utils/token-storage';
+import { getToken, saveToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
 import { resolveApiUrl } from '@/shared/api/api-url';
 
@@ -9,10 +9,20 @@ export const getApiUrl = resolveApiUrl;
 /** Error thrown by the API client; keeps the HTTP status for callers. */
 export class ApiError extends Error {
   status?: number;
-  constructor(message: string, status?: number) {
+  /** machine-readable code from the backend (e.g. EMAIL_IN_USE) */
+  code?: string;
+  /** extra data from the backend (e.g. attemptsLeft) */
+  data?: Record<string, any>;
+  constructor(message: string, status?: number, code?: string, data?: Record<string, any>) {
     super(message);
     this.name = 'ApiError';
     if (status !== undefined) this.status = status;
+    if (code) this.code = code;
+    if (data) this.data = data;
+  }
+  /** true when no HTTP response was received (offline, timeout, server unreachable) */
+  get isNetwork(): boolean {
+    return this.status === undefined;
   }
 }
 
@@ -106,6 +116,9 @@ apiClient.interceptors.response.use(
       const serverMsg: string | undefined =
         typeof data === 'string' ? data : data?.message || data?.error;
 
+      const code: string | undefined = typeof data?.code === 'string' ? data.code : undefined;
+      const extra = data && typeof data === 'object' ? data : undefined;
+
       if (status === 401) {
         // Only a rejected *authenticated* request means the session is dead.
         // A wrong password on /auth/login must not log the user out or redirect.
@@ -115,12 +128,12 @@ apiClient.interceptors.response.use(
             !!(error.config?.headers as any).get('Authorization');
         const isCredentialCall = /\/auth\/(login|register)$/.test(url);
         if (hadToken && !isCredentialCall) emitUnauthorized();
-        throw new ApiError(serverMsg || 'Authorization failed', status);
+        throw new ApiError(serverMsg || 'Authorization failed', status, code, extra);
       }
       if (status >= 500) {
-        throw new ApiError(serverMsg || 'Server error. Please try again later.', status);
+        throw new ApiError(serverMsg || 'Server error. Please try again later.', status, code ?? 'SERVER_ERROR', extra);
       }
-      throw new ApiError(serverMsg || `Request failed (${status})`, status);
+      throw new ApiError(serverMsg || `Request failed (${status})`, status, code, extra);
     } else if (error.code === 'ECONNABORTED') {
       throw new ApiError(`Cannot reach the server (${getApiUrl()}). Make sure the backend is running and your phone is on the same Wi-Fi as the computer.`);
     } else if (error.request) {
@@ -152,6 +165,20 @@ export interface AuthResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface VerifyResetCodeRequest {
+  email: string;
+  code: string;
+}
+
+export interface ResetPasswordRequest {
+  resetToken: string;
+  newPassword: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -171,6 +198,23 @@ export async function login(payload: LoginRequest): Promise<AuthResponse> {
 /** POST /auth/register */
 export async function register(payload: RegisterRequest): Promise<AuthResponse> {
   const { data } = await apiClient.post<AuthResponse>('/auth/register', payload);
+  return data;
+}
+
+/** POST /auth/forgot-password (always succeeds for valid emails; does not reveal if the account exists) */
+export async function forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
+  await apiClient.post('/auth/forgot-password', payload);
+}
+
+/** POST /auth/verify-reset-code -> short-lived single-use reset token */
+export async function verifyResetCode(payload: VerifyResetCodeRequest): Promise<{ resetToken: string }> {
+  const { data } = await apiClient.post<{ resetToken: string }>('/auth/verify-reset-code', payload);
+  return data;
+}
+
+/** POST /auth/reset-password -> signs the user in */
+export async function resetPassword(payload: ResetPasswordRequest): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>('/auth/reset-password', payload);
   return data;
 }
 
@@ -257,8 +301,11 @@ export interface ChangePasswordPayload {
  * PATCH /user/password
  * Changes the current user's password.
  */
-export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
-  await apiClient.patch('/user/password', payload);
+export async function changePassword(payload: ChangePasswordPayload): Promise<{ token?: string }> {
+  // The backend revokes all other sessions on password change and returns a fresh token for this device.
+  const { data } = await apiClient.patch<{ success: boolean; token?: string }>('/user/password', payload);
+  if (data?.token) await saveToken(data.token);
+  return { ...(data?.token ? { token: data.token } : {}) };
 }
 
 /**

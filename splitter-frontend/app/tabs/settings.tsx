@@ -107,7 +107,8 @@ export default function SettingsScreen() {
 
     try {
       setIsChangingPassword(true);
-      await changePassword({ currentPassword, newPassword });
+      const changed = await changePassword({ currentPassword, newPassword });
+      if (changed.token) useAppStore.getState().setToken(changed.token);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');

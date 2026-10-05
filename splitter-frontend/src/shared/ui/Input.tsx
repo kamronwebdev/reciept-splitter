@@ -12,6 +12,11 @@ export type CustomInputProps = {
   secureTextEntry?: boolean;
   error?: string;
   required?: boolean;
+  /** small helper text under the field (hidden while an error is shown) */
+  hint?: string;
+  accessibilityLabel?: string;
+  /** ref to the underlying TextInput (for focus chaining) */
+  inputRef?: React.Ref<any>;
 
   /** Иконка/кнопка справа (например, «глаз»). */
   rightAdornment?: ReactNode;
@@ -30,6 +35,9 @@ export function Input({
   secureTextEntry,
   error,
   required,
+  hint,
+  accessibilityLabel,
+  inputRef,
   rightAdornment,
   textInputProps,
 }: CustomInputProps) {
@@ -44,6 +52,8 @@ export function Input({
 
       <XStack position="relative" w="100%">
         <TInput
+          ref={inputRef as any}
+          accessibilityLabel={accessibilityLabel ?? label ?? placeholder}
           w="100%"      // >>> всегда на полную ширину строки
           f={1}         // >>> растягивается внутри строки
           value={value}
@@ -80,8 +90,13 @@ export function Input({
       </XStack>
 
       {!!error && (
-        <Text fontSize="$3" color="$red10">
+        <Text fontSize="$3" color="$red10" accessibilityRole="alert">
           {error}
+        </Text>
+      )}
+      {!error && !!hint && (
+        <Text fontSize="$2" color="$gray10">
+          {hint}
         </Text>
       )}
     </YStack>
