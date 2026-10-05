@@ -19,7 +19,9 @@ export function resolveApiUrl(): string {
     const hostUri: string | undefined =
       (Constants.expoConfig as any)?.hostUri ?? (Constants as any).expoGoConfig?.debuggerHost;
     const host = hostUri?.split(':')[0];
-    if (host) return `http://${host}:${BACKEND_PORT}`;
+    // Tunnel mode (exp.direct / ngrok) does not expose the backend port: use the hosted backend.
+    const isTunnel = !!host && /(exp\.direct|ngrok|\.expo\.)/i.test(host);
+    if (host && !isTunnel) return `http://${host}:${BACKEND_PORT}`;
     if (Platform.OS === 'web') return `http://localhost:${BACKEND_PORT}`;
   }
   return PRODUCTION_URL;
