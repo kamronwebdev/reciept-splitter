@@ -10,6 +10,17 @@ TypeScript + ESM Express API with Prisma (PostgreSQL), JWT auth, and Swagger doc
 - JWT auth middleware + request logging for `/auth/*`
 - Swagger UI at `/api-docs`
 
+## Run
+
+```bash
+npm run dev     # auto-restart on changes (tsx)
+npm start       # single run
+```
+
+On start the server prints its LAN address(es), e.g. `LAN: http://192.168.1.7:3001`. Open `<that>/health` in the
+phone's browser to verify the phone can reach it. Missing `DATABASE_URL`/`JWT_SECRET`, a busy port or an
+unreachable database are reported with a clear message.
+
 ## Tests
 
 ```bash
