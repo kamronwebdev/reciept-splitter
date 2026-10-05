@@ -346,7 +346,7 @@ export default function SessionParticipantsScreen() {
               <React.Fragment key={p.uniqueId}>
                 <XStack h={56} ai="center" jc="space-between" px="$4" bg="$color1">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(p.username || "U").slice(0, 1).toUpperCase()} size={32} textSize={12} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(p.username || "U").slice(0, 1).toUpperCase()} size={32} textSize={12} />
                     <YStack>
                       <Text fontSize={16} fontWeight="600">{p.username}</Text>
                       <Text fontSize={12} color="$gray10">

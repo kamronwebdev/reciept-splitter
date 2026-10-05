@@ -174,10 +174,10 @@ export default function HistoryDetailsScreen() {
               <XStack ai="center" gap="$2">
                 <UserAvatar
                   uri={avatarUrl ?? undefined}
-                  label={(participant.username || 'U').slice(0, 1).toUpperCase()}
+                  label={participant.username || 'U'}
+            seed={participant.uniqueId}
                   size={40}
                   textSize={16}
-                  backgroundColor="$gray5"
                 />
                 <Text fontSize={16} fontWeight="600">{participant.username}</Text>
               </XStack>

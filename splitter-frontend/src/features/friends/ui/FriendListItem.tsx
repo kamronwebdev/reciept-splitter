@@ -78,7 +78,6 @@ export const FriendListItem = memo(function FriendListItem({ friend }: { friend:
           label={avatarLabel}
           size={36}
           textSize={14}
-          backgroundColor="$gray5"
         />
         <YStack>
           <Text fontSize={17} fontWeight="600">{title}</Text>

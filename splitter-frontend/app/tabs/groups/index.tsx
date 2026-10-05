@@ -42,9 +42,9 @@ function AvatarStack({
           <UserAvatar
             uri={member.avatarUrl ?? member.user?.avatarUrl ?? undefined}
             label={labelFor(member)}
+            seed={member.uniqueId}
             size={34}
             textSize={14}
-            backgroundColor="$gray5"
           />
         </View>
       ))}

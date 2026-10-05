@@ -74,9 +74,9 @@ function AvatarStack({ participantIds }: { participantIds: string[] }) {
           <UserAvatar
             uri={undefined}
             label={(uniqueId || 'U').slice(0, 2).toUpperCase()}
+            seed={uniqueId}
             size={28}
             textSize={12}
-            backgroundColor="$gray5"
           />
         </View>
       ))}

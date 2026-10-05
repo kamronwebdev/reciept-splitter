@@ -33,10 +33,10 @@ function AvatarGroup({ participants }: { participants: SessionHistoryParticipant
         <View key={participant.uniqueId ?? idx} ml={idx === 0 ? 0 : -8}>
           <UserAvatar
             uri={participant.avatarUrl ?? undefined}
-            label={(participant.username || 'U').slice(0, 1).toUpperCase()}
+            label={participant.username || 'U'}
+            seed={participant.uniqueId}
             size={28}
             textSize={12}
-            backgroundColor="$gray5"
           />
         </View>
       ))}

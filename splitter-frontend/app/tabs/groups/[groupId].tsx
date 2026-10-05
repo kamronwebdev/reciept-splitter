@@ -255,7 +255,7 @@ export default function GroupDetailsScreen() {
               <React.Fragment key={uid ?? `${label}-${idx}`}>
                 <XStack h={60} ai="center" jc="space-between" px="$4" bg="$green3">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
                     <YStack>
                       <Text fontSize={17} fontWeight="600">{label}</Text>
                       {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}
@@ -312,7 +312,7 @@ export default function GroupDetailsScreen() {
               <React.Fragment key={uid ?? `${label}-${idx}`}>
                 <XStack h={60} ai="center" jc="space-between" px="$4">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
                     <YStack>
                       <Text fontSize={17} fontWeight="600">{label}</Text>
                       {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}

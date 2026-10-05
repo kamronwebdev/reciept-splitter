@@ -102,7 +102,11 @@
       "SESSION_REVOKED": "Your session expired, please log in again",
       "USER_NOT_FOUND": "Account not found",
       "WRONG_CURRENT_PASSWORD": "Current password is incorrect",
-      "SERVER_ERROR": "Server error. Please try again later."
+      "SERVER_ERROR": "Server error. Please try again later.",
+      "FILE_TOO_LARGE": "The photo is too large. Please choose a smaller one.",
+      "UNSUPPORTED_TYPE": "This photo format is not supported.",
+      "FILE_REQUIRED": "Please choose a photo.",
+      "INVALID_PASSWORD": "Password is incorrect"
     }
   },
   "common": {
@@ -157,77 +161,73 @@
   },
   "profile": {
     "title": "Profile",
-    "status": {
-      "saved": "Saved"
-    },
-    "actions": {
-      "copy": "Copy"
-    },
     "labels": {
-      "guest": "Guest",
-      "notAvailable": "N/A"
+      "guest": "Guest"
+    },
+    "header": {
+      "copyId": "Copy ID",
+      "copied": "Copied",
+      "shareQr": "Share my invite QR",
+      "idLabel": "ID"
     },
     "avatar": {
-      "title": "Avatar",
-      "hint": "Uploaded avatars are delivered via our CDN and refresh instantly.",
-      "upload": "Upload from phone",
-      "uploading": "Uploading...",
-      "reset": "Reset avatar",
-      "resetting": "Resetting..."
+      "change": "Change profile photo",
+      "sheetTitle": "Profile photo",
+      "takePhoto": "Take photo",
+      "chooseLibrary": "Choose from library",
+      "remove": "Remove photo",
+      "cancel": "Cancel",
+      "uploading": "Uploading…",
+      "updated": "Profile photo updated",
+      "removed": "Profile photo removed",
+      "cameraBlockedTitle": "Camera access is off",
+      "photosBlockedTitle": "Photo access is off",
+      "blockedBody": "Allow access in your phone's Settings, then try again.",
+      "openSettings": "Open Settings",
+      "pickFailed": "Could not read the photo. Please try another one."
     },
-    "info": {
-      "title": "User information",
-      "usernameLabel": "Username",
-      "usernamePlaceholder": "Enter a new username",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Enter a new email",
-      "userId": "User ID"
+    "stats": {
+      "title": "Your activity",
+      "sessions": "Bills",
+      "friends": "Friends",
+      "groups": "Groups"
+    },
+    "username": {
+      "label": "Username",
+      "edit": "Edit username",
+      "save": "Save",
+      "cancel": "Cancel",
+      "rule": "2-30 characters",
+      "updated": "Username updated"
+    },
+    "email": {
+      "title": "Email",
+      "change": "Change email",
+      "newEmail": "New email",
+      "currentPassword": "Current password",
+      "passwordHelp": "Enter your current password to confirm.",
+      "submit": "Update email",
+      "updated": "Email updated",
+      "same": "This is already your email"
     },
     "password": {
-      "title": "Change password",
-      "currentLabel": "Current password",
-      "currentPlaceholder": "Enter current password",
-      "newLabel": "New password",
-      "newPlaceholder": "Enter new password",
-      "confirmLabel": "Confirm new password",
-      "confirmPlaceholder": "Confirm new password",
-      "requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special symbol.",
-      "submit": "Change password",
-      "updating": "Updating..."
+      "title": "Password",
+      "change": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Update password",
+      "updated": "Password updated. Other devices were signed out.",
+      "same": "Choose a different password"
+    },
+    "danger": {
+      "title": "Danger zone",
+      "delete": "Delete account",
+      "warning": "This permanently deletes your account, the bills you created, your groups and your friend connections. Bills created by other people stay, but your share is removed. This cannot be undone.",
+      "passwordLabel": "Type your password to confirm",
+      "confirm": "Delete my account"
     },
     "logout": "Log out",
-    "copy": {
-      "successTitle": "Copied",
-      "successMessage": "{{field}} copied to the clipboard.",
-      "unavailableMessage": "{{field}} is not available yet."
-    },
-    "alerts": {
-      "permissionTitle": "Permission needed",
-      "permissionMessage": "Please allow access to your photo library to pick an avatar.",
-      "unavailableTitle": "Unavailable",
-      "avatarLoginRequired": "Sign in to update your avatar.",
-      "profileLoginRequired": "Sign in to update your profile.",
-      "passwordLoginRequired": "Sign in to change your password.",
-      "avatarUpdateFailed": "Could not update the avatar.",
-      "avatarResetFailed": "Could not reset the avatar.",
-      "usernameUpdateFailed": "Could not update the username.",
-      "emailUpdateFailed": "Could not update the email.",
-      "passwordChangeFailed": "Could not change the password.",
-      "logoutFailed": "Could not log out. Please try again.",
-      "imageMissing": "Image file is missing a URI.",
-      "uploadReadFailed": "Unable to read the selected file for upload."
-    },
-    "validation": {
-      "usernameRequired": "Username cannot be empty",
-      "usernameMin": "Username must be at least 2 characters",
-      "emailRequired": "Email cannot be empty",
-      "emailInvalid": "Enter a valid email address",
-      "passwordCurrent": "Enter your current password",
-      "passwordLength": "New password must be at least 8 characters",
-      "passwordComplexity": "Password must include uppercase, lowercase, number, and special character",
-      "passwordMismatch": "Passwords do not match",
-      "passwordDifferent": "Choose a different password"
-    }
+    "refreshFailed": "Could not refresh your profile. Pull down to try again."
   },
   "navigation": {
     "mainMenu": "Main menu",
@@ -252,6 +252,35 @@
     "historyDetails": "Bill details"
   },
   "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "title": "Theme",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark",
+        "hint": "System follows your phone and updates automatically."
+      },
+      "font": {
+        "title": "Font",
+        "preview": "Receipt Splitter",
+        "inter": "Inter",
+        "interDesc": "Clean",
+        "nunito": "Nunito",
+        "nunitoDesc": "Soft & rounded",
+        "manrope": "Manrope",
+        "manropeDesc": "Modern & geometric",
+        "japaneseNote": "Japanese uses the system font."
+      },
+      "textSize": {
+        "title": "Text size",
+        "small": "Small",
+        "default": "Default",
+        "large": "Large",
+        "sample": "The quick brown fox"
+      }
+    },
     "language": {
       "title": "Language",
       "description": "Choose the language used across the app.",
@@ -260,6 +289,18 @@
         "ja": "Japanese",
         "uz": "Uzbek"
       }
+    },
+    "account": {
+      "title": "Account",
+      "profile": "Profile & security",
+      "profileHint": "Photo, username, email, password"
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "support": "Support & feedback",
+      "supportSubject": "Receipt Splitter feedback",
+      "mailFailed": "Could not open your mail app. Write to {{email}}."
     }
   }
 }

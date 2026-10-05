@@ -70,7 +70,6 @@ function GlobalTabsHeader(props: any) {
 
   const requestsCount = useFriendsStore((s) => s.requestsRaw?.incoming?.length ?? 0);
   const displayName = user?.username || t('profile.labels.guest', 'Guest');
-  const userInitial = displayName.slice(0, 1).toUpperCase();
 
   const handleOpenProfile = useCallback(() => {
     router.push({ pathname: '/tabs/profile' });
@@ -103,8 +102,8 @@ function GlobalTabsHeader(props: any) {
             </View>
           </Pressable>
 
-          <Pressable onPress={handleOpenProfile} hitSlop={10}>
-            <UserAvatar uri={user?.avatarUrl ?? undefined} label={userInitial} size={36} textSize={14} />
+          <Pressable onPress={handleOpenProfile} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('profile.title', 'Profile')}>
+            <UserAvatar uri={user?.avatarUrl} label={displayName} seed={user?.uniqueId} size={36} textSize={14} />
           </Pressable>
         </XStack>
       </XStack>

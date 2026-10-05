@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { Platform } from 'react-native';
 import { getToken, saveToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
 import { resolveApiUrl } from '@/shared/api/api-url';
@@ -231,65 +232,43 @@ export async function getCurrentUser(token?: string): Promise<User> {
 
 /**
  * POST /uploads/avatar
- * Uploads a new avatar file and returns the CDN URL.
+ * Uploads an already resized JPEG and returns the user with the new (absolute) avatar URL.
  */
 export interface UploadAvatarResponse {
   success: boolean;
   avatarUrl: string;
   key: string;
+  user: User;
 }
 
 export async function uploadAvatar(formData: FormData): Promise<UploadAvatarResponse> {
-  const { data } = await apiClient.post<UploadAvatarResponse>('/uploads/avatar', formData);
+  const { data } = await apiClient.post<UploadAvatarResponse>('/uploads/avatar', formData, {
+    // Native: RN's XHR adds the multipart boundary itself. Web: the browser must set it, so the JSON default is removed.
+    headers: { 'Content-Type': Platform.OS === 'web' ? false : 'multipart/form-data' } as any,
+  });
   return data;
-}
-
-export interface UpdateAvatarPayload {
-  avatarUrl: string;
-}
-
-/**
- * PATCH /users/me/avatar
- * Updates the current user's avatar URL.
- */
-export async function updateAvatar(payload: UpdateAvatarPayload): Promise<User> {
-  const response = await apiClient.patch<User | null>('/users/me/avatar', payload);
-  if (response.data) {
-    return response.data;
-  }
-  return getCurrentUser();
 }
 
 export interface UpdateUsernamePayload {
   username: string;
 }
 
-/**
- * PATCH /user/username
- * Updates the current user's username.
- */
+/** PATCH /user/username */
 export async function updateUsername(payload: UpdateUsernamePayload): Promise<User> {
-  const response = await apiClient.patch<User | null>('/user/username', payload);
-  if (response.data) {
-    return response.data;
-  }
-  return getCurrentUser();
+  const { data } = await apiClient.patch<User>('/user/username', payload);
+  return data;
 }
 
 export interface UpdateEmailPayload {
   email: string;
+  /** required by the server: changing the e-mail needs the current password */
+  currentPassword: string;
 }
 
-/**
- * PATCH /user/email
- * Updates the current user's email address.
- */
+/** PATCH /user/email */
 export async function updateEmail(payload: UpdateEmailPayload): Promise<User> {
-  const response = await apiClient.patch<User | null>('/user/email', payload);
-  if (response.data) {
-    return response.data;
-  }
-  return getCurrentUser();
+  const { data } = await apiClient.patch<User>('/user/email', payload);
+  return data;
 }
 
 export interface ChangePasswordPayload {
@@ -299,23 +278,34 @@ export interface ChangePasswordPayload {
 
 /**
  * PATCH /user/password
- * Changes the current user's password.
+ * The backend revokes all OTHER sessions (tokenVersion) and returns a fresh token for this device,
+ * which is saved here so the user stays signed in.
  */
 export async function changePassword(payload: ChangePasswordPayload): Promise<{ token?: string }> {
-  // The backend revokes all other sessions on password change and returns a fresh token for this device.
   const { data } = await apiClient.patch<{ success: boolean; token?: string }>('/user/password', payload);
   if (data?.token) await saveToken(data.token);
   return { ...(data?.token ? { token: data.token } : {}) };
 }
 
-/**
- * DELETE /users/me/avatar
- * Resets the current user's avatar to default (null in DB).
- */
+/** DELETE /users/me/avatar -> the user without a photo (the app shows initials) */
 export async function resetAvatar(): Promise<User> {
-  const response = await apiClient.delete<User | null>('/users/me/avatar');
-  if (response.data) {
-    return response.data;
-  }
-  return getCurrentUser();
+  const { data } = await apiClient.delete<{ success: boolean; user: User }>('/users/me/avatar');
+  return data.user;
+}
+
+export interface UserStats {
+  sessions: number;
+  friends: number;
+  groups: number;
+}
+
+/** GET /user/stats */
+export async function getUserStats(): Promise<UserStats> {
+  const { data } = await apiClient.get<UserStats>('/user/stats');
+  return data;
+}
+
+/** DELETE /user/delete (password confirmation required). Removes the account and its data. */
+export async function deleteAccount(payload: { password: string }): Promise<void> {
+  await apiClient.delete('/user/delete', { data: payload });
 }

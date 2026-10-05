@@ -111,7 +111,6 @@ function UserRow({ title, uid, right, index, total, avatarUrl }: UserRowProps) {
           label={avatarLabel}
           size={36}
           textSize={14}
-          backgroundColor="$gray5"
         />
         <YStack>
           <Text fontSize={17} fontWeight="600">
