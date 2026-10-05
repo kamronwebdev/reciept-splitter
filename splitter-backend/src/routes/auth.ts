@@ -67,7 +67,6 @@ function generateUniqueId() {
 router.post("/register", async (req, res) => {
   const ct = String(req.headers["content-type"] || "");
   console.log("/auth/register content-type:", ct);
-  console.log("/auth/register body:", req.body);
   try {
     if (!ct.includes("application/json")) {
       return res
@@ -255,7 +254,6 @@ router.post("/register", async (req, res) => {
  *         description: Неверный Content-Type (нужен application/json)
  */
 router.post("/login", async (req, res) => {
-  console.log("/auth/login body:", req.body);
   try {
     const ct = String(req.headers["content-type"] || "");
     if (!ct.includes("application/json")) {
