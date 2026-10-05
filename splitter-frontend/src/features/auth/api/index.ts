@@ -24,7 +24,7 @@ export class ApiError extends Error {
   }
   /** true when no HTTP response was received (offline, timeout, server unreachable) */
   get isNetwork(): boolean {
-    return this.status === undefined;
+    return this.status === undefined && this.code !== 'CANCELLED';
   }
 }
 
@@ -92,6 +92,10 @@ apiClient.interceptors.response.use(
         status: error.response?.status,
         headers: error.response?.headers,
       });
+    }
+
+    if (axios.isCancel(error)) {
+      throw new ApiError('Request cancelled', undefined, 'CANCELLED');
     }
 
     if (error.response) {

@@ -118,7 +118,8 @@
     "confirm": "Confirm",
     "continue": "Continue",
     "back": "Back",
-    "retry": "Retry"
+    "retry": "Retry",
+    "close": "Close"
   },
   "friends": {
     "title": "Friends",
@@ -301,6 +302,183 @@
       "support": "Support & feedback",
       "supportSubject": "Receipt Splitter feedback",
       "mailFailed": "Could not open your mail app. Write to {{email}}."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Review items",
+      "people": "Who is splitting?",
+      "split": "Split items",
+      "summary": "Summary"
+    },
+    "steps": {
+      "scan": "Scan",
+      "items": "Items",
+      "people": "People",
+      "split": "Split",
+      "summary": "Done"
+    },
+    "demoBanner": "Demo data: this is not your receipt.",
+    "kinds": {
+      "item": "Item",
+      "fee": "Service / fees",
+      "tax": "Tax",
+      "discount": "Discount"
+    },
+    "discard": {
+      "title": "Discard this receipt?",
+      "message": "The items and the split you entered will be lost.",
+      "confirm": "Discard",
+      "keep": "Keep editing"
+    },
+    "resume": {
+      "title": "Continue your receipt?",
+      "message": "You have an unfinished receipt.",
+      "continue": "Continue",
+      "startNew": "Start new"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Scanning is unavailable",
+      "PARSE_FAILED": "Could not read the receipt",
+      "NOT_A_RECEIPT": "This is not a receipt",
+      "IMAGE_UNREADABLE": "The photo is not readable",
+      "ITEM_NOT_ASSIGNED": "Some items are not assigned",
+      "RATE_LIMITED": "Too many requests",
+      "UNAUTHORIZED": "Please sign in again",
+      "SESSION_REVOKED": "Please sign in again",
+      "NETWORK": "No connection",
+      "CANCELLED": "Cancelled",
+      "SERVER_ERROR": "Something went wrong",
+      "UNKNOWN": "Something went wrong"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Receipt scanning is not set up on the server yet. You can enter the items manually.",
+      "PARSE_FAILED": "The receipt reader is not available right now. Try again, choose another photo, or enter the items manually.",
+      "NOT_A_RECEIPT": "We could not find a receipt in this photo. Retake it so the whole receipt is in the frame.",
+      "IMAGE_UNREADABLE": "We could not read any items. Retake the photo in better light, closer and without glare.",
+      "ITEM_NOT_ASSIGNED": "Assign every item to at least one person.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHORIZED": "Your session expired. Please sign in again.",
+      "SESSION_REVOKED": "Your session expired. Please sign in again.",
+      "NETWORK": "Check your internet connection and try again.",
+      "CANCELLED": "Cancelled.",
+      "SERVER_ERROR": "The server had a problem. Please try again in a moment.",
+      "UNKNOWN": "Something went wrong. Please try again."
+    },
+    "scan": {
+      "hint": "Fit the whole receipt in the frame, good light",
+      "lightOn": "Light on",
+      "lightOff": "Light off",
+      "on": "On",
+      "off": "Off",
+      "zoomTo": "Zoom {{level}}",
+      "gallery": "Choose from gallery",
+      "shutter": "Take photo",
+      "captureFailed": "Could not take the photo. Please try again.",
+      "previewLabel": "Receipt photo preview",
+      "rotate": "Rotate",
+      "crop": "Crop",
+      "applyCrop": "Apply crop",
+      "retake": "Retake",
+      "usePhoto": "Use photo",
+      "phase": {
+        "preparing": "Preparing the photo…",
+        "uploading": "Uploading…",
+        "reading": "Reading items…"
+      },
+      "tryAgain": "Try again",
+      "chooseAnother": "Choose another photo",
+      "chooseFromGallery": "Choose from gallery",
+      "manual": "Enter items manually",
+      "permissionTitle": "Camera access is needed",
+      "permissionBody": "The camera is only used to photograph your receipt so the items can be read. You can also pick a photo from the gallery or type the items yourself.",
+      "allowCamera": "Allow camera access"
+    },
+    "review": {
+      "billName": "Bill name",
+      "viewPhoto": "View receipt photo",
+      "items": "Items",
+      "empty": "No items yet. Add what was bought.",
+      "addItem": "Add item",
+      "editItem": "Edit item",
+      "deleteItem": "Delete item",
+      "delete": "Delete",
+      "tapToEdit": "Tap to edit",
+      "extras": "Fees, tax and discounts",
+      "addExtra": "Add fee, tax or discount",
+      "totals": "Totals",
+      "itemsSubtotal": "Items",
+      "calculated": "Calculated total",
+      "receiptTotal": "Total on the receipt",
+      "mismatchLess": "The items add up to {{amount}} less than the receipt total. Check the items, or use the calculated total.",
+      "mismatchMore": "The items add up to {{amount}} more than the receipt total. Check the items, or use the calculated total.",
+      "useCalculated": "Use calculated total",
+      "currency": "Currency",
+      "changeCurrency": "Change",
+      "name": "Name",
+      "quantity": "Quantity",
+      "unitPrice": "Price per unit",
+      "amount": "Amount",
+      "lineTotal": "Line total",
+      "discountHint": "Enter the discount as a positive number",
+      "save": "Save",
+      "needItem": "Add at least one item to continue.",
+      "next": "Next: choose people",
+      "errors": {
+        "name": "Enter a name",
+        "price": "Enter a price greater than zero"
+      }
+    },
+    "people": {
+      "you": "You",
+      "search": "Search people and groups",
+      "groups": "Groups",
+      "friends": "Friends",
+      "members": "{{count}} members",
+      "remove": "Remove {{name}}",
+      "needTwo": "Select at least 2 people to split the bill.",
+      "next": "Next: split items ({{count}} people)",
+      "emptyTitle": "No friends yet",
+      "emptyBody": "Add friends to split the bill with them, or let them scan your QR code.",
+      "addFriends": "Add friends",
+      "inviteQr": "Invite by QR",
+      "noMatches": "No one matches your search."
+    },
+    "split": {
+      "equalAll": "Split everything equally",
+      "clear": "Clear",
+      "single": "One portion",
+      "notAssigned": "Not assigned",
+      "mode": {
+        "equal": "Equally",
+        "count": "By count"
+      },
+      "remaining": "Remaining: {{count}}",
+      "allUnits": "All units assigned",
+      "extras": "Fees, tax and discounts",
+      "feeMode": {
+        "proportional": "Proportional",
+        "equal": "Equally"
+      },
+      "feeModeHint": {
+        "proportional": "Everyone pays a share of fees and tax based on what they ordered.",
+        "equal": "Fees and tax are split equally between everyone."
+      },
+      "unassigned": "Unassigned: {{amount}}",
+      "allAssigned": "Everything is assigned",
+      "finishHint": "Assign every item to finish ({{count}} left).",
+      "finish": "Finish"
+    },
+    "summary": {
+      "total": "Total",
+      "untitled": "Bill",
+      "addsUp": "Every share adds up to the total",
+      "mismatch": "Shares do not add up to the total",
+      "show": "What they had",
+      "hide": "Hide details",
+      "share": "Share",
+      "done": "Done",
+      "copied": "Summary copied"
     }
   }
 }

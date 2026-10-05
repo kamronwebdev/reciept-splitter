@@ -118,7 +118,8 @@
     "confirm": "確認",
     "continue": "続ける",
     "back": "戻る",
-    "retry": "再試行"
+    "retry": "再試行",
+    "close": "閉じる"
   },
   "friends": {
     "title": "友だち",
@@ -301,6 +302,183 @@
       "support": "サポート・ご意見",
       "supportSubject": "Receipt Splitter へのご意見",
       "mailFailed": "メールアプリを開けませんでした。{{email}} 宛にご連絡ください。"
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "品目の確認",
+      "people": "誰と割り勘？",
+      "split": "品目の割り当て",
+      "summary": "まとめ"
+    },
+    "steps": {
+      "scan": "撮影",
+      "items": "品目",
+      "people": "人",
+      "split": "割当",
+      "summary": "完了"
+    },
+    "demoBanner": "デモデータです。実際のレシートではありません。",
+    "kinds": {
+      "item": "品目",
+      "fee": "サービス料など",
+      "tax": "税",
+      "discount": "割引"
+    },
+    "discard": {
+      "title": "このレシートを破棄しますか？",
+      "message": "入力した品目と割り当てが失われます。",
+      "confirm": "破棄",
+      "keep": "編集を続ける"
+    },
+    "resume": {
+      "title": "レシートを続けますか？",
+      "message": "未完了のレシートがあります。",
+      "continue": "続ける",
+      "startNew": "新規作成"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "スキャンは利用できません",
+      "PARSE_FAILED": "レシートを読み取れませんでした",
+      "NOT_A_RECEIPT": "レシートではありません",
+      "IMAGE_UNREADABLE": "写真を読み取れません",
+      "ITEM_NOT_ASSIGNED": "未割り当ての品目があります",
+      "RATE_LIMITED": "リクエストが多すぎます",
+      "UNAUTHORIZED": "もう一度ログインしてください",
+      "SESSION_REVOKED": "もう一度ログインしてください",
+      "NETWORK": "接続がありません",
+      "CANCELLED": "キャンセルしました",
+      "SERVER_ERROR": "問題が発生しました",
+      "UNKNOWN": "問題が発生しました"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "サーバーでレシートのスキャンがまだ設定されていません。品目を手入力できます。",
+      "PARSE_FAILED": "レシートの読み取りが現在利用できません。もう一度試すか、別の写真を選ぶか、品目を手入力してください。",
+      "NOT_A_RECEIPT": "この写真にレシートが見つかりませんでした。レシート全体が枠に入るように撮り直してください。",
+      "IMAGE_UNREADABLE": "品目を読み取れませんでした。明るい場所で、近づいて、反射を避けて撮り直してください。",
+      "ITEM_NOT_ASSIGNED": "すべての品目を1人以上に割り当ててください。",
+      "RATE_LIMITED": "試行回数が多すぎます。しばらくしてからお試しください。",
+      "UNAUTHORIZED": "セッションの有効期限が切れました。もう一度ログインしてください。",
+      "SESSION_REVOKED": "セッションの有効期限が切れました。もう一度ログインしてください。",
+      "NETWORK": "インターネット接続を確認してもう一度お試しください。",
+      "CANCELLED": "キャンセルしました。",
+      "SERVER_ERROR": "サーバーで問題が発生しました。しばらくしてからお試しください。",
+      "UNKNOWN": "問題が発生しました。もう一度お試しください。"
+    },
+    "scan": {
+      "hint": "レシート全体を枠に収め、明るい場所で撮影",
+      "lightOn": "ライトオン",
+      "lightOff": "ライトオフ",
+      "on": "オン",
+      "off": "オフ",
+      "zoomTo": "{{level}} にズーム",
+      "gallery": "ギャラリーから選ぶ",
+      "shutter": "撮影",
+      "captureFailed": "撮影できませんでした。もう一度お試しください。",
+      "previewLabel": "レシート写真のプレビュー",
+      "rotate": "回転",
+      "crop": "切り抜き",
+      "applyCrop": "切り抜きを適用",
+      "retake": "撮り直す",
+      "usePhoto": "この写真を使う",
+      "phase": {
+        "preparing": "写真を準備中…",
+        "uploading": "アップロード中…",
+        "reading": "品目を読み取り中…"
+      },
+      "tryAgain": "もう一度試す",
+      "chooseAnother": "別の写真を選ぶ",
+      "chooseFromGallery": "ギャラリーから選ぶ",
+      "manual": "品目を手入力",
+      "permissionTitle": "カメラへのアクセスが必要です",
+      "permissionBody": "カメラはレシートを撮影して品目を読み取るためだけに使います。ギャラリーから写真を選ぶか、品目を手入力することもできます。",
+      "allowCamera": "カメラへのアクセスを許可"
+    },
+    "review": {
+      "billName": "割り勘の名前",
+      "viewPhoto": "レシート写真を見る",
+      "items": "品目",
+      "empty": "品目がありません。購入した物を追加してください。",
+      "addItem": "品目を追加",
+      "editItem": "品目を編集",
+      "deleteItem": "品目を削除",
+      "delete": "削除",
+      "tapToEdit": "タップして編集",
+      "extras": "サービス料・税・割引",
+      "addExtra": "サービス料・税・割引を追加",
+      "totals": "合計",
+      "itemsSubtotal": "品目",
+      "calculated": "計算上の合計",
+      "receiptTotal": "レシートの合計",
+      "mismatchLess": "品目の合計がレシートの合計より {{amount}} 少ないです。品目を確認するか、計算上の合計を使ってください。",
+      "mismatchMore": "品目の合計がレシートの合計より {{amount}} 多いです。品目を確認するか、計算上の合計を使ってください。",
+      "useCalculated": "計算上の合計を使う",
+      "currency": "通貨",
+      "changeCurrency": "変更",
+      "name": "名前",
+      "quantity": "数量",
+      "unitPrice": "単価",
+      "amount": "金額",
+      "lineTotal": "小計",
+      "discountHint": "割引は正の数で入力してください",
+      "save": "保存",
+      "needItem": "続けるには品目を1つ以上追加してください。",
+      "next": "次へ：人を選ぶ",
+      "errors": {
+        "name": "名前を入力してください",
+        "price": "0より大きい金額を入力してください"
+      }
+    },
+    "people": {
+      "you": "あなた",
+      "search": "人とグループを検索",
+      "groups": "グループ",
+      "friends": "友だち",
+      "members": "{{count}}人のメンバー",
+      "remove": "{{name}} を外す",
+      "needTwo": "割り勘するには2人以上を選んでください。",
+      "next": "次へ：割り当て（{{count}}人）",
+      "emptyTitle": "友だちがいません",
+      "emptyBody": "友だちを追加するか、QRコードを読み取ってもらいましょう。",
+      "addFriends": "友だちを追加",
+      "inviteQr": "QRで招待",
+      "noMatches": "検索に一致する人がいません。"
+    },
+    "split": {
+      "equalAll": "すべて均等に分ける",
+      "clear": "クリア",
+      "single": "1人前",
+      "notAssigned": "未割り当て",
+      "mode": {
+        "equal": "均等",
+        "count": "個数ごと"
+      },
+      "remaining": "残り：{{count}}",
+      "allUnits": "すべて割り当て済み",
+      "extras": "サービス料・税・割引",
+      "feeMode": {
+        "proportional": "比例",
+        "equal": "均等"
+      },
+      "feeModeHint": {
+        "proportional": "サービス料と税は、注文した金額に応じて負担します。",
+        "equal": "サービス料と税は全員で均等に分けます。"
+      },
+      "unassigned": "未割り当て：{{amount}}",
+      "allAssigned": "すべて割り当て済み",
+      "finishHint": "完了するにはすべての品目を割り当ててください（残り{{count}}件）。",
+      "finish": "完了"
+    },
+    "summary": {
+      "total": "合計",
+      "untitled": "割り勘",
+      "addsUp": "各自の金額の合計が総額と一致します",
+      "mismatch": "各自の金額の合計が総額と一致しません",
+      "show": "内訳を見る",
+      "hide": "内訳を隠す",
+      "share": "共有",
+      "done": "完了",
+      "copied": "まとめをコピーしました"
     }
   }
 }

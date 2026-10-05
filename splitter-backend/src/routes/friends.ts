@@ -210,10 +210,13 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       }),
     ]);
 
+    // most recent friendships first; `since` lets the app sort "recent friends first"
     const friends = [
-      ...asRequester.map((f) => f.receiver),
-      ...asReceiver.map((f) => f.requester),
-    ].map((u) => ({ ...u, avatarUrl: u.avatarUrl ?? null }));
+      ...asRequester.map((f) => ({ ...f.receiver, since: f.updatedAt })),
+      ...asReceiver.map((f) => ({ ...f.requester, since: f.updatedAt })),
+    ]
+      .sort((a, b) => b.since.getTime() - a.since.getTime())
+      .map((u) => ({ ...u, avatarUrl: u.avatarUrl ?? null }));
     console.log("GET /friends count:", friends.length);
     return res.json(friends);
   } catch (err) {

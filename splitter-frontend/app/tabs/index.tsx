@@ -1,4 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
+import { Alert, Platform } from 'react-native';
+import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
@@ -174,7 +176,35 @@ export default function HomePage() {
 
   const openFriends = () => router.push('/tabs/friends');
   const openGroups = () => router.push('/tabs/groups');
-  const onScan = () => router.push('/tabs/scan-receipt');
+  const onScan = () => {
+    const draft = useReceiptSessionStore.getState();
+    const resume = () => {
+      const route = { items: '/tabs/receipt/review', people: '/tabs/receipt/people', split: '/tabs/receipt/split', summary: '/tabs/receipt/summary', scan: '/tabs/receipt/review' } as const;
+      router.push(route[draft.step] as never);
+    };
+    const startNew = () => {
+      draft.reset();
+      router.push('/tabs/scan-receipt');
+    };
+    if (!draft.active || draft.finalized) {
+      if (draft.active) draft.reset();
+      router.push('/tabs/scan-receipt');
+      return;
+    }
+    // an unfinished receipt survived (the draft is saved on the phone): continue it or start over
+    const title = t('receipt.resume.title', 'Continue your receipt?');
+    const message = t('receipt.resume.message', 'You have an unfinished receipt.');
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && window.confirm(`${title}\n\n${message}`)) resume();
+      else startNew();
+      return;
+    }
+    Alert.alert(title, message, [
+      { text: t('receipt.resume.continue', 'Continue'), onPress: resume },
+      { text: t('receipt.resume.startNew', 'Start new'), style: 'destructive', onPress: startNew },
+      { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+    ]);
+  };
   const openAllSessions = () => router.push('/tabs/sessions/history');
 
   const recent = useMemo<SessionHistoryEntry[]>(() => sessions.slice(0, 3), [sessions]);

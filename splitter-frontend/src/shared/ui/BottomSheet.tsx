@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 
@@ -28,7 +28,7 @@ export default function BottomSheet({ visible, onClose, children, label }: Props
       statusBarTranslucent
       supportedOrientations={['portrait', 'landscape']}
     >
-      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'flex-end' }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <Pressable
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: colors.overlay }}
           onPress={onClose}
@@ -58,7 +58,7 @@ export default function BottomSheet({ visible, onClose, children, label }: Props
             {children}
           </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

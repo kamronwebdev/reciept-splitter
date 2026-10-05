@@ -13,6 +13,8 @@ import { useFocusEffect } from 'expo-router';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import Banner from '@/shared/ui/Banner';
+import { confirmAction } from '@/shared/lib/utils/confirm';
+import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
@@ -47,10 +49,33 @@ function GlobalTabsHeader(props: any) {
   const showHomeShortcut =
     routeName === 'profile' ||
     routeName === 'settings' ||
+    routeName.startsWith('receipt') ||
     routeName.startsWith('friends') ||
     routeName.startsWith('groups') ||
     routeName.startsWith('sessions');
-  const onBackToHome = () => router.replace({ pathname: '/tabs' });
+  const receiptActive = useReceiptSessionStore((s) => s.active);
+  const inReceiptFlow = routeName.startsWith('receipt');
+  const onBackToHome = () => {
+    if (inReceiptFlow && receiptActive && useReceiptSessionStore.getState().finalized) {
+      // already saved to the history: nothing to discard
+      useReceiptSessionStore.getState().reset();
+    } else if (inReceiptFlow && receiptActive) {
+      // leaving the flow loses the receipt: ask first
+      confirmAction({
+        title: t('receipt.discard.title', 'Discard this receipt?'),
+        message: t('receipt.discard.message', 'The items and the split you entered will be lost.'),
+        confirmText: t('receipt.discard.confirm', 'Discard'),
+        cancelText: t('receipt.discard.keep', 'Keep editing'),
+        destructive: true,
+        onConfirm: () => {
+          useReceiptSessionStore.getState().reset();
+          router.replace({ pathname: '/tabs' });
+        },
+      });
+      return;
+    }
+    router.replace({ pathname: '/tabs' });
+  };
 
   useEffect(() => {
     fetchIfStale();
@@ -163,9 +188,6 @@ export default function TabLayout() {
   const friendQrTitle = t('navigation.friendQr', 'My Friend QR');
   const groupQrTitle = t('navigation.groupQr', 'Group QR');
   const scanReceiptTitle = t('navigation.scanReceipt', 'Scan Receipt');
-  const participantsTitle = t('navigation.participants', 'Participants');
-  const itemsSplitTitle = t('navigation.itemsSplit', 'Items Split');
-  const finishTitle = t('navigation.finish', 'Finish');
   const historyTitle = t('navigation.history', 'Recent bills');
   const historyDetailsTitle = t('navigation.historyDetails', 'Bill details');
 
@@ -176,6 +198,7 @@ export default function TabLayout() {
     <>
     <FlashMessage />
     <Tabs
+      backBehavior="history"
       screenOptions={{
         header: (props) => <GlobalTabsHeader {...props} />,
         tabBarStyle: { display: 'none' },
@@ -189,7 +212,7 @@ export default function TabLayout() {
           href: null,
           title: homeTitle,
           tabBarLabel: homeLabel,
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Home size={size} color={color as any} />,
         }}
       />
       <Tabs.Screen
@@ -198,7 +221,7 @@ export default function TabLayout() {
           href: null,
           title: settingsTitle,
           tabBarLabel: settingsTitle,
-          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Settings size={size} color={color as any} />,
         }}
       />
 
@@ -224,10 +247,12 @@ export default function TabLayout() {
       <Tabs.Screen name="friends/invite" options={{ href: null, title: friendQrTitle }} />
       <Tabs.Screen name="groups/invite" options={{ href: null, title: groupQrTitle }} />
 
-      <Tabs.Screen name="scan-receipt" options={{ href: null, title: scanReceiptTitle }} />
-      <Tabs.Screen name="sessions/participants" options={{ href: null, title: participantsTitle }} />
-      <Tabs.Screen name="sessions/items-split" options={{ href: null, title: itemsSplitTitle }} />
-      <Tabs.Screen name="sessions/finish" options={{ href: null, title: finishTitle }} />
+      {/* Receipt flow: Scan (full-screen camera, own UI) -> Items -> People -> Split -> Summary */}
+      <Tabs.Screen name="scan-receipt" options={{ href: null, title: scanReceiptTitle, headerShown: false }} />
+      <Tabs.Screen name="receipt/review" options={{ href: null, title: t('receipt.titles.items', 'Review items') }} />
+      <Tabs.Screen name="receipt/people" options={{ href: null, title: t('receipt.titles.people', 'Who is splitting?') }} />
+      <Tabs.Screen name="receipt/split" options={{ href: null, title: t('receipt.titles.split', 'Split items') }} />
+      <Tabs.Screen name="receipt/summary" options={{ href: null, title: t('receipt.titles.summary', 'Summary') }} />
       <Tabs.Screen name="sessions/history/index" options={{ href: null, title: historyTitle }} />
       <Tabs.Screen name="sessions/history/[historyId]" options={{ href: null, title: historyDetailsTitle }} />
 

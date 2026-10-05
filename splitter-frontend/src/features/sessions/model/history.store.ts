@@ -72,6 +72,7 @@ const normalizeEntry = (raw: SessionHistoryEntryRaw): SessionHistoryEntry => {
     finalizedAt,
     createdAt,
     grandTotal,
+    currency: raw.currency ?? p?.currency ?? p?.totals?.currency ?? 'UZS',
     participantUniqueIds: raw.participantUniqueIds ?? [],
     totals: p?.totals,
     allocations: p?.allocations ?? [],

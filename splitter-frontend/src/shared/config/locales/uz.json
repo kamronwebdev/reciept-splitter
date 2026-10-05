@@ -118,7 +118,8 @@
     "confirm": "Tasdiqlash",
     "continue": "Davom etish",
     "back": "Orqaga",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "close": "Yopish"
   },
   "home": {
     "header": {
@@ -290,6 +291,183 @@
       "support": "Yordam va fikr-mulohaza",
       "supportSubject": "Receipt Splitter fikr-mulohaza",
       "mailFailed": "Pochta ilovasini ochib bo'lmadi. {{email}} manziliga yozing."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Mahsulotlarni tekshirish",
+      "people": "Kimlar bo'lishadi?",
+      "split": "Mahsulotlarni taqsimlash",
+      "summary": "Xulosa"
+    },
+    "steps": {
+      "scan": "Skaner",
+      "items": "Mahsulot",
+      "people": "Odamlar",
+      "split": "Taqsim",
+      "summary": "Tayyor"
+    },
+    "demoBanner": "Demo ma'lumot: bu sizning chekingiz emas.",
+    "kinds": {
+      "item": "Mahsulot",
+      "fee": "Xizmat / to'lovlar",
+      "tax": "Soliq",
+      "discount": "Chegirma"
+    },
+    "discard": {
+      "title": "Bu chekni bekor qilasizmi?",
+      "message": "Kiritgan mahsulotlaringiz va taqsimot yo'qoladi.",
+      "confirm": "Bekor qilish",
+      "keep": "Davom etish"
+    },
+    "resume": {
+      "title": "Chekni davom ettirasizmi?",
+      "message": "Tugallanmagan chekingiz bor.",
+      "continue": "Davom etish",
+      "startNew": "Yangisini boshlash"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Skanerlash mavjud emas",
+      "PARSE_FAILED": "Chekni o'qib bo'lmadi",
+      "NOT_A_RECEIPT": "Bu chek emas",
+      "IMAGE_UNREADABLE": "Rasm o'qilmadi",
+      "ITEM_NOT_ASSIGNED": "Ba'zi mahsulotlar taqsimlanmagan",
+      "RATE_LIMITED": "Juda ko'p so'rov",
+      "UNAUTHORIZED": "Qaytadan kiring",
+      "SESSION_REVOKED": "Qaytadan kiring",
+      "NETWORK": "Aloqa yo'q",
+      "CANCELLED": "Bekor qilindi",
+      "SERVER_ERROR": "Nimadir xato ketdi",
+      "UNKNOWN": "Nimadir xato ketdi"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Serverda chekni skanerlash hali sozlanmagan. Mahsulotlarni qo'lda kiritishingiz mumkin.",
+      "PARSE_FAILED": "Chek o'qish xizmati hozir ishlamayapti. Qayta urinib ko'ring, boshqa rasm tanlang yoki mahsulotlarni qo'lda kiriting.",
+      "NOT_A_RECEIPT": "Bu rasmda chek topilmadi. Butun chek kadrga sig'ishi uchun qayta suratga oling.",
+      "IMAGE_UNREADABLE": "Hech qanday mahsulot o'qilmadi. Yaxshiroq yorug'likda, yaqinroqdan va yaltiroqsiz qayta suratga oling.",
+      "ITEM_NOT_ASSIGNED": "Har bir mahsulotni kamida bitta odamga taqsimlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "SESSION_REVOKED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "NETWORK": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
+      "CANCELLED": "Bekor qilindi.",
+      "SERVER_ERROR": "Serverda muammo bo'ldi. Birozdan keyin qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring."
+    },
+    "scan": {
+      "hint": "Butun chekni kadrga joylang, yorug'lik yaxshi bo'lsin",
+      "lightOn": "Chiroq yoniq",
+      "lightOff": "Chiroq o'chiq",
+      "on": "Yoniq",
+      "off": "O'chiq",
+      "zoomTo": "{{level}} yaqinlashtirish",
+      "gallery": "Galereyadan tanlash",
+      "shutter": "Suratga olish",
+      "captureFailed": "Suratga olib bo'lmadi. Qayta urinib ko'ring.",
+      "previewLabel": "Chek rasmining ko'rinishi",
+      "rotate": "Burish",
+      "crop": "Qirqish",
+      "applyCrop": "Qirqishni qo'llash",
+      "retake": "Qayta olish",
+      "usePhoto": "Rasmni ishlatish",
+      "phase": {
+        "preparing": "Rasm tayyorlanmoqda…",
+        "uploading": "Yuborilmoqda…",
+        "reading": "Mahsulotlar o'qilmoqda…"
+      },
+      "tryAgain": "Qayta urinish",
+      "chooseAnother": "Boshqa rasm tanlash",
+      "chooseFromGallery": "Galereyadan tanlash",
+      "manual": "Mahsulotlarni qo'lda kiritish",
+      "permissionTitle": "Kameraga ruxsat kerak",
+      "permissionBody": "Kamera faqat chekni suratga olish va mahsulotlarni o'qish uchun ishlatiladi. Shuningdek, galereyadan rasm tanlashingiz yoki mahsulotlarni o'zingiz kiritishingiz mumkin.",
+      "allowCamera": "Kameraga ruxsat berish"
+    },
+    "review": {
+      "billName": "Hisob nomi",
+      "viewPhoto": "Chek rasmini ko'rish",
+      "items": "Mahsulotlar",
+      "empty": "Hozircha mahsulot yo'q. Sotib olinganlarni qo'shing.",
+      "addItem": "Mahsulot qo'shish",
+      "editItem": "Mahsulotni tahrirlash",
+      "deleteItem": "Mahsulotni o'chirish",
+      "delete": "O'chirish",
+      "tapToEdit": "Tahrirlash uchun bosing",
+      "extras": "To'lovlar, soliq va chegirmalar",
+      "addExtra": "To'lov, soliq yoki chegirma qo'shish",
+      "totals": "Jami",
+      "itemsSubtotal": "Mahsulotlar",
+      "calculated": "Hisoblangan jami",
+      "receiptTotal": "Chekdagi jami",
+      "mismatchLess": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} kam. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
+      "mismatchMore": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} ko'p. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
+      "useCalculated": "Hisoblangan jamini ishlatish",
+      "currency": "Valyuta",
+      "changeCurrency": "O'zgartirish",
+      "name": "Nomi",
+      "quantity": "Miqdori",
+      "unitPrice": "Birlik narxi",
+      "amount": "Summa",
+      "lineTotal": "Qator jami",
+      "discountHint": "Chegirmani musbat son sifatida kiriting",
+      "save": "Saqlash",
+      "needItem": "Davom etish uchun kamida bitta mahsulot qo'shing.",
+      "next": "Keyingisi: odamlarni tanlash",
+      "errors": {
+        "name": "Nomni kiriting",
+        "price": "Noldan katta narx kiriting"
+      }
+    },
+    "people": {
+      "you": "Siz",
+      "search": "Odamlar va guruhlarni qidirish",
+      "groups": "Guruhlar",
+      "friends": "Do'stlar",
+      "members": "{{count}} a'zo",
+      "remove": "{{name}} ni olib tashlash",
+      "needTwo": "Hisobni bo'lish uchun kamida 2 kishini tanlang.",
+      "next": "Keyingisi: taqsimlash ({{count}} kishi)",
+      "emptyTitle": "Hali do'stlar yo'q",
+      "emptyBody": "Hisobni bo'lishish uchun do'stlarni qo'shing yoki QR kodingizni skanerlashlarini so'rang.",
+      "addFriends": "Do'st qo'shish",
+      "inviteQr": "QR orqali taklif qilish",
+      "noMatches": "Qidiruvga mos odam topilmadi."
+    },
+    "split": {
+      "equalAll": "Hammasini teng bo'lish",
+      "clear": "Tozalash",
+      "single": "Bitta porsiya",
+      "notAssigned": "Taqsimlanmagan",
+      "mode": {
+        "equal": "Teng",
+        "count": "Soni bo'yicha"
+      },
+      "remaining": "Qoldi: {{count}}",
+      "allUnits": "Hammasi taqsimlandi",
+      "extras": "To'lovlar, soliq va chegirmalar",
+      "feeMode": {
+        "proportional": "Mutanosib",
+        "equal": "Teng"
+      },
+      "feeModeHint": {
+        "proportional": "Har kim to'lov va soliqni buyurtmasiga mutanosib to'laydi.",
+        "equal": "To'lov va soliq hamma o'rtasida teng bo'linadi."
+      },
+      "unassigned": "Taqsimlanmagan: {{amount}}",
+      "allAssigned": "Hammasi taqsimlandi",
+      "finishHint": "Tugatish uchun har bir mahsulotni taqsimlang ({{count}} ta qoldi).",
+      "finish": "Tugatish"
+    },
+    "summary": {
+      "total": "Jami",
+      "untitled": "Hisob",
+      "addsUp": "Barcha ulushlar jamiga teng",
+      "mismatch": "Ulushlar jamiga teng emas",
+      "show": "Nimalar oldi",
+      "hide": "Yashirish",
+      "share": "Ulashish",
+      "done": "Tayyor",
+      "copied": "Xulosa nusxalandi"
     }
   }
 }

@@ -54,6 +54,7 @@ export const useFriendsStore = create<State & Actions>((set, get) => ({
           avatarUrl,
           uniqueId,
           username,
+          since: item.since ?? null,
           raw,
         };
       });
