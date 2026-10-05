@@ -3,7 +3,8 @@ import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useIsFocused } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import { YStack, XStack, Button, Paragraph, Input, Text, Spinner } from 'tamagui';
+import { YStack, XStack, Input, Spinner } from 'tamagui';
+import { Button, Paragraph, Text } from '@/shared/ui/typography';
 import { ChevronLeft, AlertTriangle, Camera as CameraIcon } from '@tamagui/lucide-icons';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
@@ -14,6 +15,7 @@ import {
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { DEFAULT_LANGUAGE } from '@/shared/config/languages';
 
+import { CAMERA } from '@/shared/theme/palette';
 const getDefaultSessionName = () => {
   const now = new Date();
   const pad = (value: number) => value.toString().padStart(2, '0');
@@ -164,12 +166,12 @@ export default function ScanReceiptScreen() {
             h={28}
             chromeless
             onPress={goBack}
-            icon={<ChevronLeft size={18} color="white" />}
-            color="white"
+            icon={<ChevronLeft size={18} color={CAMERA.onCamera} />}
+            color={CAMERA.onCamera}
           >
             Back
           </Button>
-          <Paragraph fow="700" fos="$6" col="white">Scan receipt</Paragraph>
+          <Paragraph fow="700" fos="$6" col={CAMERA.onCamera}>Scan receipt</Paragraph>
           <YStack w={54} />
         </XStack>
       </View>
@@ -183,14 +185,14 @@ export default function ScanReceiptScreen() {
           />
         ) : (
           <YStack f={1} ai="center" jc="center">
-            {!perm ? <ActivityIndicator color="white" /> : <Paragraph col="$gray1">Allow camera access</Paragraph>}
+            {!perm ? <ActivityIndicator color={CAMERA.onCamera} /> : <Paragraph col="$gray1">Allow camera access</Paragraph>}
           </YStack>
         )}
 
         {parsing && (
           <View style={S.overlay}>
-            <Spinner size="large" color="white" />
-            <Paragraph mt="$2" col="white">Uploading receipt...</Paragraph>
+            <Spinner size="large" color={CAMERA.onCamera} />
+            <Paragraph mt="$2" col={CAMERA.onCamera}>Uploading receipt...</Paragraph>
           </View>
         )}
       </View>
@@ -208,15 +210,15 @@ export default function ScanReceiptScreen() {
               height={41}
               borderRadius={10}
               px={16}
-              backgroundColor="rgba(255,255,255,0.1)"
-              color="white"
+              backgroundColor={CAMERA.onCameraSoft}
+              color={CAMERA.onCamera}
               borderWidth={1}
-              borderColor="rgba(255,255,255,0.25)"
+              borderColor={CAMERA.onCameraBorder}
             />
           </YStack>
 
           <Paragraph color="$gray1" fontSize={12}>
-            language: <Text fontWeight="700" color="white">{language}</Text>
+            language: <Text fontWeight="700" color={CAMERA.onCamera}>{language}</Text>
           </Paragraph>
 
           {storedCapture?.uri && (
@@ -229,9 +231,9 @@ export default function ScanReceiptScreen() {
           )}
 
           {errorMessage && (
-            <XStack ai="center" gap="$2" bg="rgba(255,99,71,0.18)" px="$2" py="$2" borderRadius={8}>
-              <AlertTriangle size={16} color="#FF6B6B" />
-              <Paragraph color="#FF6B6B" flexShrink={1}>{errorMessage}</Paragraph>
+            <XStack ai="center" gap="$2" bg={CAMERA.warnBg} px="$2" py="$2" borderRadius={8}>
+              <AlertTriangle size={16} color={CAMERA.warn} />
+              <Paragraph color={CAMERA.warn} flexShrink={1}>{errorMessage}</Paragraph>
             </XStack>
           )}
 
@@ -252,7 +254,7 @@ export default function ScanReceiptScreen() {
               theme="active"
               onPress={handleParse}
               disabled={disableAction}
-              icon={parsing ? undefined : <CameraIcon size={18} color="white" />}
+              icon={parsing ? undefined : <CameraIcon size={18} color={CAMERA.onCamera} />}
             >
               {parsing ? 'Processing...' : 'Scan receipt'}
             </Button>
@@ -268,23 +270,23 @@ export default function ScanReceiptScreen() {
 }
 
 const S = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#000' },
+  root: { flex: 1, backgroundColor: CAMERA.black },
   headerAbs: {
     position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
-    paddingTop: 8, backgroundColor: 'rgba(0,0,0,0.25)',
+    paddingTop: 8, backgroundColor: CAMERA.topScrim,
   },
-  cameraWrap: { flex: 1, backgroundColor: '#000' },
+  cameraWrap: { flex: 1, backgroundColor: CAMERA.black },
   camera: { flex: 1 },
   overlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: CAMERA.pillSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   actions: {
     position: 'absolute',
     bottom: 24, left: 16, right: 16,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: CAMERA.pillLight,
     padding: 16,
     borderRadius: 16,
   },
@@ -293,7 +295,7 @@ const S = StyleSheet.create({
     height: 56,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: CAMERA.onCameraBorderStrong,
   },
 });
 

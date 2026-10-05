@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { YStack, XStack, Paragraph, Input, ScrollView, Spinner, Separator, Text } from 'tamagui';
+import { YStack, XStack, Input, ScrollView, Spinner, Separator } from 'tamagui';
+import { Paragraph, Text } from '@/shared/ui/typography';
 import { useRouter } from 'expo-router';
 import { Search } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';

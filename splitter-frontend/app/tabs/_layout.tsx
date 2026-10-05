@@ -1,16 +1,19 @@
 // app/tabs/_layout.tsx
 
 import React, { useCallback, useEffect } from 'react';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, Redirect, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, View } from 'tamagui';
+import { YStack, XStack, View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { Home, Settings, Bell, ChevronLeft } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { AppState } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
+import Banner from '@/shared/ui/Banner';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 
@@ -24,9 +27,9 @@ function DotBadge({ value }: { value?: number }) {
       w={20} h={20}
       br={999}
       ai="center" jc="center"
-      backgroundColor="#2ECC71"
+      backgroundColor="$primary"
     >
-      <Text color="white" fontSize={10} fontWeight="700">
+      <Text color="$onPrimary" fontSize={10} fontWeight="700">
         {value}
       </Text>
     </View>
@@ -38,36 +41,36 @@ function GlobalTabsHeader(props: any) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAppStore();
-  const fetchAll = useFriendsStore((s) => s.fetchAll);
+  const fetchIfStale = useFriendsStore((s) => s.fetchIfStale);
   const { t } = useTranslation();
   const routeName = props?.route?.name ?? '';
   const showHomeShortcut =
     routeName === 'profile' ||
+    routeName === 'settings' ||
     routeName.startsWith('friends') ||
     routeName.startsWith('groups') ||
     routeName.startsWith('sessions');
   const onBackToHome = () => router.replace({ pathname: '/tabs' });
 
   useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+    fetchIfStale();
+  }, [fetchIfStale]);
 
   useFocusEffect(
     useCallback(() => {
-      fetchAll();
-    }, [fetchAll])
+      fetchIfStale();
+    }, [fetchIfStale])
   );
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') fetchAll();
+      if (state === 'active') fetchIfStale();
     });
     return () => sub.remove();
-  }, [fetchAll]);
+  }, [fetchIfStale]);
 
   const requestsCount = useFriendsStore((s) => s.requestsRaw?.incoming?.length ?? 0);
   const displayName = user?.username || t('profile.labels.guest', 'Guest');
-  const userInitial = displayName.slice(0, 1).toUpperCase();
 
   const handleOpenProfile = useCallback(() => {
     router.push({ pathname: '/tabs/profile' });
@@ -93,15 +96,29 @@ function GlobalTabsHeader(props: any) {
         </XStack>
 
         <XStack ai="center" gap="$3">
-          <Pressable onPress={() => router.push('/tabs/friends/requests')}>
+          <Pressable
+            onPress={() => router.push('/tabs/settings')}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.title', 'Settings')}
+          >
+            <Settings size={22} color="$gray11" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push('/tabs/friends/requests')}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={t('friends.requests', 'Requests')}
+          >
             <View>
               <Bell size={22} color="$gray11" />
               <DotBadge value={requestsCount} />
             </View>
           </Pressable>
 
-          <Pressable onPress={handleOpenProfile} hitSlop={10}>
-            <UserAvatar uri={user?.avatarUrl ?? undefined} label={userInitial} size={36} textSize={14} />
+          <Pressable onPress={handleOpenProfile} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('profile.title', 'Profile')}>
+            <UserAvatar uri={user?.avatarUrl} label={displayName} seed={user?.uniqueId} size={36} textSize={14} />
           </Pressable>
         </XStack>
       </XStack>
@@ -109,8 +126,29 @@ function GlobalTabsHeader(props: any) {
   );
 }
 
+/** One-shot success message (e.g. "Password updated") shown above the tabs for a few seconds. */
+function FlashMessage() {
+  const message = useAppStore((s) => s.flashMessage);
+  const setFlashMessage = useAppStore((s) => s.setFlashMessage);
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (!message) return;
+    const id = setTimeout(() => setFlashMessage(null), 5000);
+    return () => clearTimeout(id);
+  }, [message, setFlashMessage]);
+
+  if (!message) return null;
+  return (
+    <View position="absolute" top={insets.top + 58} left={16} right={16} zIndex={1000}>
+      <Banner kind="success" message={message} />
+    </View>
+  );
+}
+
 export default function TabLayout() {
-  const { user } = useAppStore();
+  const { user, token, isInitialized } = useAppStore();
+  const { colors } = useAppTheme();
   const { t } = useTranslation();
 
   const greetingName = user?.username || t('home.header.friendFallback', 'friend');
@@ -131,11 +169,17 @@ export default function TabLayout() {
   const historyTitle = t('navigation.history', 'Recent bills');
   const historyDetailsTitle = t('navigation.historyDetails', 'Bill details');
 
+  // Signed-out (or expired) sessions can never stay inside the tabs.
+  if (isInitialized && !token) return <Redirect href="/" />;
+
   return (
+    <>
+    <FlashMessage />
     <Tabs
       screenOptions={{
         header: (props) => <GlobalTabsHeader {...props} />,
         tabBarStyle: { display: 'none' },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       {/* Home & Settings tabs (hidden from bar) */}
@@ -188,5 +232,6 @@ export default function TabLayout() {
       <Tabs.Screen name="sessions/history/[historyId]" options={{ href: null, title: historyDetailsTitle }} />
 
     </Tabs>
+    </>
   );
 }

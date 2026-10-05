@@ -1,7 +1,8 @@
 // app/tabs/groups/invite.tsx
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { YStack, XStack, Button, Paragraph, Spinner } from 'tamagui';
+import { YStack, XStack, Spinner } from 'tamagui';
+import { Button, Paragraph } from '@/shared/ui/typography';
 import { ChevronLeft, QrCode } from '@tamagui/lucide-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 

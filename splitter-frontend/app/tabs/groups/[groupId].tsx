@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
-import {
-  YStack, XStack, Paragraph, Separator, Button, Input, Spinner, Text
-} from 'tamagui';
+import { YStack, XStack, Separator, Input, Spinner } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Crown, Pencil, Trash2, Check, X as IconX, ChevronLeft, QrCode } from '@tamagui/lucide-icons';
 
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import UserAvatar from '@/shared/ui/UserAvatar';
+import { confirmAction } from '@/shared/lib/utils/confirm';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 
 const fmtUid = (uid?: string) => (uid ? `@${uid.toLowerCase().replace('user#','user')}` : '');
@@ -41,7 +40,7 @@ export default function GroupDetailsScreen() {
   const [busyHdr, setBusyHdr] = useState<string | number | undefined>();
 
   useEffect(() => { if (gid) openGroup(gid); }, [gid, openGroup]);
-  useEffect(() => { if (!friends?.length) fetchFriends(); }, [friends?.length, fetchFriends]);
+  useEffect(() => { fetchFriends(); }, [fetchFriends]); // once on mount (no refetch-if-empty)
   useEffect(() => {
     if (current?.group?.name) { setNewName(current.group.name!); setEditing(false); }
   }, [current?.group?.name]);
@@ -83,24 +82,19 @@ export default function GroupDetailsScreen() {
   }
 
   function onDeleteAsk() {
-    Alert.alert(
-      'Delete group',
-      'Are you sure you want to delete this group? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            if (!gid) return;
-            setBusyHdr('delete');
-            try { await deleteGroup(gid); router.replace('/tabs/groups' as never); }
-            finally { setBusyHdr(undefined); }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+    confirmAction({
+      title: 'Delete group',
+      message: 'Are you sure you want to delete this group? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      destructive: true,
+      onConfirm: async () => {
+        if (!gid) return;
+        setBusyHdr('delete');
+        try { await deleteGroup(gid); router.replace('/tabs/groups' as never); }
+        finally { setBusyHdr(undefined); }
+      },
+    });
   }
 
   async function onAdd(uid: string) {
@@ -256,7 +250,7 @@ export default function GroupDetailsScreen() {
               <React.Fragment key={uid ?? `${label}-${idx}`}>
                 <XStack h={60} ai="center" jc="space-between" px="$4" bg="$green3">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
                     <YStack>
                       <Text fontSize={17} fontWeight="600">{label}</Text>
                       {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}
@@ -313,7 +307,7 @@ export default function GroupDetailsScreen() {
               <React.Fragment key={uid ?? `${label}-${idx}`}>
                 <XStack h={60} ai="center" jc="space-between" px="$4">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
                     <YStack>
                       <Text fontSize={17} fontWeight="600">{label}</Text>
                       {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}

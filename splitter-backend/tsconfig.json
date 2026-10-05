@@ -42,6 +42,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
+  "include": ["src/**/*"],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"

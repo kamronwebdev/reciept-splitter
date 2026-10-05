@@ -1,14 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
-import {
-  YStack,
-  XStack,
-  Input,
-  Button,
-  Paragraph,
-  Separator,
-  Spinner,
-  Text,
-} from 'tamagui';
+import { YStack, XStack, Input, Separator, Spinner } from 'tamagui';
+import { Button, Paragraph, Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
 
 import { useFriendsStore } from '@/features/friends/model/friends.store';

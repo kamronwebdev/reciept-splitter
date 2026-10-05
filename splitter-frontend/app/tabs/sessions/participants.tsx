@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import {
-  YStack, XStack, Button, Spinner, Text, Input, ScrollView
-} from 'tamagui';
+import { YStack, XStack, Spinner, Input, ScrollView } from 'tamagui';
+import { Button, Text } from '@/shared/ui/typography';
 import { Users as UsersIcon, Check } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
@@ -241,12 +240,12 @@ export default function SessionParticipantsScreen() {
       height={29}
       borderRadius={10}
       borderWidth={1}
-      borderColor="#D9D9D9"
-      backgroundColor={on ? '#2ECC71' : 'transparent'}
+      borderColor="$borderColor"
+      backgroundColor={on ? '$primary' : 'transparent'}
       ai="center"
       jc="center"
     >
-      <Text fontSize={14} fontWeight="500" color={on ? '#FFFFFF' : '#2C3D4FCC'}>
+      <Text fontSize={14} fontWeight="500" color={on ? '$onPrimary' : '$textMuted'}>
         {on ? 'Selected' : 'Select'}
       </Text>
     </Button>
@@ -265,21 +264,21 @@ export default function SessionParticipantsScreen() {
       px={12}
       borderRadius={18}
       borderWidth={1}
-      borderColor={active ? '#2ECC71' : '#D9D9D9'}
-      backgroundColor={active ? '#2ECC71' : 'transparent'}
+      borderColor={active ? '$primary' : '$borderColor'}
+      backgroundColor={active ? '$primary' : 'transparent'}
       ai="center"
       jc="center"
     >
       <XStack ai="center" gap="$1">
-        <UsersIcon size={14} color={active ? '#FFFFFF' : '#2C3D4FCC'} />
-        <Text fontSize={14} fontWeight="500" color={active ? '#FFFFFF' : '#2C3D4FCC'}>
+        <UsersIcon size={14} color={active ? '$onPrimary' : '$textMuted'} />
+        <Text fontSize={14} fontWeight="500" color={active ? '$onPrimary' : '$textMuted'}>
           {name}
         </Text>
-        <Text fontSize={12} color={active ? '#FFFFFF' : '#2C3D4FCC'}>
+        <Text fontSize={12} color={active ? '$onPrimary' : '$textMuted'}>
           · {typeof count === 'number' ? count : (loading ? '…' : '—')}
         </Text>
-        {loading && <Spinner size="small" color={active ? 'white' : '$gray10'} />}
-        {active && !loading && <Check size={14} color="#FFFFFF" />}
+        {loading && <Spinner size="small" color={active ? '$onPrimary' : '$gray10'} />}
+        {active && !loading && <Check size={14} color="$onPrimary" />}
       </XStack>
     </Button>
   );
@@ -347,7 +346,7 @@ export default function SessionParticipantsScreen() {
               <React.Fragment key={p.uniqueId}>
                 <XStack h={56} ai="center" jc="space-between" px="$4" bg="$color1">
                   <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(p.username || "U").slice(0, 1).toUpperCase()} size={32} textSize={12} backgroundColor="$gray5" />
+                    <UserAvatar uri={avatarUrl ?? undefined} label={(p.username || "U").slice(0, 1).toUpperCase()} size={32} textSize={12} />
                     <YStack>
                       <Text fontSize={16} fontWeight="600">{p.username}</Text>
                       <Text fontSize={12} color="$gray10">
@@ -380,12 +379,12 @@ export default function SessionParticipantsScreen() {
           width={358}
           height={41}
           borderRadius={10}
-          backgroundColor="#2ECC71"
+          backgroundColor="$primary"
           ai="center"
           jc="center"
           opacity={canNext ? 1 : 0.5}
         >
-          <Text fontSize={16} fontWeight="500" color="#FFFFFF" style={{ lineHeight: 25 }}>
+          <Text fontSize={16} fontWeight="500" color="$onPrimary" style={{ lineHeight: 25 }}>
             Next
           </Text>
         </Button>

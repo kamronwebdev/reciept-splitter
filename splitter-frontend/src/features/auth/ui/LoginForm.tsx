@@ -1,67 +1,131 @@
-import React, { useState } from 'react';
-import { useRouter, Link } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { YStack, XStack, Text } from 'tamagui';
+import { YStack, XStack } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
 import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
 import { Card } from '@/shared/ui/Card';
+import Banner from '@/shared/ui/Banner';
+import TextLink from '@/shared/ui/TextLink';
+import EmailInput from '@/shared/ui/EmailInput';
 import ScreenFormContainer from '@/shared/ui/ScreenFormContainer';
 import PasswordInput from '@/shared/ui/PasswordInput';
-import { login, LoginRequest, getCurrentUser } from '../api';
+import { isValidEmail, normalizeEmail } from '@/shared/lib/utils/email';
+import { login, getCurrentUser } from '../api';
 import { saveToken } from '@/shared/lib/utils/token-storage';
 import { useAppStore } from '@/shared/lib/stores/app-store';
-import { Mail, Lock } from '@tamagui/lucide-icons';
+import { loadLastEmail, saveLastEmail, useAuthDraft } from '../model/auth-draft.store';
+import { authErrorMessage, errorCodeOf } from '../model/auth-errors';
 
-const schema = z.object({
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = { email: string; password: string };
+type FormError = { kind: 'credentials' | 'network' | 'other'; message: string } | null;
 
 export default function LoginForm() {
   const { t } = useTranslation();
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '' },
-  });
-  const setAuth = useAppStore((s) => s.setAuth);
   const router = useRouter();
+  const setAuth = useAppStore((s) => s.setAuth);
+  const sessionExpired = useAppStore((s) => s.sessionExpired);
+  const setSessionExpired = useAppStore((s) => s.setSessionExpired);
+  const draftEmail = useAuthDraft((s) => s.email);
+  const setDraftEmail = useAuthDraft((s) => s.setEmail);
+
+  const schema = React.useMemo(
+    () =>
+      z.object({
+        email: z
+          .string()
+          .refine((v) => v.trim().length > 0, t('auth.errors.emailRequired', 'Please enter your email'))
+          .refine((v) => v.trim().length === 0 || isValidEmail(v), t('auth.errors.INVALID_EMAIL', 'Please enter a valid email')),
+        password: z.string().min(1, t('auth.errors.passwordRequired', 'Please enter your password')),
+      }),
+    [t]
+  );
+
+  const { control, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+    defaultValues: { email: draftEmail, password: '' },
+  });
+
   const [isLoading, setIsLoading] = useState(false);
+  const submitting = useRef(false);
+  const [formError, setFormError] = useState<FormError>(null);
+  const passwordRef = useRef<any>(null);
+  const [emailPrefilled, setEmailPrefilled] = useState(!!draftEmail);
 
-  const onSubmit = async (values: LoginRequest) => {
-    try {
-      setIsLoading(true);
-      const res = await login(values);
-      await saveToken(res.token);
-
-      let profile = res.user;
-      try {
-        profile = await getCurrentUser(res.token);
-      } catch (fetchError) {
-        console.warn('Login profile refresh failed:', fetchError);
+  // Prefill the last used e-mail (never the password) unless the user already typed one.
+  useEffect(() => {
+    if (draftEmail) return;
+    let alive = true;
+    loadLastEmail().then((last) => {
+      if (alive && last && !getValues('email')) {
+        setValue('email', last);
+        setDraftEmail(last);
+        setEmailPrefilled(true);
       }
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      setAuth(res.token, profile);
-      router.replace('/');
-    } catch (error: any) {
-      Alert.alert(
-        t('common.error', 'Error'),
-        error.message || t('auth.loginError', 'An error occurred during login')
-      );
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = useCallback(
+    async (values: FormData) => {
+      if (submitting.current) return; // no double submits
+      submitting.current = true;
+      setIsLoading(true);
+      setFormError(null);
+      try {
+        const email = normalizeEmail(values.email);
+        const res = await login({ email, password: values.password });
+        await saveToken(res.token);
+
+        let profile = res.user;
+        try {
+          profile = await getCurrentUser(res.token);
+        } catch (fetchError) {
+          console.warn('Login profile refresh failed');
+        }
+
+        await saveLastEmail(email);
+        setSessionExpired(false);
+        setAuth(res.token, profile);
+        router.replace('/');
+      } catch (error) {
+        const code = errorCodeOf(error);
+        if (code === 'INVALID_CREDENTIALS') {
+          setFormError({ kind: 'credentials', message: authErrorMessage(t, error) });
+        } else if (code === 'NETWORK') {
+          setFormError({ kind: 'network', message: authErrorMessage(t, error) });
+        } else {
+          setFormError({ kind: 'other', message: authErrorMessage(t, error) });
+        }
+      } finally {
+        submitting.current = false;
+        setIsLoading(false);
+      }
+    },
+    [router, setAuth, setSessionExpired, t]
+  );
+
+  const submit = handleSubmit(onSubmit);
+  const goForgot = () => {
+    setDraftEmail(normalizeEmail(getValues('email')));
+    router.push('/forgot-password');
+  };
+  const goRegister = () => {
+    setDraftEmail(normalizeEmail(getValues('email')));
+    router.replace('/register');
   };
 
   return (
     <ScreenFormContainer>
       <YStack space="$6">
-        {/* Header */}
         <YStack alignItems="center" space="$4">
           <Text fontSize="$8" fontWeight="900" color="$gray12">
             {t('auth.signIn', 'Sign In')}
@@ -71,104 +135,94 @@ export default function LoginForm() {
           </Text>
         </YStack>
 
-        {/* Form Card */}
+        {sessionExpired && (
+          <Banner kind="info" message={t('auth.sessionExpired', 'Your session expired, please log in again')} />
+        )}
+
         <Card>
           <YStack space="$5">
-            {/* Email */}
             <Controller
               control={control}
               name="email"
-              render={({ field: { onChange, value } }) => (
-                <XStack space="$3" alignItems="flex-start">
-                  <YStack
-                    width={40}
-                    height={40}
-                    backgroundColor="$gray3"
-                    borderRadius="$6"
-                    alignItems="center"
-                    justifyContent="center"
-                    marginTop="$6"
-                  >
-                    <Mail size={20} color="$gray11" />
-                  </YStack>
-                  <YStack flex={1}>
-                    <Input
-                      label={t('auth.email', 'Email')}
-                      placeholder={t('auth.emailPlaceholder', 'Enter your email')}
-                      value={value}
-                      onChangeText={onChange}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      error={errors.email?.message}
-                      required
-                    />
-                  </YStack>
-                </XStack>
+              render={({ field: { onChange, onBlur, value } }) => (
+                <EmailInput
+                  value={value}
+                  onChangeText={(v) => {
+                    onChange(v);
+                    setDraftEmail(v);
+                    if (formError) setFormError(null);
+                  }}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                  autoFocus={!emailPrefilled}
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                />
               )}
             />
 
-            {/* Password */}
             <Controller
               control={control}
               name="password"
-              render={({ field: { onChange, value } }) => (
-                <XStack space="$3" alignItems="flex-start">
-                  <YStack
-                    width={40}
-                    height={40}
-                    backgroundColor="$gray3"
-                    borderRadius="$6"
-                    alignItems="center"
-                    justifyContent="center"
-                    marginTop="$6"
-                  >
-                    <Lock size={20} color="$gray11" />
-                  </YStack>
-                  <YStack flex={1}>
-                    <PasswordInput
-                      label={t('auth.password', 'Password')}
-                      placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.password?.message}
-                      required
-                    />
-                  </YStack>
-                </XStack>
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PasswordInput
+                  label={t('auth.password', 'Password')}
+                  value={value}
+                  onChangeText={(v) => {
+                    onChange(v);
+                    if (formError) setFormError(null);
+                  }}
+                  onBlur={onBlur}
+                  mode="current"
+                  inputRef={passwordRef}
+                  autoFocus={emailPrefilled}
+                  returnKeyType="go"
+                  onSubmitEditing={submit}
+                  error={errors.password?.message}
+                  required
+                />
               )}
             />
 
-            {/* Forgot */}
             <XStack justifyContent="flex-end">
-              <Text fontSize="$3" color="#2ECC71" fontWeight="500">
-                {t('auth.forgotPassword', 'Forgot Password?')}
-              </Text>
+              <TextLink
+                title={t('auth.forgotPassword', 'Forgot Password?')}
+                onPress={goForgot}
+                highlight={formError?.kind === 'credentials'}
+                align="right"
+              />
             </XStack>
 
-            {/* Submit */}
+            {formError && formError.kind === 'network' && (
+              <Banner
+                kind="error"
+                message={formError.message}
+                actionLabel={t('common.retry', 'Retry')}
+                onAction={submit}
+                actionLoading={isLoading}
+              />
+            )}
+            {formError && formError.kind !== 'network' && (
+              <Text fontSize="$3" color="$red10" accessibilityRole="alert">
+                {formError.message}
+              </Text>
+            )}
+
             <Button
-              title={isLoading ? t('common.loading', 'Loading...') : t('auth.signIn', 'Sign In')}
+              title={t('auth.signIn', 'Sign In')}
               variant="primary"
               size="large"
-              onPress={handleSubmit(onSubmit)}
-              disabled={isLoading}
+              onPress={submit}
+              loading={isLoading}
             />
           </YStack>
         </Card>
 
-        {/* Footer */}
-        <YStack alignItems="center" space="$3">
-          <XStack alignItems="center" space="$1">
-            <YStack width={80} height={1} backgroundColor="$gray6" />
-            <Text fontSize="$3" color="$gray9" paddingHorizontal="$3">
-              {t('auth.noAccount', "Don't have an account?")}
-            </Text>
-            <YStack width={80} height={1} backgroundColor="$gray6" />
-          </XStack>
-
-          <Link href="/register" asChild>
-            <Button title={t('auth.createAccount', 'Create Account')} variant="outline" size="medium" />
-          </Link>
+        <YStack alignItems="center" space="$1">
+          <Text fontSize="$3" color="$gray9">
+            {t('auth.noAccount', "Don't have an account?")}
+          </Text>
+          <TextLink title={t('auth.createAccount', 'Create Account')} onPress={goRegister} />
         </YStack>
       </YStack>
     </ScreenFormContainer>

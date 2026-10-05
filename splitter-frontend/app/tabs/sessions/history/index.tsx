@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useMemo, useState, useCallback } from 'react';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Pressable, RefreshControl } from 'react-native';
-import { YStack, XStack, Text, ScrollView, View } from 'tamagui';
+import { YStack, XStack, ScrollView, View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
@@ -32,10 +33,10 @@ function AvatarGroup({ participants }: { participants: SessionHistoryParticipant
         <View key={participant.uniqueId ?? idx} ml={idx === 0 ? 0 : -8}>
           <UserAvatar
             uri={participant.avatarUrl ?? undefined}
-            label={(participant.username || 'U').slice(0, 1).toUpperCase()}
+            label={participant.username || 'U'}
+            seed={participant.uniqueId}
             size={28}
             textSize={12}
-            backgroundColor="$gray5"
           />
         </View>
       ))}
@@ -44,9 +45,9 @@ function AvatarGroup({ participants }: { participants: SessionHistoryParticipant
           w={28}
           h={28}
           br={14}
-          backgroundColor="#CBD5F5"
+          backgroundColor="$surfaceAlt"
           borderWidth={2}
-          borderColor="white"
+          borderColor="$background"
           ml={shown.length === 0 ? 0 : -8}
           ai="center"
           jc="center"
@@ -80,9 +81,9 @@ function HistoryCard({
         h={110}
         br={12}
         borderWidth={1}
-        borderColor="#E4E7EB"
+        borderColor="$borderColor"
         p="$3"
-        backgroundColor="white"
+        backgroundColor="$surface"
       >
         <XStack jc="space-between" ai="center">
           <YStack>
@@ -93,7 +94,7 @@ function HistoryCard({
               {summary}
             </Text>
           </YStack>
-          <Text fontSize={14} lineHeight={22} fontWeight="700" color="#2ECC71">
+          <Text fontSize={14} lineHeight={22} fontWeight="700" color="$primaryText">
             {amountLabel}
           </Text>
         </XStack>
@@ -110,23 +111,19 @@ export default function SessionsHistoryScreen() {
   const router = useRouter();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
   const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
   const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
 
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (loading) return;
-    if (!initialized || (currentLimit ?? 0) < HISTORY_LIMIT) {
-      fetchHistory(HISTORY_LIMIT).catch(() => {});
-    } else {
-      // если уже инициализировано — подёргаем обновление по давности
-      refreshIfStale(15_000, HISTORY_LIMIT).catch(() => {});
-    }
-  }, [initialized, loading, currentLimit, fetchHistory, refreshIfStale]);
+  // Load on screen focus only (not on every state change): refreshIfStale skips fresh data,
+  // treats an empty list as fresh and backs off after errors.
+  useFocusEffect(
+    useCallback(() => {
+      refreshIfStale(undefined, HISTORY_LIMIT).catch(() => {});
+    }, [refreshIfStale])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

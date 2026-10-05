@@ -7,10 +7,14 @@ type State = {
   requestsRaw: any | null;
   loading: boolean;
   error?: string;
+  lastFetchedAt?: number | null;
+  lastErrorAt?: number | null;
 };
 
 type Actions = {
   fetchAll: () => Promise<void>;
+  /** Loads only when never loaded or older than maxAgeMs (and not right after a failure). */
+  fetchIfStale: (maxAgeMs?: number) => Promise<void>;
   search: (q: string) => Promise<any[]>;
   send: (uniqueId: string) => Promise<void>;
   remove: (uniqueId: string) => Promise<void>; // <-- меняем тип
@@ -20,6 +24,15 @@ export const useFriendsStore = create<State & Actions>((set, get) => ({
   friends: [],
   requestsRaw: null,
   loading: false,
+  lastFetchedAt: null,
+  lastErrorAt: null,
+
+  async fetchIfStale(maxAgeMs = 15_000) {
+    const { loading, lastFetchedAt, lastErrorAt } = get();
+    if (loading) return;
+    if (lastErrorAt && Date.now() - lastErrorAt < 30_000) return;
+    if (!lastFetchedAt || Date.now() - lastFetchedAt > maxAgeMs) await get().fetchAll();
+  },
 
   async fetchAll() {
     set({ loading: true, error: undefined });
@@ -45,9 +58,9 @@ export const useFriendsStore = create<State & Actions>((set, get) => ({
         };
       });
 
-      set({ friends: normalizedFriends, requestsRaw });
+      set({ friends: normalizedFriends, requestsRaw, lastFetchedAt: Date.now(), lastErrorAt: null });
     } catch (e: any) {
-      set({ error: e?.message || 'Failed to load' });
+      set({ error: e?.message || 'Failed to load', lastErrorAt: Date.now() });
     } finally {
       set({ loading: false });
     }

@@ -1,6 +1,7 @@
 // src/shared/ui/InviteQR.tsx
 import React from 'react';
-import { YStack, Paragraph, Card, Text } from 'tamagui';
+import { YStack, Card } from 'tamagui';
+import { Paragraph, Text } from '@/shared/ui/typography';
 import QRCode from 'react-native-qrcode-svg';
 
 type Props = {
