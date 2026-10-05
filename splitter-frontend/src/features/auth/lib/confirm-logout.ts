@@ -1,7 +1,7 @@
-import { Alert } from 'react-native';
 import type { useRouter } from 'expo-router';
 import type { TFunction } from 'i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
+import { confirmAction } from '@/shared/lib/utils/confirm';
 
 /**
  * "Log out?" confirmation. Logging out is local (token + user + user-specific stores + query cache),
@@ -9,24 +9,20 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
  * Welcome screen, so the back button can never return to the tabs.
  */
 export function confirmLogout(t: TFunction, router: ReturnType<typeof useRouter>) {
-  Alert.alert(
-    t('auth.logout.title', 'Log out?'),
-    t('auth.logout.message', 'You will need to sign in again to use the app.'),
-    [
-      { text: t('common.cancel', 'Cancel'), style: 'cancel' },
-      {
-        text: t('auth.logout.confirm', 'Log out'),
-        style: 'destructive',
-        onPress: async () => {
-          await useAppStore.getState().logout();
-          try {
-            if (router.canDismiss()) router.dismissAll();
-          } catch {
-            // no stack to dismiss
-          }
-          router.replace('/');
-        },
-      },
-    ]
-  );
+  confirmAction({
+    title: t('auth.logout.title', 'Log out?'),
+    message: t('auth.logout.message', 'You will need to sign in again to use the app.'),
+    confirmText: t('auth.logout.confirm', 'Log out'),
+    cancelText: t('common.cancel', 'Cancel'),
+    destructive: true,
+    onConfirm: async () => {
+      await useAppStore.getState().logout();
+      try {
+        if (router.canDismiss()) router.dismissAll();
+      } catch {
+        // no stack to dismiss
+      }
+      router.replace('/');
+    },
+  });
 }

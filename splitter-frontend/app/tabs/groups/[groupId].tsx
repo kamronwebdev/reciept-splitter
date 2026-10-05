@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { YStack, XStack, Separator, Input, Spinner } from 'tamagui';
 import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -8,6 +7,7 @@ import { Crown, Pencil, Trash2, Check, X as IconX, ChevronLeft, QrCode } from '@
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import UserAvatar from '@/shared/ui/UserAvatar';
+import { confirmAction } from '@/shared/lib/utils/confirm';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 
 const fmtUid = (uid?: string) => (uid ? `@${uid.toLowerCase().replace('user#','user')}` : '');
@@ -82,24 +82,19 @@ export default function GroupDetailsScreen() {
   }
 
   function onDeleteAsk() {
-    Alert.alert(
-      'Delete group',
-      'Are you sure you want to delete this group? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            if (!gid) return;
-            setBusyHdr('delete');
-            try { await deleteGroup(gid); router.replace('/tabs/groups' as never); }
-            finally { setBusyHdr(undefined); }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+    confirmAction({
+      title: 'Delete group',
+      message: 'Are you sure you want to delete this group? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      destructive: true,
+      onConfirm: async () => {
+        if (!gid) return;
+        setBusyHdr('delete');
+        try { await deleteGroup(gid); router.replace('/tabs/groups' as never); }
+        finally { setBusyHdr(undefined); }
+      },
+    });
   }
 
   async function onAdd(uid: string) {

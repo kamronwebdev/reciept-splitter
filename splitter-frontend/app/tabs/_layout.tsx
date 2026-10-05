@@ -125,7 +125,7 @@ function FlashMessage() {
 
   if (!message) return null;
   return (
-    <View position="absolute" top={insets.top + 8} left={16} right={16} zIndex={1000}>
+    <View position="absolute" top={insets.top + 58} left={16} right={16} zIndex={1000}>
       <Banner kind="success" message={message} />
     </View>
   );

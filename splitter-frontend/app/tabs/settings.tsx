@@ -89,7 +89,7 @@ export default function SettingsScreen() {
         >
           <XStack ai="center" gap="$3" minHeight={56}>
             <UserAvatar uri={user?.avatarUrl} label={user?.username ?? '?'} seed={user?.uniqueId} size={44} />
-            <YStack f={1}>
+            <YStack f={1} ai="flex-start">
               <Text fontSize={15} fontWeight="700" color="$text" numberOfLines={1}>
                 {user?.username ?? t('profile.labels.guest', 'Guest')}
               </Text>

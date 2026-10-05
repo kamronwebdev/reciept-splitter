@@ -9,10 +9,12 @@ type Props = {
   highlight?: boolean;
   align?: 'left' | 'center' | 'right';
   disabled?: boolean;
+  /** red text (destructive actions) */
+  danger?: boolean;
 };
 
 /** Inline text button with a 44pt touch target. */
-export default function TextLink({ title, onPress, highlight, align = 'center', disabled }: Props) {
+export default function TextLink({ title, onPress, highlight, align = 'center', disabled, danger }: Props) {
   return (
     <Pressable
       onPress={onPress}
@@ -29,7 +31,7 @@ export default function TextLink({ title, onPress, highlight, align = 'center', 
     >
       <Text
         fontSize="$3"
-        color="$primaryText"
+        color={danger ? '$danger' : '$primaryText'}
         fontWeight={highlight ? '800' : '600'}
         textDecorationLine={highlight ? 'underline' : 'none'}
       >

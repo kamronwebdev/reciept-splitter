@@ -198,7 +198,7 @@ export default function HomePage() {
 
   return (
     <ScreenContainer>
-      <YStack f={1} ai="center" bg="$surface">
+      <YStack f={1} ai="center" bg="$background">
         <YStack ai="center" mt="$6" mb="$4">
           <Pressable onPress={onScan}>
             <Circle size={64} bg="$primary" ai="center" jc="center" elevationAndroid={4}>

@@ -67,6 +67,7 @@ export default function DeleteAccountSection() {
             setOtherError(null);
           }}
           align="right"
+          danger
         />
       }
     >

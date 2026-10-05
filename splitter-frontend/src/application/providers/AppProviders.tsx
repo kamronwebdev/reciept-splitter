@@ -1,6 +1,6 @@
 // src/application/providers/AppProviders.tsx
 import { ReactNode, useEffect } from 'react';
-import { View, useColorScheme } from 'react-native';
+import { View } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import QueryProvider from './QueryProvider';
@@ -9,6 +9,7 @@ import { TamaguiProvider } from './TamaguiProvider';
 import { AppStoreProvider, useAppStoreHydrated } from '@/shared/lib/stores/app-store';
 import { FONT_ASSETS } from '@/shared/theme/fonts';
 import { palettes } from '@/shared/theme/palette';
+import { useSystemScheme } from '@/shared/theme/useAppTheme';
 
 // Keep the native splash screen up until fonts and saved settings are ready: no flash of the wrong theme/font.
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -16,7 +17,7 @@ SplashScreen.preventAutoHideAsync().catch(() => undefined);
 export default function AppProviders({ children }: { children: ReactNode }) {
   const [fontsLoaded, fontError] = useFonts(FONT_ASSETS);
   const hydrated = useAppStoreHydrated();
-  const system = useColorScheme();
+  const system = useSystemScheme();
   const ready = (fontsLoaded || !!fontError) && hydrated;
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function AppProviders({ children }: { children: ReactNode }) {
 
   if (!ready) {
     // matches the phone's scheme while the saved choice is still loading
-    return <View style={{ flex: 1, backgroundColor: palettes[system === 'dark' ? 'dark' : 'light'].background }} />;
+    return <View style={{ flex: 1, backgroundColor: palettes[system].background }} />;
   }
 
   return (
