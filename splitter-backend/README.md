@@ -56,6 +56,7 @@ Env variables (minimum):
 - `PORT` — HTTP port (defaults to `3001`)
 - `CORS_ORIGINS` — comma-separated allowlist for production (e.g. `http://localhost:5173,http://localhost:3000`)
 - `ALLOW_ALL_CORS=1` — permissive mode (`Access-Control-Allow-Origin: *`, credentials disabled)
+- `RESEND_API_KEY`, `EMAIL_FROM` — password reset emails via Resend. Without a key the 6-digit code is printed to the server console (`[DEV] Reset code for x@y.com: 123456`)
 - `DEBUG_AUTH=1` — verbose JWT verification logs
 - `DEBUG_ENV=1` — print env-presence summary on startup
 - `ENABLE_DEBUG_ROUTES=1` — mount `/debug/*` in production (always on outside production)

@@ -28,6 +28,7 @@ export default function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const submitting = useRef(false);
+  const finished = useRef(false); // set once the reset succeeded so the guard below never redirects
   const [error, setError] = useState<{ kind: 'field' | 'network' | 'token' | 'other'; message: string } | null>(null);
 
   const canSubmit = isStrongPassword(password);
@@ -41,6 +42,7 @@ export default function ResetPasswordForm() {
       const res = await resetPassword({ resetToken, newPassword: password });
       await saveToken(res.token);
       await saveLastEmail(res.user.email);
+      finished.current = true;
       clearReset();
       setSessionExpired(false);
       setAuth(res.token, res.user);
@@ -59,7 +61,7 @@ export default function ResetPasswordForm() {
     }
   }, [canSubmit, clearReset, password, resetToken, router, setAuth, setFlashMessage, setSessionExpired, t]);
 
-  if (!resetToken && !isLoading) return <Redirect href="/forgot-password" />;
+  if (!resetToken && !finished.current) return <Redirect href="/forgot-password" />;
 
   return (
     <ScreenFormContainer>
