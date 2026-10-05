@@ -6,6 +6,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
 import authRoutes from "./routes/auth.js";
+import passwordResetRoutes from "./routes/passwordReset.js";
 import userRoutes from "./routes/user.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import friendsRoutes from "./routes/friends.js";
@@ -31,6 +32,8 @@ if (missingEnv.length) {
 }
 
 const app = express();
+// Behind a proxy (Render) the real client IP is needed for rate limiting.
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 // Allow configurable JSON body size (large base64 images for /sessions/scan)
 // Default increased from Express ~100kb to 4mb to fit ~3MB binary image (base64 expands ~33%).
 const JSON_LIMIT = process.env.JSON_BODY_LIMIT || "4mb";
@@ -95,7 +98,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/static", express.static(path.join(process.cwd(), "public")));
 
 // Auth routes with logging
-app.use("/auth", logAuthAttempts, authRoutes);
+app.use("/auth", logAuthAttempts, authRoutes, passwordResetRoutes);
 app.use("/user", userRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/groups", groupsRoutes);

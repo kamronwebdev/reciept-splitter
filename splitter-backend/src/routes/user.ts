@@ -8,6 +8,8 @@ import {
   isStrongPassword,
   PASSWORD_POLICY_MESSAGE,
 } from "../utils/validation.js";
+import { signAuthToken } from "../utils/authToken.js";
+import { sendError } from "../utils/errors.js";
 
 const router = Router();
 
@@ -79,6 +81,7 @@ router.patch(
           return res.status(400).json({ error: PASSWORD_POLICY_MESSAGE });
         }
         data.password = await bcrypt.hash(password, 10);
+        data.tokenVersion = { increment: 1 };
       }
 
       if (Object.keys(data).length === 0) {
@@ -95,6 +98,7 @@ router.patch(
             username: true,
             uniqueId: true,
             avatarUrl: true,
+            tokenVersion: true,
           },
         })
         .catch((e) => {
@@ -106,7 +110,11 @@ router.patch(
         return res.status(404).json({ error: "User not found" });
       }
       console.log("/user/update success:", { id: updated.id });
-      return res.json(updated);
+      const { tokenVersion, ...publicUser } = updated;
+      // Password changed => old sessions are invalid; hand back a fresh token for this device.
+      return res.json(
+        data.tokenVersion ? { ...publicUser, token: signAuthToken(updated) } : publicUser
+      );
     } catch (err) {
       console.error("/user/update error:", err);
       return res.status(500).json({ error: "Server error" });
@@ -338,7 +346,7 @@ router.patch(
           .json({ error: "Both currentPassword and newPassword are required" });
       }
       if (!isStrongPassword(newPassword)) {
-        return res.status(400).json({ error: PASSWORD_POLICY_MESSAGE });
+        return sendError(res, 400, "WEAK_PASSWORD", PASSWORD_POLICY_MESSAGE);
       }
 
       const user = await prisma.user.findUnique({ where: { id: req.user.id } });
@@ -348,16 +356,17 @@ router.patch(
 
       const ok = await bcrypt.compare(currentPassword, user.password);
       if (!ok) {
-        return res.status(400).json({ error: "Current password is incorrect" });
+        return sendError(res, 400, "WRONG_CURRENT_PASSWORD", "Current password is incorrect");
       }
 
       const hashed = await bcrypt.hash(newPassword, 10);
-      await prisma.user.update({
+      // Bump tokenVersion: every other session becomes invalid. Return a fresh token so this device stays signed in.
+      const updatedUser = await prisma.user.update({
         where: { id: req.user.id },
-        data: { password: hashed },
+        data: { password: hashed, tokenVersion: { increment: 1 } },
       });
 
-      return res.json({ success: true });
+      return res.json({ success: true, token: signAuthToken(updatedUser) });
     } catch (err) {
       console.error("/user/password error:", err);
       return res.status(500).json({ error: "Server error" });
