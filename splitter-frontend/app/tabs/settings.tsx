@@ -1,267 +1,118 @@
-// app/tabs/settings.tsx
-import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { YStack, Text, Separator, XStack } from 'tamagui';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { Linking, Pressable, ScrollView } from 'react-native';
+import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
+import { XStack, YStack } from 'tamagui';
+import { ChevronRight, Mail } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
-
-import { Button } from '@/shared/ui/Button';
-import { ScreenContainer } from '@/shared/ui/ScreenContainer';
-import Input from '@/shared/ui/Input';
-import PasswordInput from '@/shared/ui/PasswordInput';
+import { Text } from '@/shared/ui/typography';
+import Section from '@/shared/ui/Section';
+import UserAvatar from '@/shared/ui/UserAvatar';
+import Banner from '@/shared/ui/Banner';
+import { LanguageSegmentedControl } from '@/shared/ui/LanguageSegmentedControl';
 import { useAppStore } from '@/shared/lib/stores/app-store';
-import { changePassword, updateUsername } from '@/features/auth/api';
-import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
+import AppearanceSection from '@/features/settings/ui/AppearanceSection';
 
+const SUPPORT_EMAIL = process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'support@example.com';
+
+function Row({ label, value, onPress, icon }: { label: string; value?: string; onPress?: () => void; icon?: React.ReactNode }) {
+  const content = (
+    <XStack ai="center" jc="space-between" minHeight={48} gap="$3">
+      <XStack ai="center" gap="$2" f={1}>
+        {icon}
+        <Text fontSize={15} color="$text" numberOfLines={1}>
+          {label}
+        </Text>
+      </XStack>
+      {!!value && (
+        <Text fontSize={14} color="$textMuted">
+          {value}
+        </Text>
+      )}
+      {onPress && <ChevronRight size={18} color="$textSubtle" />}
+    </XStack>
+  );
+  if (!onPress) return content;
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
+      {content}
+    </Pressable>
+  );
+}
+
+/** Settings: Appearance, Language, Account, About. (Profile data lives on the Profile screen only.) */
 export default function SettingsScreen() {
-  const { user, setUser, language, setLanguage } = useAppStore();
   const { t } = useTranslation();
-  const isLoggedIn = !!user;
+  const router = useRouter();
+  const { colors } = useAppTheme();
+  const user = useAppStore((s) => s.user);
+  const language = useAppStore((s) => s.language);
+  const setLanguage = useAppStore((s) => s.setLanguage);
+  const [mailError, setMailError] = useState(false);
 
-  const [usernameValue, setUsernameValue] = useState(user?.username ?? '');
-  const [usernameError, setUsernameError] = useState<string | null>(null);
-  const [isUpdatingUsername, setIsUpdatingUsername] = useState(false);
+  const version = Constants.expoConfig?.version ?? '1.0.0';
+  const build = Constants.nativeBuildVersion ? ` (${Constants.nativeBuildVersion})` : '';
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  useEffect(() => {
-    setUsernameValue(user?.username ?? '');
-  }, [user?.username]);
-
-  const usernameDirty = useMemo(() => {
-    const trimmed = usernameValue.trim();
-    return trimmed.length > 0 && trimmed !== (user?.username ?? '').trim();
-  }, [usernameValue, user?.username]);
-
-  const validateUsername = (value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) return 'Username cannot be empty';
-    if (trimmed.length < 2) return 'Username must be at least 2 characters';
-    return null;
-  };
-
-  const validatePasswordForm = () => {
-    if (!currentPassword.trim()) return 'Enter your current password';
-    if (newPassword.length < 8) return 'New password must be at least 8 characters';
-    const hasUppercase = /[A-Z]/.test(newPassword);
-    const hasLowercase = /[a-z]/.test(newPassword);
-    const hasNumber = /\d/.test(newPassword);
-    const hasSymbol = /[^A-Za-z0-9\s]/.test(newPassword);
-    if (!hasUppercase || !hasLowercase || !hasNumber || !hasSymbol) {
-      return 'Password must include uppercase, lowercase, number, and special character';
-    }
-    if (newPassword !== confirmPassword) return 'Passwords do not match';
-    if (newPassword === currentPassword) return 'Choose a different password';
-    return null;
-  };
-
-  const handleLanguageChange = (code: LanguageCode) => {
-    if (code === language) return;
-    setLanguage(code);
-  };
-
-  const handleSaveUsername = async () => {
-    if (!isLoggedIn) {
-      Alert.alert('Unavailable', 'Sign in to update your username.');
-      return;
-    }
-    const error = validateUsername(usernameValue);
-    if (error) {
-      setUsernameError(error);
-      return;
-    }
-    setUsernameError(null);
-
-    const trimmed = usernameValue.trim();
-
+  const openSupport = async () => {
+    setMailError(false);
+    const subject = encodeURIComponent(t('settings.about.supportSubject', 'Receipt Splitter feedback'));
     try {
-      setIsUpdatingUsername(true);
-      const updatedUser = await updateUsername({ username: trimmed });
-      setUser(updatedUser);
-      Alert.alert('Success', 'Username updated.');
-    } catch (error) {
-      console.error('Username update failed:', error);
-      const message = error instanceof Error ? error.message : 'Could not update the username.';
-      Alert.alert('Error', message);
-    } finally {
-      setIsUpdatingUsername(false);
+      await Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=${subject}`);
+    } catch {
+      setMailError(true);
     }
   };
-
-  const handleChangePassword = async () => {
-    if (!isLoggedIn) {
-      Alert.alert('Unavailable', 'Sign in to change your password.');
-      return;
-    }
-
-    const error = validatePasswordForm();
-    if (error) {
-      setPasswordError(error);
-      return;
-    }
-    setPasswordError(null);
-
-    try {
-      setIsChangingPassword(true);
-      await changePassword({ currentPassword, newPassword });
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      Alert.alert('Password updated', 'Your password has been changed.');
-    } catch (error) {
-      console.error('Password change failed:', error);
-      const message = error instanceof Error ? error.message : 'Could not change the password.';
-      Alert.alert('Error', message);
-    } finally {
-      setIsChangingPassword(false);
-    }
-  };
-
-  useEffect(() => {
-    if (usernameError && usernameValue.trim().length >= 2) {
-      setUsernameError(null);
-    }
-  }, [usernameError, usernameValue]);
-
-  useEffect(() => {
-    if (passwordError) {
-      const err = validatePasswordForm();
-      if (!err) setPasswordError(null);
-    }
-  }, [currentPassword, newPassword, confirmPassword, passwordError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.select({ ios: 0, android: 0 }) ?? 0}
-      >
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
-          keyboardShouldPersistTaps="handled"
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 16 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <AppearanceSection />
+
+      <Section title={t('settings.language.title', 'Language')} description={t('settings.language.description', 'Choose the language used across the app.')}>
+        <LanguageSegmentedControl
+          value={language}
+          onChange={setLanguage}
+          getLabel={(code, fallback) => t(`settings.language.options.${code}`, fallback)}
+        />
+      </Section>
+
+      <Section title={t('settings.account.title', 'Account')}>
+        <Pressable
+          onPress={() => router.push('/tabs/profile')}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.account.profile', 'Profile & security')}
+          style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
         >
-          <ScreenContainer>
-            <YStack space="$5">
-              {/* Header */}
-              <YStack space="$3" mt="$4">
-                <Text fontSize={20} fontWeight="700">
-                  Account settings
-                </Text>
-                <Text color="$gray10">
-                  Update your username and password using the forms below.
-                </Text>
-              </YStack>
-
-              {/* LANGUAGE */}
-              <YStack space="$3">
-                <Text fontSize={16} fontWeight="600">
-                  {t('settings.language.title', 'Language')}
-                </Text>
-                <Text fontSize={14} color="$gray10">
-                  {t('settings.language.description', 'Choose the language used across the app.')}
-                </Text>
-
-                <XStack
-                  space="$2"
-                  backgroundColor="$gray3"
-                  borderRadius="$8"
-                  padding="$1"
-                  flexWrap="wrap"
-                >
-                  {LANGUAGE_OPTIONS.map((option) => {
-                    const isActive = option.code === language;
-                    const label = t(
-                      `settings.language.options.${option.code}`,
-                      option.shortLabel
-                    );
-                    return (
-                      <Button
-                        key={option.code}
-                        title={label}
-                        variant={isActive ? 'primary' : 'outline'}
-                        size="small"
-                        onPress={() => handleLanguageChange(option.code)}
-                      />
-                    );
-                  })}
-                </XStack>
-              </YStack>
-
-              <Separator />
-
-              {/* USERNAME */}
-              <YStack space="$3">
-                <Text fontSize={16} fontWeight="600">Username</Text>
-                <Input
-                  value={usernameValue}
-                  onChangeText={setUsernameValue}
-                  placeholder="Enter a new username"
-                  textInputProps={{ autoCapitalize: 'none', autoCorrect: false }}
-                  error={usernameError || undefined}
-                />
-                <XStack space="$2">
-                  <Button
-                    title={isUpdatingUsername ? 'Saving...' : 'Save username'}
-                    variant="primary"
-                    size="medium"
-                    disabled={!usernameDirty || isUpdatingUsername}
-                    onPress={handleSaveUsername}
-                  />
-                  <Button
-                    title="Reset"
-                    variant="outline"
-                    size="medium"
-                    disabled={!usernameDirty}
-                    onPress={() => setUsernameValue(user?.username ?? '')}
-                  />
-                </XStack>
-              </YStack>
-
-              <Separator />
-
-              {/* PASSWORD */}
-              <YStack space="$3">
-                <Text fontSize={16} fontWeight="600">Password</Text>
-                <PasswordInput
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
-                  placeholder="Current password"
-                  textInputProps={{ returnKeyType: 'next' }}
-                />
-                <PasswordInput
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  placeholder="New password"
-                  textInputProps={{ returnKeyType: 'next' }}
-                />
-                <Text fontSize={12} color="$gray10">
-                  Password must be at least 8 characters and include uppercase, lowercase, number, and special symbol.
-                </Text>
-                <PasswordInput
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  placeholder="Confirm new password"
-                  error={passwordError || undefined}
-                  textInputProps={{ returnKeyType: 'done' }}
-                />
-                <Button
-                  title={isChangingPassword ? 'Updating...' : 'Change password'}
-                  variant="primary"
-                  size="medium"
-                  disabled={isChangingPassword}
-                  onPress={handleChangePassword}
-                />
-              </YStack>
+          <XStack ai="center" gap="$3" minHeight={56}>
+            <UserAvatar uri={user?.avatarUrl} label={user?.username ?? '?'} seed={user?.uniqueId} size={44} />
+            <YStack f={1} ai="flex-start">
+              <Text fontSize={15} fontWeight="700" color="$text" numberOfLines={1}>
+                {user?.username ?? t('profile.labels.guest', 'Guest')}
+              </Text>
+              <Text fontSize={12} color="$textMuted" numberOfLines={1}>
+                {t('settings.account.profileHint', 'Photo, username, email, password')}
+              </Text>
             </YStack>
-          </ScreenContainer>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <ChevronRight size={18} color="$textSubtle" />
+          </XStack>
+        </Pressable>
+      </Section>
+
+      <Section title={t('settings.about.title', 'About')}>
+        <Row label={t('settings.about.version', 'Version')} value={`${version}${build}`} />
+        <Row
+          label={t('settings.about.support', 'Support & feedback')}
+          icon={<Mail size={18} color="$textMuted" />}
+          onPress={openSupport}
+        />
+        {mailError && (
+          <Banner kind="info" message={t('settings.about.mailFailed', { email: SUPPORT_EMAIL, defaultValue: 'Could not open your mail app. Write to {{email}}.' })} />
+        )}
+      </Section>
+    </ScrollView>
   );
 }

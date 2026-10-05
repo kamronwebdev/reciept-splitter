@@ -37,8 +37,10 @@ export type SessionHistoryPayload = {
   totals: {
     byItem: SessionHistoryTotalsByItem[];
     grandTotal: number;
+    currency?: string;
     byParticipant: SessionHistoryTotalsByParticipant[];
   };
+  currency?: string;
   createdAt: string; // ISO
   sessionId: number;
   allocations: SessionHistoryAllocation[];
@@ -52,6 +54,7 @@ export interface SessionHistoryEntryRaw {
   sessionName: string;
   finalizedAt: string;
   grandTotal: number;
+  currency?: string;
   participantUniqueIds: string[];
   isCreator: boolean;
   payload: SessionHistoryPayload;
@@ -71,6 +74,7 @@ export interface SessionHistoryEntry {
   finalizedAt?: string;
   createdAt?: string;
   grandTotal: number;
+  currency?: string;
 
   participantUniqueIds: string[];
 
@@ -94,14 +98,13 @@ const HISTORY_ENDPOINT = '/sessions/history';
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 5;
 
+import { DEBUG_API } from '@/shared/api/debug';
+
 let currentRequest: AbortController | null = null;
 let isLoading = false;
 
 /** ===== Debug helpers ===== */
-const DEBUG_HISTORY =
-  (typeof __DEV__ !== 'undefined' && __DEV__) ||
-  process.env.EXPO_PUBLIC_DEBUG_HISTORY === '1' ||
-  process.env.NODE_ENV === 'development';
+const DEBUG_HISTORY = DEBUG_API;
 
 const safeStringify = (obj: any) => {
   try {

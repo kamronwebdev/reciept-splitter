@@ -31,7 +31,83 @@
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
-    "haveAccount": "Hisobingiz bormi?"
+    "haveAccount": "Hisobingiz bormi?",
+    "hidePassword": "Parolni yashirish",
+    "showPassword": "Parolni ko'rsatish",
+    "clearEmail": "Emailni tozalash",
+    "didYouMeanPrefix": "Shuni nazarda tutdingizmi:",
+    "didYouMean": "Shuni nazarda tutdingizmi: {{email}}?",
+    "passwordRequirements": "Parol talablari",
+    "ruleMet": "bajarilgan",
+    "ruleNotMet": "bajarilmagan",
+    "passwordRules": {
+      "length": "Kamida 8 ta belgi",
+      "upper": "Bitta bosh harf",
+      "lower": "Bitta kichik harf",
+      "number": "Bitta raqam",
+      "special": "Bitta maxsus belgi"
+    },
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "Parol o'ylab toping",
+    "usernameRule": "2-30 ta belgi",
+    "logInInstead": "Kirish sahifasiga o'tish",
+    "backToLogin": "Kirishga qaytish",
+    "sessionExpired": "Sessiyangiz tugadi, qaytadan kiring",
+    "logout": {
+      "title": "Chiqasizmi?",
+      "message": "Ilovadan foydalanish uchun qaytadan kirishingiz kerak bo'ladi.",
+      "confirm": "Chiqish"
+    },
+    "forgot": {
+      "title": "Parolni unutdingizmi?",
+      "desc": "Emailingizni kiriting, parolni tiklash uchun 6 xonali kod yuboramiz.",
+      "send": "Kod yuborish"
+    },
+    "reset": {
+      "codeTitle": "Kodni kiriting",
+      "codeDesc": "{{email}} manziliga 6 xonali kod yubordik. U 15 daqiqa amal qiladi.",
+      "codeLabel": "Tasdiqlash kodi",
+      "codeSent": "Yangi kod yuborildi.",
+      "verify": "Davom etish",
+      "resend": "Kodni qayta yuborish",
+      "resendIn": "Kodni qayta yuborish: {{seconds}} soniya",
+      "changeEmail": "Emailni o'zgartirish",
+      "newPasswordTitle": "Yangi parol tanlang",
+      "newPasswordDesc": "Ilgari ishlatmagan kuchli parolni tanlang.",
+      "submit": "Parolni yangilash",
+      "success": "Parol yangilandi. Siz tizimga kirdingiz.",
+      "startOver": "Boshidan boshlash"
+    },
+    "errors": {
+      "emailRequired": "Emailni kiriting",
+      "passwordRequired": "Parolni kiriting",
+      "NETWORK": "Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "VALIDATION_ERROR": "Kiritilgan ma'lumotlarni tekshiring.",
+      "INVALID_EMAIL": "To'g'ri email kiriting",
+      "INVALID_USERNAME": "Foydalanuvchi nomi 2-30 ta belgidan iborat bo'lishi kerak",
+      "EMAIL_IN_USE": "Bu email allaqachon ro'yxatdan o'tgan",
+      "INVALID_CREDENTIALS": "Email yoki parol noto'g'ri",
+      "WEAK_PASSWORD": "Parol talablarga javob bermaydi",
+      "INVALID_CODE": "Kod noto'g'ri. Qayta urinib ko'ring.",
+      "CODE_EXPIRED": "Kod muddati tugagan. Yangi kod so'rang.",
+      "TOO_MANY_ATTEMPTS": "Juda ko'p noto'g'ri urinish. Yangi kod so'rang.",
+      "INVALID_RESET_TOKEN": "Tiklash sessiyasi tugagan. Boshidan boshlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Davom etish uchun tizimga kiring.",
+      "TOKEN_EXPIRED": "Sessiyangiz tugadi, qaytadan kiring",
+      "TOKEN_INVALID": "Sessiyangiz tugadi, qaytadan kiring",
+      "SESSION_REVOKED": "Sessiyangiz tugadi, qaytadan kiring",
+      "USER_NOT_FOUND": "Hisob topilmadi",
+      "WRONG_CURRENT_PASSWORD": "Joriy parol noto'g'ri",
+      "SERVER_ERROR": "Server xatosi. Keyinroq qayta urinib ko'ring.",
+      "FILE_TOO_LARGE": "Rasm hajmi juda katta. Kichikroq rasm tanlang.",
+      "UNSUPPORTED_TYPE": "Bu rasm formati qo'llab-quvvatlanmaydi.",
+      "FILE_REQUIRED": "Rasm tanlang.",
+      "INVALID_PASSWORD": "Parol noto'g'ri"
+    },
+    "loginError": "Kirishda xatolik yuz berdi",
+    "registerError": "Ro'yxatdan o'tishda xatolik yuz berdi"
   },
   "common": {
     "welcome": "Xush kelibsiz",
@@ -41,7 +117,9 @@
     "cancel": "Bekor qilish",
     "confirm": "Tasdiqlash",
     "continue": "Davom etish",
-    "back": "Orqaga"
+    "back": "Orqaga",
+    "retry": "Qayta urinish",
+    "close": "Yopish"
   },
   "home": {
     "header": {
@@ -73,77 +151,73 @@
   },
   "profile": {
     "title": "Profil",
-    "status": {
-      "saved": "Saqlandi"
-    },
-    "actions": {
-      "copy": "Nusxa olish"
-    },
     "labels": {
-      "guest": "Mehmon",
-      "notAvailable": "Mavjud emas"
+      "guest": "Mehmon"
+    },
+    "header": {
+      "copyId": "ID ni nusxalash",
+      "copied": "Nusxalandi",
+      "shareQr": "Taklif QR kodimni ulashish",
+      "idLabel": "ID"
     },
     "avatar": {
-      "title": "Avatar",
-      "hint": "Yuklangan avatarlar bizning CDN orqali darhol yangilanadi.",
-      "upload": "Telefoningizdan yuklash",
-      "uploading": "Yuklanmoqda...",
-      "reset": "Avatarni tiklash",
-      "resetting": "Tiklanmoqda..."
+      "change": "Profil rasmini o'zgartirish",
+      "sheetTitle": "Profil rasmi",
+      "takePhoto": "Rasmga olish",
+      "chooseLibrary": "Galereyadan tanlash",
+      "remove": "Rasmni o'chirish",
+      "cancel": "Bekor qilish",
+      "uploading": "Yuklanmoqda…",
+      "updated": "Profil rasmi yangilandi",
+      "removed": "Profil rasmi o'chirildi",
+      "cameraBlockedTitle": "Kameraga ruxsat berilmagan",
+      "photosBlockedTitle": "Rasmlarga ruxsat berilmagan",
+      "blockedBody": "Telefon sozlamalarida ruxsat bering, so'ng qayta urinib ko'ring.",
+      "openSettings": "Sozlamalarni ochish",
+      "pickFailed": "Rasmni o'qib bo'lmadi. Boshqa rasm tanlang."
     },
-    "info": {
-      "title": "Foydalanuvchi ma'lumotlari",
-      "usernameLabel": "Foydalanuvchi nomi",
-      "usernamePlaceholder": "Yangi foydalanuvchi nomini kiriting",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Yangi email kiriting",
-      "userId": "Foydalanuvchi ID"
+    "stats": {
+      "title": "Faoliyatingiz",
+      "sessions": "Hisoblar",
+      "friends": "Do'stlar",
+      "groups": "Guruhlar"
+    },
+    "username": {
+      "label": "Foydalanuvchi nomi",
+      "edit": "Nomni tahrirlash",
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "rule": "2-30 ta belgi",
+      "updated": "Foydalanuvchi nomi yangilandi"
+    },
+    "email": {
+      "title": "Email",
+      "change": "Emailni o'zgartirish",
+      "newEmail": "Yangi email",
+      "currentPassword": "Joriy parol",
+      "passwordHelp": "Tasdiqlash uchun joriy parolni kiriting.",
+      "submit": "Emailni yangilash",
+      "updated": "Email yangilandi",
+      "same": "Bu allaqachon sizning emailingiz"
     },
     "password": {
-      "title": "Parolni o'zgartirish",
-      "currentLabel": "Joriy parol",
-      "currentPlaceholder": "Joriy parolni kiriting",
-      "newLabel": "Yangi parol",
-      "newPlaceholder": "Yangi parolni kiriting",
-      "confirmLabel": "Yangi parolni tasdiqlang",
-      "confirmPlaceholder": "Yangi parolni qayta kiriting",
-      "requirements": "Parol kamida 8 ta belgi bo'lib, katta va kichik harf, raqam va maxsus belgini o'z ichiga olishi kerak.",
-      "submit": "Parolni o'zgartirish",
-      "updating": "Yangilanmoqda..."
+      "title": "Parol",
+      "change": "Parolni o'zgartirish",
+      "current": "Joriy parol",
+      "new": "Yangi parol",
+      "submit": "Parolni yangilash",
+      "updated": "Parol yangilandi. Boshqa qurilmalardan chiqarildi.",
+      "same": "Boshqa parol tanlang"
+    },
+    "danger": {
+      "title": "Xavfli hudud",
+      "delete": "Hisobni o'chirish",
+      "warning": "Bu hisobingizni, yaratgan hisoblaringizni, guruhlaringizni va do'stlik aloqalaringizni butunlay o'chiradi. Boshqalar yaratgan hisoblar qoladi, lekin sizning ulushingiz olib tashlanadi. Buni ortga qaytarib bo'lmaydi.",
+      "passwordLabel": "Tasdiqlash uchun parolni kiriting",
+      "confirm": "Hisobimni o'chirish"
     },
     "logout": "Chiqish",
-    "copy": {
-      "successTitle": "Nusxa olindi",
-      "successMessage": "{{field}} almashish buferiga nusxalandi.",
-      "unavailableMessage": "{{field}} hali mavjud emas."
-    },
-    "alerts": {
-      "permissionTitle": "Ruxsat kerak",
-      "permissionMessage": "Avatar tanlash uchun galereyaga kirishga ruxsat bering.",
-      "unavailableTitle": "Mavjud emas",
-      "avatarLoginRequired": "Avatarni yangilash uchun tizimga kiring.",
-      "profileLoginRequired": "Profilni yangilash uchun tizimga kiring.",
-      "passwordLoginRequired": "Parolni o'zgartirish uchun tizimga kiring.",
-      "avatarUpdateFailed": "Avatarni yangilab bo'lmadi.",
-      "avatarResetFailed": "Avatarni tiklab bo'lmadi.",
-      "usernameUpdateFailed": "Foydalanuvchi nomini yangilab bo'lmadi.",
-      "emailUpdateFailed": "Emailni yangilab bo'lmadi.",
-      "passwordChangeFailed": "Parolni o'zgartirib bo'lmadi.",
-      "logoutFailed": "Chiqib bo'lmadi. Iltimos, yana urinib ko'ring.",
-      "imageMissing": "Rasm faylining URI topilmadi.",
-      "uploadReadFailed": "Tanlangan faylni o'qib bo'lmadi."
-    },
-    "validation": {
-      "usernameRequired": "Foydalanuvchi nomini kiriting.",
-      "usernameMin": "Foydalanuvchi nomi kamida 2 ta belgidan iborat bo'lishi kerak.",
-      "emailRequired": "Email kiriting.",
-      "emailInvalid": "Yaroqli email kiriting.",
-      "passwordCurrent": "Joriy parolni kiriting.",
-      "passwordLength": "Yangi parol kamida 8 ta belgi bo'lishi kerak.",
-      "passwordComplexity": "Parolda katta va kichik harf, raqam va maxsus belgi bo'lishi kerak.",
-      "passwordMismatch": "Parollar mos emas.",
-      "passwordDifferent": "Boshqa parol tanlang."
-    }
+    "refreshFailed": "Profilni yangilab bo'lmadi. Qayta urinish uchun pastga torting."
   },
   "navigation": {
     "mainMenu": "Bosh menyu",
@@ -168,14 +242,236 @@
     "historyDetails": "Hisob tafsilotlari"
   },
   "settings": {
+    "title": "Sozlamalar",
+    "appearance": {
+      "title": "Ko'rinish",
+      "theme": {
+        "title": "Mavzu",
+        "system": "Tizim",
+        "light": "Yorug'",
+        "dark": "Qorong'i",
+        "hint": "Tizim rejimi telefoningizga ergashadi va o'zi yangilanadi."
+      },
+      "font": {
+        "title": "Shrift",
+        "preview": "Receipt Splitter",
+        "inter": "Inter",
+        "interDesc": "Sodda va toza",
+        "nunito": "Nunito",
+        "nunitoDesc": "Yumshoq va yumaloq",
+        "manrope": "Manrope",
+        "manropeDesc": "Zamonaviy, geometrik",
+        "japaneseNote": "Yapon tilida tizim shrifti ishlatiladi."
+      },
+      "textSize": {
+        "title": "Matn o'lchami",
+        "small": "Kichik",
+        "default": "Oddiy",
+        "large": "Katta",
+        "sample": "Tez jigarrang tulki"
+      }
+    },
     "language": {
       "title": "Til",
       "description": "Ilovada ishlatiladigan tilni tanlang.",
       "options": {
-        "en": "Ingliz tili",
-        "ja": "Yapon tili",
-        "uz": "O'zbek tili"
+        "en": "Inglizcha",
+        "ja": "Yaponcha",
+        "uz": "O'zbekcha"
       }
+    },
+    "account": {
+      "title": "Hisob",
+      "profile": "Profil va xavfsizlik",
+      "profileHint": "Rasm, nom, email, parol"
+    },
+    "about": {
+      "title": "Ilova haqida",
+      "version": "Versiya",
+      "support": "Yordam va fikr-mulohaza",
+      "supportSubject": "Receipt Splitter fikr-mulohaza",
+      "mailFailed": "Pochta ilovasini ochib bo'lmadi. {{email}} manziliga yozing."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Mahsulotlarni tekshirish",
+      "people": "Kimlar bo'lishadi?",
+      "split": "Mahsulotlarni taqsimlash",
+      "summary": "Xulosa"
+    },
+    "steps": {
+      "scan": "Skaner",
+      "items": "Mahsulot",
+      "people": "Odamlar",
+      "split": "Taqsim",
+      "summary": "Tayyor"
+    },
+    "demoBanner": "Demo ma'lumot: bu sizning chekingiz emas.",
+    "kinds": {
+      "item": "Mahsulot",
+      "fee": "Xizmat / to'lovlar",
+      "tax": "Soliq",
+      "discount": "Chegirma"
+    },
+    "discard": {
+      "title": "Bu chekni bekor qilasizmi?",
+      "message": "Kiritgan mahsulotlaringiz va taqsimot yo'qoladi.",
+      "confirm": "Bekor qilish",
+      "keep": "Davom etish"
+    },
+    "resume": {
+      "title": "Chekni davom ettirasizmi?",
+      "message": "Tugallanmagan chekingiz bor.",
+      "continue": "Davom etish",
+      "startNew": "Yangisini boshlash"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Skanerlash mavjud emas",
+      "PARSE_FAILED": "Chekni o'qib bo'lmadi",
+      "NOT_A_RECEIPT": "Bu chek emas",
+      "IMAGE_UNREADABLE": "Rasm o'qilmadi",
+      "ITEM_NOT_ASSIGNED": "Ba'zi mahsulotlar taqsimlanmagan",
+      "RATE_LIMITED": "Juda ko'p so'rov",
+      "UNAUTHORIZED": "Qaytadan kiring",
+      "SESSION_REVOKED": "Qaytadan kiring",
+      "NETWORK": "Aloqa yo'q",
+      "CANCELLED": "Bekor qilindi",
+      "SERVER_ERROR": "Nimadir xato ketdi",
+      "UNKNOWN": "Nimadir xato ketdi"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Serverda chekni skanerlash hali sozlanmagan. Mahsulotlarni qo'lda kiritishingiz mumkin.",
+      "PARSE_FAILED": "Chek o'qish xizmati hozir ishlamayapti. Qayta urinib ko'ring, boshqa rasm tanlang yoki mahsulotlarni qo'lda kiriting.",
+      "NOT_A_RECEIPT": "Bu rasmda chek topilmadi. Butun chek kadrga sig'ishi uchun qayta suratga oling.",
+      "IMAGE_UNREADABLE": "Hech qanday mahsulot o'qilmadi. Yaxshiroq yorug'likda, yaqinroqdan va yaltiroqsiz qayta suratga oling.",
+      "ITEM_NOT_ASSIGNED": "Har bir mahsulotni kamida bitta odamga taqsimlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "SESSION_REVOKED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "NETWORK": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
+      "CANCELLED": "Bekor qilindi.",
+      "SERVER_ERROR": "Serverda muammo bo'ldi. Birozdan keyin qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "SESSION_NOT_FOUND": "Bu chek serverda topilmadi (eski qoralama bo'lishi mumkin). Yangi chek boshlang.",
+      "SESSION_FORBIDDEN": "Bu chek boshqa akkauntga tegishli. Yangi chek boshlang."
+    },
+    "scan": {
+      "hint": "Butun chekni kadrga joylang, yorug'lik yaxshi bo'lsin",
+      "lightOn": "Chiroq yoniq",
+      "lightOff": "Chiroq o'chiq",
+      "on": "Yoniq",
+      "off": "O'chiq",
+      "zoomTo": "{{level}} yaqinlashtirish",
+      "gallery": "Galereyadan tanlash",
+      "shutter": "Suratga olish",
+      "captureFailed": "Suratga olib bo'lmadi. Qayta urinib ko'ring.",
+      "previewLabel": "Chek rasmining ko'rinishi",
+      "rotate": "Burish",
+      "crop": "Qirqish",
+      "applyCrop": "Qirqishni qo'llash",
+      "retake": "Qayta olish",
+      "usePhoto": "Rasmni ishlatish",
+      "phase": {
+        "preparing": "Rasm tayyorlanmoqda…",
+        "uploading": "Yuborilmoqda…",
+        "reading": "Mahsulotlar o'qilmoqda…"
+      },
+      "tryAgain": "Qayta urinish",
+      "chooseAnother": "Boshqa rasm tanlash",
+      "chooseFromGallery": "Galereyadan tanlash",
+      "manual": "Mahsulotlarni qo'lda kiritish",
+      "permissionTitle": "Kameraga ruxsat kerak",
+      "permissionBody": "Kamera faqat chekni suratga olish va mahsulotlarni o'qish uchun ishlatiladi. Shuningdek, galereyadan rasm tanlashingiz yoki mahsulotlarni o'zingiz kiritishingiz mumkin.",
+      "allowCamera": "Kameraga ruxsat berish"
+    },
+    "review": {
+      "billName": "Hisob nomi",
+      "viewPhoto": "Chek rasmini ko'rish",
+      "items": "Mahsulotlar",
+      "empty": "Hozircha mahsulot yo'q. Sotib olinganlarni qo'shing.",
+      "addItem": "Mahsulot qo'shish",
+      "editItem": "Mahsulotni tahrirlash",
+      "deleteItem": "Mahsulotni o'chirish",
+      "delete": "O'chirish",
+      "tapToEdit": "Tahrirlash uchun bosing",
+      "extras": "To'lovlar, soliq va chegirmalar",
+      "addExtra": "To'lov, soliq yoki chegirma qo'shish",
+      "totals": "Jami",
+      "itemsSubtotal": "Mahsulotlar",
+      "calculated": "Hisoblangan jami",
+      "receiptTotal": "Chekdagi jami",
+      "mismatchLess": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} kam. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
+      "mismatchMore": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} ko'p. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
+      "useCalculated": "Hisoblangan jamini ishlatish",
+      "currency": "Valyuta",
+      "changeCurrency": "O'zgartirish",
+      "name": "Nomi",
+      "quantity": "Miqdori",
+      "unitPrice": "Birlik narxi",
+      "amount": "Summa",
+      "lineTotal": "Qator jami",
+      "discountHint": "Chegirmani musbat son sifatida kiriting",
+      "save": "Saqlash",
+      "needItem": "Davom etish uchun kamida bitta mahsulot qo'shing.",
+      "next": "Keyingisi: odamlarni tanlash",
+      "errors": {
+        "name": "Nomni kiriting",
+        "price": "Noldan katta narx kiriting"
+      }
+    },
+    "people": {
+      "you": "Siz",
+      "search": "Odamlar va guruhlarni qidirish",
+      "groups": "Guruhlar",
+      "friends": "Do'stlar",
+      "members": "{{count}} a'zo",
+      "remove": "{{name}} ni olib tashlash",
+      "needTwo": "Hisobni bo'lish uchun kamida 2 kishini tanlang.",
+      "next": "Keyingisi: taqsimlash ({{count}} kishi)",
+      "emptyTitle": "Hali do'stlar yo'q",
+      "emptyBody": "Hisobni bo'lishish uchun do'stlarni qo'shing yoki QR kodingizni skanerlashlarini so'rang.",
+      "addFriends": "Do'st qo'shish",
+      "inviteQr": "QR orqali taklif qilish",
+      "noMatches": "Qidiruvga mos odam topilmadi."
+    },
+    "split": {
+      "equalAll": "Hammasini teng bo'lish",
+      "clear": "Tozalash",
+      "single": "Bitta porsiya",
+      "notAssigned": "Taqsimlanmagan",
+      "mode": {
+        "equal": "Teng",
+        "count": "Soni bo'yicha"
+      },
+      "remaining": "Qoldi: {{count}}",
+      "allUnits": "Hammasi taqsimlandi",
+      "extras": "To'lovlar, soliq va chegirmalar",
+      "feeMode": {
+        "proportional": "Mutanosib",
+        "equal": "Teng"
+      },
+      "feeModeHint": {
+        "proportional": "Har kim to'lov va soliqni buyurtmasiga mutanosib to'laydi.",
+        "equal": "To'lov va soliq hamma o'rtasida teng bo'linadi."
+      },
+      "unassigned": "Taqsimlanmagan: {{amount}}",
+      "allAssigned": "Hammasi taqsimlandi",
+      "finishHint": "Tugatish uchun har bir mahsulotni taqsimlang ({{count}} ta qoldi).",
+      "finish": "Tugatish",
+      "newReceipt": "Yangi chek boshlash",
+      "itemsLeft": "Ba'zi mahsulotlarga hali odam tanlanmagan. Ular pastda belgilangan."
+    },
+    "summary": {
+      "total": "Jami",
+      "untitled": "Hisob",
+      "addsUp": "Barcha ulushlar jamiga teng",
+      "mismatch": "Ulushlar jamiga teng emas",
+      "show": "Nimalar oldi",
+      "hide": "Yashirish",
+      "share": "Ulashish",
+      "done": "Tayyor",
+      "copied": "Xulosa nusxalandi"
     }
   }
 }

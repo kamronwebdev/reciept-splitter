@@ -16,11 +16,14 @@ const ZFriendLoose = z.object({
   user: ZUserLoose.optional(),
   uniqueId: z.string().optional(),
   username: z.string().optional(),
-  avatarUrl: z.string().optional(),
+  // the server sends null when a user has no photo (the app then shows initials)
+  avatarUrl: z.string().nullish(),
+  since: z.string().nullish(),
 }).transform((f) => ({
   uniqueId: f.uniqueId ?? f.user?.uniqueId,
   username: f.username ?? f.user?.username,
-  avatarUrl: f.avatarUrl ?? f.user?.avatarUrl ?? null,
+  avatarUrl: (f.avatarUrl ?? (f.user?.avatarUrl as string | null | undefined) ?? null) as string | null,
+  since: f.since ?? null,
   raw: f,
 }));
 

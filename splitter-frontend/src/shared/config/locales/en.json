@@ -6,7 +6,7 @@
   "features": {
     "scan": "Scan",
     "scanDesc": "Take photos of your receipts",
-    "split": "Split Bills", 
+    "split": "Split Bills",
     "splitDesc": "Divide costs with friends",
     "calculate": "Calculate",
     "calculateDesc": "Know who owes what"
@@ -33,7 +33,81 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
     "loginError": "An error occurred during login",
-    "registerError": "An error occurred during registration"
+    "registerError": "An error occurred during registration",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "clearEmail": "Clear email",
+    "didYouMeanPrefix": "Did you mean",
+    "didYouMean": "Did you mean {{email}}?",
+    "passwordRequirements": "Password requirements",
+    "ruleMet": "met",
+    "ruleNotMet": "not met",
+    "passwordRules": {
+      "length": "8+ characters",
+      "upper": "One uppercase letter",
+      "lower": "One lowercase letter",
+      "number": "One number",
+      "special": "One special character"
+    },
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Create a password",
+    "usernameRule": "2-30 characters",
+    "logInInstead": "Log in instead",
+    "backToLogin": "Back to Sign In",
+    "sessionExpired": "Your session expired, please log in again",
+    "logout": {
+      "title": "Log out?",
+      "message": "You will need to sign in again to use the app.",
+      "confirm": "Log out"
+    },
+    "forgot": {
+      "title": "Forgot password?",
+      "desc": "Enter your email and we'll send you a 6-digit code to reset your password.",
+      "send": "Send code"
+    },
+    "reset": {
+      "codeTitle": "Enter the code",
+      "codeDesc": "We sent a 6-digit code to {{email}}. It expires in 15 minutes.",
+      "codeLabel": "Verification code",
+      "codeSent": "A new code has been sent.",
+      "verify": "Continue",
+      "resend": "Resend code",
+      "resendIn": "Resend code in {{seconds}}s",
+      "changeEmail": "Change email",
+      "newPasswordTitle": "Choose a new password",
+      "newPasswordDesc": "Pick a strong password you have not used before.",
+      "submit": "Update password",
+      "success": "Password updated. You are now signed in.",
+      "startOver": "Start over"
+    },
+    "errors": {
+      "emailRequired": "Please enter your email",
+      "passwordRequired": "Please enter your password",
+      "NETWORK": "Can't reach the server. Check your internet connection and try again.",
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "VALIDATION_ERROR": "Please check the entered information.",
+      "INVALID_EMAIL": "Please enter a valid email",
+      "INVALID_USERNAME": "Username must be 2-30 characters",
+      "EMAIL_IN_USE": "This email is already registered",
+      "INVALID_CREDENTIALS": "Wrong email or password",
+      "WEAK_PASSWORD": "Password does not meet the requirements",
+      "INVALID_CODE": "The code is incorrect. Please try again.",
+      "CODE_EXPIRED": "The code has expired. Request a new one.",
+      "TOO_MANY_ATTEMPTS": "Too many wrong attempts. Request a new code.",
+      "INVALID_RESET_TOKEN": "This reset session has expired. Please start over.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHORIZED": "Please log in to continue.",
+      "TOKEN_EXPIRED": "Your session expired, please log in again",
+      "TOKEN_INVALID": "Your session expired, please log in again",
+      "SESSION_REVOKED": "Your session expired, please log in again",
+      "USER_NOT_FOUND": "Account not found",
+      "WRONG_CURRENT_PASSWORD": "Current password is incorrect",
+      "SERVER_ERROR": "Server error. Please try again later.",
+      "FILE_TOO_LARGE": "The photo is too large. Please choose a smaller one.",
+      "UNSUPPORTED_TYPE": "This photo format is not supported.",
+      "FILE_REQUIRED": "Please choose a photo.",
+      "INVALID_PASSWORD": "Password is incorrect"
+    }
   },
   "common": {
     "welcome": "Welcome",
@@ -43,7 +117,9 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "continue": "Continue",
-    "back": "Back"
+    "back": "Back",
+    "retry": "Retry",
+    "close": "Close"
   },
   "friends": {
     "title": "Friends",
@@ -86,77 +162,73 @@
   },
   "profile": {
     "title": "Profile",
-    "status": {
-      "saved": "Saved"
-    },
-    "actions": {
-      "copy": "Copy"
-    },
     "labels": {
-      "guest": "Guest",
-      "notAvailable": "N/A"
+      "guest": "Guest"
+    },
+    "header": {
+      "copyId": "Copy ID",
+      "copied": "Copied",
+      "shareQr": "Share my invite QR",
+      "idLabel": "ID"
     },
     "avatar": {
-      "title": "Avatar",
-      "hint": "Uploaded avatars are delivered via our CDN and refresh instantly.",
-      "upload": "Upload from phone",
-      "uploading": "Uploading...",
-      "reset": "Reset avatar",
-      "resetting": "Resetting..."
+      "change": "Change profile photo",
+      "sheetTitle": "Profile photo",
+      "takePhoto": "Take photo",
+      "chooseLibrary": "Choose from library",
+      "remove": "Remove photo",
+      "cancel": "Cancel",
+      "uploading": "Uploading…",
+      "updated": "Profile photo updated",
+      "removed": "Profile photo removed",
+      "cameraBlockedTitle": "Camera access is off",
+      "photosBlockedTitle": "Photo access is off",
+      "blockedBody": "Allow access in your phone's Settings, then try again.",
+      "openSettings": "Open Settings",
+      "pickFailed": "Could not read the photo. Please try another one."
     },
-    "info": {
-      "title": "User information",
-      "usernameLabel": "Username",
-      "usernamePlaceholder": "Enter a new username",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Enter a new email",
-      "userId": "User ID"
+    "stats": {
+      "title": "Your activity",
+      "sessions": "Bills",
+      "friends": "Friends",
+      "groups": "Groups"
+    },
+    "username": {
+      "label": "Username",
+      "edit": "Edit username",
+      "save": "Save",
+      "cancel": "Cancel",
+      "rule": "2-30 characters",
+      "updated": "Username updated"
+    },
+    "email": {
+      "title": "Email",
+      "change": "Change email",
+      "newEmail": "New email",
+      "currentPassword": "Current password",
+      "passwordHelp": "Enter your current password to confirm.",
+      "submit": "Update email",
+      "updated": "Email updated",
+      "same": "This is already your email"
     },
     "password": {
-      "title": "Change password",
-      "currentLabel": "Current password",
-      "currentPlaceholder": "Enter current password",
-      "newLabel": "New password",
-      "newPlaceholder": "Enter new password",
-      "confirmLabel": "Confirm new password",
-      "confirmPlaceholder": "Confirm new password",
-      "requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special symbol.",
-      "submit": "Change password",
-      "updating": "Updating..."
+      "title": "Password",
+      "change": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Update password",
+      "updated": "Password updated. Other devices were signed out.",
+      "same": "Choose a different password"
+    },
+    "danger": {
+      "title": "Danger zone",
+      "delete": "Delete account",
+      "warning": "This permanently deletes your account, the bills you created, your groups and your friend connections. Bills created by other people stay, but your share is removed. This cannot be undone.",
+      "passwordLabel": "Type your password to confirm",
+      "confirm": "Delete my account"
     },
     "logout": "Log out",
-    "copy": {
-      "successTitle": "Copied",
-      "successMessage": "{{field}} copied to the clipboard.",
-      "unavailableMessage": "{{field}} is not available yet."
-    },
-    "alerts": {
-      "permissionTitle": "Permission needed",
-      "permissionMessage": "Please allow access to your photo library to pick an avatar.",
-      "unavailableTitle": "Unavailable",
-      "avatarLoginRequired": "Sign in to update your avatar.",
-      "profileLoginRequired": "Sign in to update your profile.",
-      "passwordLoginRequired": "Sign in to change your password.",
-      "avatarUpdateFailed": "Could not update the avatar.",
-      "avatarResetFailed": "Could not reset the avatar.",
-      "usernameUpdateFailed": "Could not update the username.",
-      "emailUpdateFailed": "Could not update the email.",
-      "passwordChangeFailed": "Could not change the password.",
-      "logoutFailed": "Could not log out. Please try again.",
-      "imageMissing": "Image file is missing a URI.",
-      "uploadReadFailed": "Unable to read the selected file for upload."
-    },
-    "validation": {
-      "usernameRequired": "Username cannot be empty",
-      "usernameMin": "Username must be at least 2 characters",
-      "emailRequired": "Email cannot be empty",
-      "emailInvalid": "Enter a valid email address",
-      "passwordCurrent": "Enter your current password",
-      "passwordLength": "New password must be at least 8 characters",
-      "passwordComplexity": "Password must include uppercase, lowercase, number, and special character",
-      "passwordMismatch": "Passwords do not match",
-      "passwordDifferent": "Choose a different password"
-    }
+    "refreshFailed": "Could not refresh your profile. Pull down to try again."
   },
   "navigation": {
     "mainMenu": "Main menu",
@@ -181,6 +253,35 @@
     "historyDetails": "Bill details"
   },
   "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "title": "Theme",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark",
+        "hint": "System follows your phone and updates automatically."
+      },
+      "font": {
+        "title": "Font",
+        "preview": "Receipt Splitter",
+        "inter": "Inter",
+        "interDesc": "Clean",
+        "nunito": "Nunito",
+        "nunitoDesc": "Soft & rounded",
+        "manrope": "Manrope",
+        "manropeDesc": "Modern & geometric",
+        "japaneseNote": "Japanese uses the system font."
+      },
+      "textSize": {
+        "title": "Text size",
+        "small": "Small",
+        "default": "Default",
+        "large": "Large",
+        "sample": "The quick brown fox"
+      }
+    },
     "language": {
       "title": "Language",
       "description": "Choose the language used across the app.",
@@ -189,6 +290,199 @@
         "ja": "Japanese",
         "uz": "Uzbek"
       }
+    },
+    "account": {
+      "title": "Account",
+      "profile": "Profile & security",
+      "profileHint": "Photo, username, email, password"
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "support": "Support & feedback",
+      "supportSubject": "Receipt Splitter feedback",
+      "mailFailed": "Could not open your mail app. Write to {{email}}."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Review items",
+      "people": "Who is splitting?",
+      "split": "Split items",
+      "summary": "Summary"
+    },
+    "steps": {
+      "scan": "Scan",
+      "items": "Items",
+      "people": "People",
+      "split": "Split",
+      "summary": "Done"
+    },
+    "demoBanner": "Demo data: this is not your receipt.",
+    "kinds": {
+      "item": "Item",
+      "fee": "Service / fees",
+      "tax": "Tax",
+      "discount": "Discount"
+    },
+    "discard": {
+      "title": "Discard this receipt?",
+      "message": "The items and the split you entered will be lost.",
+      "confirm": "Discard",
+      "keep": "Keep editing"
+    },
+    "resume": {
+      "title": "Continue your receipt?",
+      "message": "You have an unfinished receipt.",
+      "continue": "Continue",
+      "startNew": "Start new"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Scanning is unavailable",
+      "PARSE_FAILED": "Could not read the receipt",
+      "NOT_A_RECEIPT": "This is not a receipt",
+      "IMAGE_UNREADABLE": "The photo is not readable",
+      "ITEM_NOT_ASSIGNED": "Some items are not assigned",
+      "RATE_LIMITED": "Too many requests",
+      "UNAUTHORIZED": "Please sign in again",
+      "SESSION_REVOKED": "Please sign in again",
+      "NETWORK": "No connection",
+      "CANCELLED": "Cancelled",
+      "SERVER_ERROR": "Something went wrong",
+      "UNKNOWN": "Something went wrong"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Receipt scanning is not set up on the server yet. You can enter the items manually.",
+      "PARSE_FAILED": "The receipt reader is not available right now. Try again, choose another photo, or enter the items manually.",
+      "NOT_A_RECEIPT": "We could not find a receipt in this photo. Retake it so the whole receipt is in the frame.",
+      "IMAGE_UNREADABLE": "We could not read any items. Retake the photo in better light, closer and without glare.",
+      "ITEM_NOT_ASSIGNED": "Assign every item to at least one person.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHORIZED": "Your session expired. Please sign in again.",
+      "SESSION_REVOKED": "Your session expired. Please sign in again.",
+      "NETWORK": "Check your internet connection and try again.",
+      "CANCELLED": "Cancelled.",
+      "SERVER_ERROR": "The server had a problem. Please try again in a moment.",
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "SESSION_NOT_FOUND": "This receipt no longer exists on the server (it may be an old draft). Start a new receipt.",
+      "SESSION_FORBIDDEN": "This receipt belongs to another account. Start a new receipt."
+    },
+    "scan": {
+      "hint": "Fit the whole receipt in the frame, good light",
+      "lightOn": "Light on",
+      "lightOff": "Light off",
+      "on": "On",
+      "off": "Off",
+      "zoomTo": "Zoom {{level}}",
+      "gallery": "Choose from gallery",
+      "shutter": "Take photo",
+      "captureFailed": "Could not take the photo. Please try again.",
+      "previewLabel": "Receipt photo preview",
+      "rotate": "Rotate",
+      "crop": "Crop",
+      "applyCrop": "Apply crop",
+      "retake": "Retake",
+      "usePhoto": "Use photo",
+      "phase": {
+        "preparing": "Preparing the photo…",
+        "uploading": "Uploading…",
+        "reading": "Reading items…"
+      },
+      "tryAgain": "Try again",
+      "chooseAnother": "Choose another photo",
+      "chooseFromGallery": "Choose from gallery",
+      "manual": "Enter items manually",
+      "permissionTitle": "Camera access is needed",
+      "permissionBody": "The camera is only used to photograph your receipt so the items can be read. You can also pick a photo from the gallery or type the items yourself.",
+      "allowCamera": "Allow camera access"
+    },
+    "review": {
+      "billName": "Bill name",
+      "viewPhoto": "View receipt photo",
+      "items": "Items",
+      "empty": "No items yet. Add what was bought.",
+      "addItem": "Add item",
+      "editItem": "Edit item",
+      "deleteItem": "Delete item",
+      "delete": "Delete",
+      "tapToEdit": "Tap to edit",
+      "extras": "Fees, tax and discounts",
+      "addExtra": "Add fee, tax or discount",
+      "totals": "Totals",
+      "itemsSubtotal": "Items",
+      "calculated": "Calculated total",
+      "receiptTotal": "Total on the receipt",
+      "mismatchLess": "The items add up to {{amount}} less than the receipt total. Check the items, or use the calculated total.",
+      "mismatchMore": "The items add up to {{amount}} more than the receipt total. Check the items, or use the calculated total.",
+      "useCalculated": "Use calculated total",
+      "currency": "Currency",
+      "changeCurrency": "Change",
+      "name": "Name",
+      "quantity": "Quantity",
+      "unitPrice": "Price per unit",
+      "amount": "Amount",
+      "lineTotal": "Line total",
+      "discountHint": "Enter the discount as a positive number",
+      "save": "Save",
+      "needItem": "Add at least one item to continue.",
+      "next": "Next: choose people",
+      "errors": {
+        "name": "Enter a name",
+        "price": "Enter a price greater than zero"
+      }
+    },
+    "people": {
+      "you": "You",
+      "search": "Search people and groups",
+      "groups": "Groups",
+      "friends": "Friends",
+      "members": "{{count}} members",
+      "remove": "Remove {{name}}",
+      "needTwo": "Select at least 2 people to split the bill.",
+      "next": "Next: split items ({{count}} people)",
+      "emptyTitle": "No friends yet",
+      "emptyBody": "Add friends to split the bill with them, or let them scan your QR code.",
+      "addFriends": "Add friends",
+      "inviteQr": "Invite by QR",
+      "noMatches": "No one matches your search."
+    },
+    "split": {
+      "equalAll": "Split everything equally",
+      "clear": "Clear",
+      "single": "One portion",
+      "notAssigned": "Not assigned",
+      "mode": {
+        "equal": "Equally",
+        "count": "By count"
+      },
+      "remaining": "Remaining: {{count}}",
+      "allUnits": "All units assigned",
+      "extras": "Fees, tax and discounts",
+      "feeMode": {
+        "proportional": "Proportional",
+        "equal": "Equally"
+      },
+      "feeModeHint": {
+        "proportional": "Everyone pays a share of fees and tax based on what they ordered.",
+        "equal": "Fees and tax are split equally between everyone."
+      },
+      "unassigned": "Unassigned: {{amount}}",
+      "allAssigned": "Everything is assigned",
+      "finishHint": "Assign every item to finish ({{count}} left).",
+      "finish": "Finish",
+      "newReceipt": "Start a new receipt",
+      "itemsLeft": "Some items still need people. They are highlighted below."
+    },
+    "summary": {
+      "total": "Total",
+      "untitled": "Bill",
+      "addsUp": "Every share adds up to the total",
+      "mismatch": "Shares do not add up to the total",
+      "show": "What they had",
+      "hide": "Hide details",
+      "share": "Share",
+      "done": "Done",
+      "copied": "Summary copied"
     }
   }
 }

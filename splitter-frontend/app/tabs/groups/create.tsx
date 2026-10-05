@@ -1,14 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  YStack,
-  XStack,
-  Input,
-  Button,
-  Paragraph,
-  Separator,
-  Spinner,
-  Text,
-} from 'tamagui';
+import { YStack, XStack, Input, Separator, Spinner } from 'tamagui';
+import { Button, Paragraph, Text } from '@/shared/ui/typography';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { Plus, Check, X as IconX, Crown } from '@tamagui/lucide-icons';
@@ -119,7 +111,8 @@ export default function GroupCreateScreen() {
       const label = pickTitle(friend);
       const subtitle = pickSubtitle(friend);
       const role = uid ? memberRole.get(uid.toUpperCase()) : undefined;
-      return { uid, label, subtitle, role };
+      const avatarUrl = (friend?.avatarUrl ?? friend?.user?.avatarUrl ?? null) as string | null;
+      return { uid, label, subtitle, role, avatarUrl };
     });
     if (!filter) return list;
     const q = filter.toLowerCase();
@@ -247,7 +240,6 @@ export default function GroupCreateScreen() {
                           label={avatarLabel}
                           size={36}
                           textSize={14}
-                          backgroundColor="$gray5"
                         />
                         <YStack>
                           <Text fontSize={17} fontWeight="600">

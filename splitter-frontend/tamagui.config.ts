@@ -1,30 +1,40 @@
 // tamagui.config.ts
 import { createTamagui } from '@tamagui/core'
 import { config } from '@tamagui/config/v3'
+import { palettes, type Palette } from './src/shared/theme/palette'
 
-// Простая и рабочая конфигурация
+/** Semantic theme values (usable as `$surface`, `$primary`, `$textMuted`, ... in any Tamagui prop). */
+function semantic(p: Palette) {
+  return {
+    background: p.background,
+    color: p.text,
+    borderColor: p.border,
+    surface: p.surface,
+    surfaceAlt: p.surfaceAlt,
+    border: p.border,
+    text: p.text,
+    textMuted: p.textMuted,
+    textSubtle: p.textSubtle,
+    primary: p.primary,
+    onPrimary: p.onPrimary,
+    primarySoft: p.primarySoft,
+    primaryText: p.primaryText,
+    danger: p.danger,
+    dangerSoft: p.dangerSoft,
+    success: p.success,
+    warning: p.warning,
+    overlay: p.overlay,
+    shadowColor: p.shadow,
+  }
+}
+
 const appConfig = createTamagui({
   ...config,
-  // Переопределяем только цвета
   themes: {
     ...config.themes,
-    light: {
-      ...config.themes.light,
-      primary: '#2ECC71',
-      primaryHover: '#27AE60',
-      success: '#2ECC71',
-      error: '#F44336',
-      warning: '#FF9800',
-    },
-    dark: {
-      ...config.themes.dark,
-      primary: '#2ECC71',
-      primaryHover: '#58D68D',
-      success: '#2ECC71',
-      error: '#F44336',
-      warning: '#FF9800',
-    }
-  }
+    light: { ...config.themes.light, ...semantic(palettes.light) },
+    dark: { ...config.themes.dark, ...semantic(palettes.dark) },
+  },
 })
 
 export default appConfig

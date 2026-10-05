@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { XStack, YStack, Paragraph, Button, Text } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { Trash2 } from '@tamagui/lucide-icons';
 import { useFriendsStore } from '../model/friends.store';
+import { confirmAction } from '@/shared/lib/utils/confirm';
 import UserAvatar from '@/shared/ui/UserAvatar';
 
 function pickTitle(f: any) {
@@ -55,18 +56,14 @@ export const FriendListItem = memo(function FriendListItem({ friend }: { friend:
     const uid = uniqueId;
     if (!uid) return;
 
-    Alert.alert(
-      t('friends.remove', 'Remove friend'),
-      `Are you sure you want to remove ${title}?`,
-      [
-        { text: t('common.cancel', 'Cancel'), style: 'cancel' },
-        {
-          text: t('friends.remove', 'Remove'),
-          style: 'destructive',
-          onPress: () => remove(uid),
-        },
-      ]
-    );
+    confirmAction({
+      title: t('friends.remove', 'Remove friend'),
+      message: `Are you sure you want to remove ${title}?`,
+      confirmText: t('friends.remove', 'Remove'),
+      cancelText: t('common.cancel', 'Cancel'),
+      destructive: true,
+      onConfirm: () => remove(uid),
+    });
   };
 
   return (
@@ -77,7 +74,6 @@ export const FriendListItem = memo(function FriendListItem({ friend }: { friend:
           label={avatarLabel}
           size={36}
           textSize={14}
-          backgroundColor="$gray5"
         />
         <YStack>
           <Text fontSize={17} fontWeight="600">{title}</Text>

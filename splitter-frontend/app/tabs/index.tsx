@@ -1,8 +1,11 @@
-import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
+import { Alert, Platform } from 'react-native';
+import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
-import { YStack, XStack, Text, View, Circle } from 'tamagui';
+import { YStack, XStack, View, Circle } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { ScanLine, Users, UserPlus, RefreshCw } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -73,9 +76,9 @@ function AvatarStack({ participantIds }: { participantIds: string[] }) {
           <UserAvatar
             uri={undefined}
             label={(uniqueId || 'U').slice(0, 2).toUpperCase()}
+            seed={uniqueId}
             size={28}
             textSize={12}
-            backgroundColor="$gray5"
           />
         </View>
       ))}
@@ -86,7 +89,7 @@ function AvatarStack({ participantIds }: { participantIds: string[] }) {
           br={14}
           backgroundColor="$gray3"
           borderWidth={2}
-          borderColor="white"
+          borderColor="$background"
           ml={shown.length === 0 ? 0 : -8}
           ai="center"
           jc="center"
@@ -128,7 +131,7 @@ function BillCard({
         borderWidth={1}
         borderColor="$gray6"
         p="$3"
-        backgroundColor="white"
+        backgroundColor="$surface"
       >
         <XStack jc="space-between" ai="center">
           <YStack>
@@ -139,7 +142,7 @@ function BillCard({
               {sub}
             </Text>
           </YStack>
-          <Text fontSize={14} lineHeight={22} fontWeight="700" color="#2ECC71">
+          <Text fontSize={14} lineHeight={22} fontWeight="700" color="$primaryText">
             {amountLabel}
           </Text>
         </XStack>
@@ -157,30 +160,13 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
-  const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
   const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
   const forceRefresh = useSessionsHistoryStore(state => state.forceRefresh);
 
-  const hasFetchedRef = useRef(false);
-
-  useEffect(() => {
-    if (loading) return;
-    if (hasFetchedRef.current) return;
-    if (!initialized || (currentLimit ?? 0) < HOME_HISTORY_LIMIT) {
-      hasFetchedRef.current = true;
-      fetchHistory(HOME_HISTORY_LIMIT).catch(() => {
-        hasFetchedRef.current = false;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialized, loading, currentLimit]);
-
   useFocusEffect(
     useCallback(() => {
-      refreshIfStale(15_000, HOME_HISTORY_LIMIT).catch(() => {});
+      refreshIfStale(undefined, HOME_HISTORY_LIMIT).catch(() => {});
     }, [refreshIfStale])
   );
 
@@ -190,18 +176,46 @@ export default function HomePage() {
 
   const openFriends = () => router.push('/tabs/friends');
   const openGroups = () => router.push('/tabs/groups');
-  const onScan = () => router.push('/tabs/scan-receipt');
+  const onScan = () => {
+    const draft = useReceiptSessionStore.getState();
+    const resume = () => {
+      const route = { items: '/tabs/receipt/review', people: '/tabs/receipt/people', split: '/tabs/receipt/split', summary: '/tabs/receipt/summary', scan: '/tabs/receipt/review' } as const;
+      router.push(route[draft.step] as never);
+    };
+    const startNew = () => {
+      draft.reset();
+      router.push('/tabs/scan-receipt');
+    };
+    if (!draft.active || draft.finalized) {
+      if (draft.active) draft.reset();
+      router.push('/tabs/scan-receipt');
+      return;
+    }
+    // an unfinished receipt survived (the draft is saved on the phone): continue it or start over
+    const title = t('receipt.resume.title', 'Continue your receipt?');
+    const message = t('receipt.resume.message', 'You have an unfinished receipt.');
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && window.confirm(`${title}\n\n${message}`)) resume();
+      else startNew();
+      return;
+    }
+    Alert.alert(title, message, [
+      { text: t('receipt.resume.continue', 'Continue'), onPress: resume },
+      { text: t('receipt.resume.startNew', 'Start new'), style: 'destructive', onPress: startNew },
+      { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+    ]);
+  };
   const openAllSessions = () => router.push('/tabs/sessions/history');
 
   const recent = useMemo<SessionHistoryEntry[]>(() => sessions.slice(0, 3), [sessions]);
 
   return (
     <ScreenContainer>
-      <YStack f={1} ai="center" bg="white">
+      <YStack f={1} ai="center" bg="$background">
         <YStack ai="center" mt="$6" mb="$4">
           <Pressable onPress={onScan}>
-            <Circle size={64} bg="#2ECC71" ai="center" jc="center" elevationAndroid={4}>
-              <ScanLine size={26} color="white" />
+            <Circle size={64} bg="$primary" ai="center" jc="center" elevationAndroid={4}>
+              <ScanLine size={26} color="$onPrimary" />
             </Circle>
           </Pressable>
           <Text mt="$2" color="$gray10" fontSize={13}>
@@ -240,7 +254,7 @@ export default function HomePage() {
             </Pressable>
 
             <Pressable onPress={openAllSessions}>
-              <Text color="#2ECC71">
+              <Text color="$primaryText">
                 {t('home.recent.showMore', 'Show more')}
               </Text>
             </Pressable>

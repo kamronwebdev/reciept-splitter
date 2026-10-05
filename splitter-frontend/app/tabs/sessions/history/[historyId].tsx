@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { YStack, XStack, Text, ScrollView, Button } from 'tamagui';
+import React, { useCallback, useMemo } from 'react';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
+import { YStack, XStack, ScrollView } from 'tamagui';
+import { Text, Button } from '@/shared/ui/typography';
 
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
@@ -89,10 +90,8 @@ export default function HistoryDetailsScreen() {
   const router = useRouter();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
-  const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
+  const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
 
   const bill: SessionHistoryEntry | undefined = useMemo(() => {
     if (!historyId) return undefined;
@@ -101,13 +100,13 @@ export default function HistoryDetailsScreen() {
     return sessions.find(session => session.sessionId === id);
   }, [historyId, sessions]);
 
-  useEffect(() => {
-    if (loading) return;
-    const hasBill = Boolean(bill);
-    if (!initialized || (!hasBill && (currentLimit ?? 0) < DETAIL_LIMIT)) {
-      fetchHistory(DETAIL_LIMIT).catch(() => {});
-    }
-  }, [initialized, loading, currentLimit, fetchHistory, bill]);
+  // Load once per focus. If the bill is not in the cached page, ask for a bigger page; refreshIfStale
+  // only does that when the cached page was full, so a missing bill can never cause a request loop.
+  useFocusEffect(
+    useCallback(() => {
+      refreshIfStale(undefined, DETAIL_LIMIT).catch(() => {});
+    }, [refreshIfStale])
+  );
 
   const participants = useMemo(() => buildParticipantsView(bill), [bill]);
   const currency =
@@ -147,12 +146,12 @@ export default function HistoryDetailsScreen() {
         <YStack w={358} gap="$3">
           <Text fontSize={24} fontWeight="700">{bill.sessionName || 'Hisob'}</Text>
           <Button unstyled alignSelf="flex-start" onPress={() => router.back()}>
-            <Text color="#2ECC71">{'< Ortga'}</Text>
+            <Text color="$primaryText">{'< Ortga'}</Text>
           </Button>
           <Text fontSize={14} color="$gray10">
             {`${formatSessionDate(bill.finalizedAt || bill.createdAt)} ${BULLET} ${(bill.participants ?? []).length} ishtirokchi`}
           </Text>
-          <Text fontSize={16} fontWeight="700" color="#2ECC71">
+          <Text fontSize={16} fontWeight="700" color="$primaryText">
             {fmtCurrency(bill.grandTotal ?? 0, currency)}
           </Text>
         </YStack>
@@ -162,9 +161,9 @@ export default function HistoryDetailsScreen() {
             key={participant.uniqueId}
             w={358}
             borderWidth={1}
-            borderColor="#2ECC71"
+            borderColor="$primary"
             br={12}
-            bg="white"
+            bg="$surface"
             px={16}
             py={12}
             gap="$3"
@@ -173,14 +172,14 @@ export default function HistoryDetailsScreen() {
               <XStack ai="center" gap="$2">
                 <UserAvatar
                   uri={avatarUrl ?? undefined}
-                  label={(participant.username || 'U').slice(0, 1).toUpperCase()}
+                  label={participant.username || 'U'}
+            seed={participant.uniqueId}
                   size={40}
                   textSize={16}
-                  backgroundColor="$gray5"
                 />
                 <Text fontSize={16} fontWeight="600">{participant.username}</Text>
               </XStack>
-              <Text fontSize={16} fontWeight="700" color="#2ECC71">
+              <Text fontSize={16} fontWeight="700" color="$primaryText">
                 {fmtCurrency(amount, currency)}
               </Text>
             </XStack>
@@ -190,7 +189,7 @@ export default function HistoryDetailsScreen() {
                 items.map(item => (
                   <XStack key={item.id} jc="space-between" ai="center">
                     <Text fontSize={14}>{item.title}</Text>
-                    <Text fontSize={14} fontWeight="600" color="#2ECC71">
+                    <Text fontSize={14} fontWeight="600" color="$primaryText">
                       {item.price.toLocaleString()}
                     </Text>
                   </XStack>

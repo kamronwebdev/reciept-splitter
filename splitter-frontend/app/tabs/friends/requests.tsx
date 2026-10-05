@@ -1,14 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import {
-  YStack,
-  XStack,
-  Paragraph,
-  Separator,
-  Button,
-  Spinner,
-  Input,
-  Text,
-} from 'tamagui';
+import { YStack, XStack, Separator, Spinner, Input } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { useRouter } from 'expo-router';
 import { CircleCheck, CircleX, QrCode, Scan } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
@@ -23,8 +15,8 @@ const ROW_H = 60;
 const TAB_W = 171;
 const TAB_H = 37;
 
-const TINT_REJECT = '#E74C3C1A';
-const TINT_ACCEPT = '#2ECC711A';
+const TINT_REJECT = '$dangerSoft';
+const TINT_ACCEPT = '$primarySoft';
 
 function useAutoNotice() {
   const [text, setText] = useState<string | undefined>();
@@ -119,7 +111,6 @@ function UserRow({ title, uid, right, index, total, avatarUrl }: UserRowProps) {
           label={avatarLabel}
           size={36}
           textSize={14}
-          backgroundColor="$gray5"
         />
         <YStack>
           <Text fontSize={17} fontWeight="600">
@@ -463,14 +454,14 @@ export default function FriendsRequestsUnified() {
                         onPress={() => reject(fromId, name, uid)}
                         disabled={isBusy}
                       >
-                        <CircleX size={16} color="#E74C3C" />
+                        <CircleX size={16} color="$danger" />
                       </IconPill>
                       <IconPill
                         tint={TINT_ACCEPT}
                         onPress={() => accept(fromId, name, uid)}
                         disabled={isBusy}
                       >
-                        <CircleCheck size={16} color="#2ECC71" />
+                        <CircleCheck size={16} color="$primaryText" />
                       </IconPill>
                     </XStack>
                   }

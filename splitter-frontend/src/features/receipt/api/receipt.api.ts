@@ -1,4 +1,5 @@
-﻿import { apiClient } from '@/features/auth/api';
+import { apiClient } from '@/features/auth/api';
+import type { DraftItem } from '../lib/draft';
 
 export type ReceiptImagePayload = {
   mimeType: string;
@@ -11,21 +12,22 @@ export interface ParseReceiptRequest {
   image: ReceiptImagePayload;
 }
 
-export type ParsedReceiptItemKind = 'item' | 'fee' | 'discount' | string;
-
 export interface ParsedReceiptItem {
   id: string;
   name: string;
   unitPrice: number;
   quantity: number;
   totalPrice: number;
-  kind?: ParsedReceiptItemKind;
+  kind: 'item' | 'fee' | 'discount' | 'tax';
 }
 
 export interface ReceiptSummary {
-  grandTotal: number;
-  currency?: string; // ✅ Валюта в summary
-  [key: string]: unknown;
+  subtotal: number | null;
+  tax: number | null;
+  serviceFee: number | null;
+  discount: number | null;
+  grandTotal: number | null;
+  currency: string;
 }
 
 export interface ParseReceiptResponse {
@@ -33,103 +35,88 @@ export interface ParseReceiptResponse {
   sessionName: string;
   language: string;
   items: ParsedReceiptItem[];
-  summary?: ReceiptSummary;
+  summary: ReceiptSummary;
+  totalsMismatch: number | null;
+  source: 'gemini' | 'mock';
+  isDemo: boolean;
 }
 
 export type ReceiptParticipant = {
   uniqueId: string;
   username: string;
+  avatarUrl?: string | null;
 };
-
-export type ReceiptSplitMode = 'equal' | 'count';
-
-export interface FinalizeReceiptItemPayload {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  kind?: ParsedReceiptItemKind;
-  splitMode: ReceiptSplitMode;
-  assignedTo?: string[];
-  perPersonCount?: Record<string, number>;
-}
 
 export interface FinalizeReceiptRequest {
   sessionId: number;
   sessionName: string;
   participants: ReceiptParticipant[];
-  items: FinalizeReceiptItemPayload[];
-  currency?: string; // ✅ Добавьте валюту в запрос
+  items: Array<Pick<DraftItem, 'id' | 'name' | 'kind' | 'quantity' | 'unitPrice' | 'totalPrice' | 'splitMode' | 'assignedTo' | 'perPersonCount'>>;
+  currency: string;
+  feeMode: 'proportional' | 'equal';
+}
+
+export interface FinalizeParticipantLine {
+  itemId: string;
+  name: string;
+  kind: string;
+  amount: number;
+  units?: number;
 }
 
 export interface FinalizeTotalsByParticipant {
   uniqueId: string;
   username: string;
   amountOwed: number;
-}
-
-export interface FinalizeTotalsByItem {
-  itemId: string;
-  name: string;
-  total: number;
-}
-
-export interface ReceiptAllocation {
-  itemId: string;
-  participantId: string;
-  shareAmount: number;
-  shareUnits?: number;
-  shareRatio?: number;
+  itemsAmount?: number;
+  feesAmount?: number;
+  lines?: FinalizeParticipantLine[];
 }
 
 export interface FinalizeReceiptResponse {
   sessionId: number;
-  sessionName: string;
+  sessionName: string | null;
   status: string;
   createdAt: string;
+  finalizedAt: string;
+  currency: string;
   totals: {
     grandTotal: number;
-    currency?: string; // ✅ Добавьте валюту в ответ
-    byParticipant?: FinalizeTotalsByParticipant[];
-    byItem?: FinalizeTotalsByItem[];
+    currency: string;
+    byParticipant: FinalizeTotalsByParticipant[];
+    byItem: Array<{ itemId: string; name: string; total: number; kind?: string }>;
   };
-  allocations?: ReceiptAllocation[];
 }
 
-const normalizeError = (error: unknown): Error => {
-  if (error instanceof Error) return error;
-  return new Error('Unexpected error');
-};
-
 export const ReceiptApi = {
-  async parse(payload: ParseReceiptRequest): Promise<ParseReceiptResponse> {
-    try {
-      // console.log('[API] POST /sessions/scan');
-      // console.log('[API] Request data:', JSON.stringify(payload, null, 2));
+  /** Reads a receipt photo. `signal` cancels the upload/parse (the Cancel button). */
+  async parse(
+    payload: ParseReceiptRequest,
+    opts: { signal?: AbortSignal; onUploadProgress?: (fraction: number) => void } = {}
+  ): Promise<ParseReceiptResponse> {
+    const { data } = await apiClient.post<ParseReceiptResponse>('/sessions/scan', payload, {
+      timeout: 120_000,
+      ...(opts.signal ? { signal: opts.signal } : {}),
+      onUploadProgress: (e) => {
+        if (e.total) opts.onUploadProgress?.(e.loaded / e.total);
+      },
+    });
+    return data;
+  },
 
-      const { data } = await apiClient.post<ParseReceiptResponse>('/sessions/scan', payload);
+  /** Empty session for manual entry ("Enter items manually"). */
+  async createSession(): Promise<{ id: number }> {
+    const { data } = await apiClient.post<{ id: number }>('/sessions', {});
+    return data;
+  },
 
-      console.log('[API] Response:', JSON.stringify(data, null, 2));
-      return data;
-    } catch (error) {
-      console.error('[API] Error (parse):', error);
-      throw normalizeError(error);
-    }
+  /** Resolves when the session exists and belongs to the signed-in user; rejects with SESSION_NOT_FOUND / SESSION_FORBIDDEN. */
+  async checkSession(id: number): Promise<void> {
+    await apiClient.get(`/sessions/${id}`, { timeout: 15_000 });
   },
 
   async finalize(payload: FinalizeReceiptRequest): Promise<FinalizeReceiptResponse> {
-    try {
-      console.log('[API] POST /sessions/finalize');
-      console.log('[API] Request data:', JSON.stringify(payload, null, 2));
-
-      const { data } = await apiClient.post<FinalizeReceiptResponse>('/sessions/finalize', payload);
-
-      console.log('[API] Response:', JSON.stringify(data, null, 2));
-      return data;
-    } catch (error) {
-      console.error('[API] Error (finalize):', error);
-      throw normalizeError(error);
-    }
+    const { data } = await apiClient.post<FinalizeReceiptResponse>('/sessions/finalize', payload);
+    return data;
   },
 };
-

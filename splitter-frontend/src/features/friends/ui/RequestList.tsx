@@ -1,9 +1,8 @@
 // src/features/friends/ui/RequestList.tsx
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import {
-  YStack, XStack, Paragraph, Separator, Card, Button, Spinner
-} from 'tamagui';
+import { YStack, XStack, Separator, Card, Spinner } from 'tamagui';
+import { Paragraph, Button } from '@/shared/ui/typography';
 import { useFriendsStore } from '../model/friends.store';
 import { FriendsApi } from '../api/friends.api';
 import { useAppStore } from '@/shared/lib/stores/app-store';
