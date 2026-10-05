@@ -3,7 +3,8 @@ import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useIsFocused } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import { YStack, XStack, Button, Paragraph, Input, Text, Spinner } from 'tamagui';
+import { YStack, XStack, Input, Spinner } from 'tamagui';
+import { Button, Paragraph, Text } from '@/shared/ui/typography';
 import { ChevronLeft, AlertTriangle, Camera as CameraIcon } from '@tamagui/lucide-icons';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 

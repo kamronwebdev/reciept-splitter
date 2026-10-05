@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable } from 'react-native';
-import { Text } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 type Props = {
   title: string;

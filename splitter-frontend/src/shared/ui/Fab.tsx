@@ -1,5 +1,5 @@
 // src/shared/ui/Fab.tsx
-import { Button } from 'tamagui';
+import { Button } from '@/shared/ui/typography';
 import { Plus } from '@tamagui/lucide-icons';
 
 type Props = { onPress: () => void };

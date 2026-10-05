@@ -2,7 +2,8 @@
 import React from 'react';
 import { Redirect, Link } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
-import { YStack, XStack, Text, Circle } from 'tamagui';
+import { YStack, XStack, Circle } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';

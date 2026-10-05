@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
-import { YStack, XStack, Text, View, Circle } from 'tamagui';
+import { YStack, XStack, View, Circle } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { ScanLine, Users, UserPlus, RefreshCw } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 

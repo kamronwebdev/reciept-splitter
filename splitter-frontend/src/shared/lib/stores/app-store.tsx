@@ -8,6 +8,7 @@ import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
 import { getToken, removeToken } from '../utils/token-storage';
+import type { ThemeMode, AppFontFamily, TextScaleKey } from '@/shared/theme/types';
 import type { LanguageCode } from '@/shared/config/languages';
 import { DEFAULT_LANGUAGE } from '@/shared/config/languages';
 
@@ -32,7 +33,9 @@ interface AppStore {
   flashMessage: string | null;
   
   // App settings
-  theme: 'light' | 'dark';
+  themeMode: ThemeMode;
+  fontFamily: AppFontFamily;
+  textScale: TextScaleKey;
   language: LanguageCode;
   
   // Actions
@@ -43,7 +46,9 @@ interface AppStore {
   initializeAuth: () => Promise<void>;
   setSessionExpired: (value: boolean) => void;
   setFlashMessage: (message: string | null) => void;
-  setTheme: (theme: 'light' | 'dark') => void;
+  setThemeMode: (mode: ThemeMode) => void;
+  setFontFamily: (family: AppFontFamily) => void;
+  setTextScale: (scale: TextScaleKey) => void;
   setLanguage: (language: LanguageCode) => void;
 }
 
@@ -70,7 +75,9 @@ export const useAppStore = create<AppStore>()(
       isInitialized: false,
       sessionExpired: false,
       flashMessage: null,
-      theme: 'light',
+      themeMode: 'system',
+      fontFamily: 'inter',
+      textScale: 'default',
       language: DEFAULT_LANGUAGE,
 
       // Auth actions
@@ -133,14 +140,24 @@ export const useAppStore = create<AppStore>()(
       setFlashMessage: (flashMessage) => set({ flashMessage }),
 
       // App settings actions
-      setTheme: (theme) => set({ theme }),
+      setThemeMode: (themeMode) => set({ themeMode }),
+      setFontFamily: (fontFamily) => set({ fontFamily }),
+      setTextScale: (textScale) => set({ textScale }),
       setLanguage: (language) => set({ language }),
     }),
     {
       name: 'app-store',
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
+      // v1 stored a never-changeable `theme: 'light'`; the new default follows the phone setting.
+      migrate: (persisted: any) => {
+        const { theme: _legacy, ...rest } = persisted ?? {};
+        return { ...rest, themeMode: rest.themeMode ?? 'system' };
+      },
       partialize: (state) => ({
-        theme: state.theme,
+        themeMode: state.themeMode,
+        fontFamily: state.fontFamily,
+        textScale: state.textScale,
         language: state.language,
         // Не сохраняем токен и пользователя в AsyncStorage, 
         // так как токен сохраняется отдельно в SecureStore
@@ -149,8 +166,18 @@ export const useAppStore = create<AppStore>()(
   )
 );
 
+/** true once persisted settings (theme, font, language...) were read from storage. */
+export function useAppStoreHydrated(): boolean {
+  const [hydrated, setHydrated] = useState(useAppStore.persist.hasHydrated());
+  useEffect(() => {
+    if (useAppStore.persist.hasHydrated()) setHydrated(true);
+    return useAppStore.persist.onFinishHydration(() => setHydrated(true));
+  }, []);
+  return hydrated;
+}
+
 // Provider component for initialization
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { onUnauthorized } from '@/shared/api/auth-events';
 

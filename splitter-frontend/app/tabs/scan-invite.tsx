@@ -4,7 +4,8 @@ import { ActivityIndicator, StyleSheet, View, Image, Animated, Modal } from 'rea
 import { useIsFocused } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { YStack, XStack, Button, Paragraph } from 'tamagui';
+import { YStack, XStack } from 'tamagui';
+import { Button, Paragraph } from '@/shared/ui/typography';
 import { ChevronLeft } from '@tamagui/lucide-icons';
 
 import { parseInviteFromScan } from '@/shared/lib/utils/invite';

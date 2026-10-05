@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { XStack, YStack, Paragraph, Button, Text } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { Trash2 } from '@tamagui/lucide-icons';
 import { useFriendsStore } from '../model/friends.store';
 import UserAvatar from '@/shared/ui/UserAvatar';

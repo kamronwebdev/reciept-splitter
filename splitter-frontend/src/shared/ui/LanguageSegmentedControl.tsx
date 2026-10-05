@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, Pressable } from 'react-native';
-import { XStack, Text, View } from 'tamagui';
+import { XStack, View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
 
 interface LanguageSegmentedControlProps {

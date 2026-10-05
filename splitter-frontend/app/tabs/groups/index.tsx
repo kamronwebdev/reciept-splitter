@@ -2,16 +2,8 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Scan } from '@tamagui/lucide-icons';
-import {
-  YStack,
-  Paragraph,
-  Card,
-  XStack,
-  Spinner,
-  Separator,
-  View,
-  Button,
-} from 'tamagui';
+import { YStack, Card, XStack, Spinner, Separator, View } from 'tamagui';
+import { Paragraph, Button } from '@/shared/ui/typography';
 
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import type { GroupMember } from '@/features/groups/api/groups.api';

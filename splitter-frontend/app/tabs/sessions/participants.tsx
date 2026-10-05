@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import {
-  YStack, XStack, Button, Spinner, Text, Input, ScrollView
-} from 'tamagui';
+import { YStack, XStack, Spinner, Input, ScrollView } from 'tamagui';
+import { Button, Text } from '@/shared/ui/typography';
 import { Users as UsersIcon, Check } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFriendsStore } from '@/features/friends/model/friends.store';

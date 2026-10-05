@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Pressable } from 'react-native';
-import { YStack, Text } from 'tamagui';
+import { YStack } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/shared/ui/Input';

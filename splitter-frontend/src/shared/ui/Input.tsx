@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { TextInputProps } from 'react-native';
-import { YStack, XStack, Text, Input as TInput } from 'tamagui';
+import { YStack, XStack, Input as TInput } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 export type CustomInputProps = {
   label?: string;

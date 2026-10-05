@@ -1,14 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import {
-  YStack,
-  XStack,
-  Paragraph,
-  Separator,
-  Button,
-  Spinner,
-  Input,
-  Text,
-} from 'tamagui';
+import { YStack, XStack, Separator, Spinner, Input } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { useRouter } from 'expo-router';
 import { CircleCheck, CircleX, QrCode, Scan } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';

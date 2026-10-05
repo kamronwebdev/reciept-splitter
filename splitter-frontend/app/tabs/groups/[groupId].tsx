@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
-import {
-  YStack, XStack, Paragraph, Separator, Button, Input, Spinner, Text
-} from 'tamagui';
+import { YStack, XStack, Separator, Input, Spinner } from 'tamagui';
+import { Paragraph, Button, Text } from '@/shared/ui/typography';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Crown, Pencil, Trash2, Check, X as IconX, ChevronLeft, QrCode } from '@tamagui/lucide-icons';
 

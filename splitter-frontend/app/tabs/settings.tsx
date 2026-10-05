@@ -1,7 +1,8 @@
 // app/tabs/settings.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { YStack, Text, Separator, XStack } from 'tamagui';
+import { YStack, Separator, XStack } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 

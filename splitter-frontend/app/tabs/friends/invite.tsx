@@ -1,6 +1,7 @@
 // app/tabs/friends/invite.tsx
 import React, { useEffect, useState } from 'react';
-import { YStack, XStack, Button, Paragraph, Spinner } from 'tamagui';
+import { YStack, XStack, Spinner } from 'tamagui';
+import { Button, Paragraph } from '@/shared/ui/typography';
 import { QrCode } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';

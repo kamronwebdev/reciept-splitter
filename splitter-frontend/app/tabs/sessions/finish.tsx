@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { YStack, XStack, Text, Button, Circle, ScrollView } from 'tamagui';
+import { YStack, XStack, Circle, ScrollView } from 'tamagui';
+import { Text, Button } from '@/shared/ui/typography';
 import { Check } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FinalizeTotalsByItem, FinalizeTotalsByParticipant, ReceiptAllocation } from '@/features/receipt/api/receipt.api';

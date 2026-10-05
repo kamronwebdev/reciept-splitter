@@ -1,5 +1,6 @@
 import React from 'react';
-import { YStack, XStack, Text } from 'tamagui';
+import { YStack, XStack } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { AlertCircle, CheckCircle2, Info } from '@tamagui/lucide-icons';
 import { Button } from '@/shared/ui/Button';
 

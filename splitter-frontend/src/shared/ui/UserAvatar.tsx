@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
-import { View, Text } from 'tamagui';
+import { View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 interface UserAvatarProps {
   uri?: string | null;

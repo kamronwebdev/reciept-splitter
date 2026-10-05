@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Redirect, useRouter } from 'expo-router';
-import { YStack, Text } from 'tamagui';
+import { YStack } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';

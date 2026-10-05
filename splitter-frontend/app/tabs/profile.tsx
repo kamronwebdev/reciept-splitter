@@ -1,9 +1,10 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Animated, KeyboardAvoidingView, Platform, ScrollView, TextInputProps } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
-import { YStack, XStack, Text, Button, Separator, Spinner } from 'tamagui';
+import { YStack, XStack, Separator, Spinner } from 'tamagui';
+import { Text, Button } from '@/shared/ui/typography';
 import { Copy, LogOut, Upload, RotateCcw, CheckCircle, User as UserIcon, Mail, Lock, Edit3, X, Check, Languages } from '@tamagui/lucide-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';

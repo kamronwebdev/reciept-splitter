@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { Pressable, RefreshControl } from 'react-native';
-import { YStack, XStack, Text, ScrollView, View } from 'tamagui';
+import { YStack, XStack, ScrollView, View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';

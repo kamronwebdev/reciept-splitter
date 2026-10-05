@@ -3,7 +3,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Pressable } from 'react-native';
-import { YStack, XStack, Text, Button, Circle, ScrollView, Spinner } from 'tamagui';
+import { YStack, XStack, Circle, ScrollView, Spinner } from 'tamagui';
+import { Text, Button } from '@/shared/ui/typography';
 import { Users as UsersIcon, Check, Plus, Minus, Package as PackageIcon } from '@tamagui/lucide-icons';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { YStack, XStack, Text, ScrollView, Button } from 'tamagui';
+import { YStack, XStack, ScrollView } from 'tamagui';
+import { Text, Button } from '@/shared/ui/typography';
 
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';

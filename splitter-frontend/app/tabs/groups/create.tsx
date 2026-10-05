@@ -1,14 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  YStack,
-  XStack,
-  Input,
-  Button,
-  Paragraph,
-  Separator,
-  Spinner,
-  Text,
-} from 'tamagui';
+import { YStack, XStack, Input, Separator, Spinner } from 'tamagui';
+import { Button, Paragraph, Text } from '@/shared/ui/typography';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { Plus, Check, X as IconX, Crown } from '@tamagui/lucide-icons';

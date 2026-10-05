@@ -1,6 +1,6 @@
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
-import { Button as TamaguiButton, Text } from 'tamagui'
+import { Button as TamaguiButton, Text } from '@/shared/ui/typography';
 
 interface CustomButtonProps {
   title: string

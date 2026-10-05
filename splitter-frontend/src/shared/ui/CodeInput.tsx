@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import { Text } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 
 type Props = {
   value: string;

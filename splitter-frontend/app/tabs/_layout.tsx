@@ -4,7 +4,8 @@ import React, { useCallback, useEffect } from 'react';
 import { Tabs, Redirect, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, View } from 'tamagui';
+import { YStack, XStack, View } from 'tamagui';
+import { Text } from '@/shared/ui/typography';
 import { Home, Settings, Bell, ChevronLeft } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { AppState } from 'react-native';
@@ -12,6 +13,7 @@ import { useFocusEffect } from 'expo-router';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import Banner from '@/shared/ui/Banner';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 
@@ -132,6 +134,7 @@ function FlashMessage() {
 
 export default function TabLayout() {
   const { user, token, isInitialized } = useAppStore();
+  const { colors } = useAppTheme();
   const { t } = useTranslation();
 
   const greetingName = user?.username || t('home.header.friendFallback', 'friend');
@@ -162,6 +165,7 @@ export default function TabLayout() {
       screenOptions={{
         header: (props) => <GlobalTabsHeader {...props} />,
         tabBarStyle: { display: 'none' },
+        sceneStyle: { backgroundColor: colors.background },
       }}
     >
       {/* Home & Settings tabs (hidden from bar) */}
