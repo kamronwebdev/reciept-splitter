@@ -74,14 +74,6 @@ apiClient.interceptors.request.use(async (config) => {
     console.log(`[API] ${method} ${url}`);
     if (config.params) console.log('[API] Params:', config.params);
     if (config.data) console.log('[API] Request data:', redact(config.data));
-    const hasAppend = !!(config.data && typeof (config.data as any).append === 'function');
-    console.log('[API] Request isFormData by append:', hasAppend);
-    try {
-      const ct = (config.headers && (config.headers as any)['Content-Type']) || (config.headers && typeof (config.headers as any).get === 'function' && (config.headers as any).get('Content-Type'));
-      console.log('[API] Request Content-Type header (interceptor):', ct);
-    } catch (e) {
-      console.warn('[API] cannot read Content-Type header in interceptor', e);
-    }
   }
 
   return config;
@@ -128,9 +120,9 @@ apiClient.interceptors.response.use(
       }
       throw new ApiError(serverMsg || `Request failed (${status})`, status);
     } else if (error.code === 'ECONNABORTED') {
-      throw new ApiError('The request timed out. Please try again.');
+      throw new ApiError(`Cannot reach the server (${API_URL}). Make sure the backend is running and your phone is on the same Wi-Fi as the computer.`);
     } else if (error.request) {
-      throw new ApiError('Network error. Please check your connection and server address.');
+      throw new ApiError(`Cannot reach the server (${API_URL}). Check your connection and the server address.`);
     }
 
     throw new ApiError('Unexpected error while performing the request.');
