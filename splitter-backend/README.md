@@ -69,7 +69,7 @@ Receipt parsing (Gemini) optional:
 
 Body size tuning:
 
-- `JSON_BODY_LIMIT` — override JSON request body limit (default `4mb`) for large base64 images in `/sessions/scan`
+- `JSON_BODY_LIMIT` — override JSON request body limit (default `8mb`) for large base64 images in `/sessions/scan`
 
 Avatars: without R2 the files are stored in `public/` and served from `/static`. The DB keeps a relative path and every response builds the absolute URL from the incoming request (so phones on your LAN can load it). Set `PUBLIC_BASE_URL` (e.g. `https://api.example.com`) to force a fixed origin. `AVATAR_MAX_BYTES` (default 2 MB).
 

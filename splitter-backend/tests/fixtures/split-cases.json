@@ -1,0 +1,37 @@
+[
+  {
+    "name": "uzs equal split with 3 people and a 12% service fee (proportional)",
+    "currency": "UZS",
+    "participants": ["a", "b", "c"],
+    "feeMode": "proportional",
+    "lines": [
+      { "id": "1", "name": "Plov", "kind": "item", "quantity": 1, "total": 45000, "splitMode": "equal", "assignedTo": ["a", "b"], "perPersonCount": {} },
+      { "id": "2", "name": "Tea", "kind": "item", "quantity": 3, "total": 15000, "splitMode": "count", "assignedTo": [], "perPersonCount": { "a": 1, "b": 1, "c": 1 } },
+      { "id": "3", "name": "Salad", "kind": "item", "quantity": 1, "total": 33333, "splitMode": "equal", "assignedTo": ["c"], "perPersonCount": {} },
+      { "id": "F", "name": "Xizmat haqi", "kind": "fee", "quantity": 1, "total": 11199, "splitMode": "equal", "assignedTo": [], "perPersonCount": {} }
+    ]
+  },
+  {
+    "name": "usd cents, odd split, discount and tax (equal fees)",
+    "currency": "USD",
+    "participants": ["a", "b", "c", "d"],
+    "feeMode": "equal",
+    "lines": [
+      { "id": "1", "name": "Pizza", "kind": "item", "quantity": 1, "total": 19.99, "splitMode": "equal", "assignedTo": ["a", "b", "c"], "perPersonCount": {} },
+      { "id": "2", "name": "Beer", "kind": "item", "quantity": 5, "total": 27.5, "splitMode": "count", "assignedTo": [], "perPersonCount": { "a": 2, "b": 1, "d": 2 } },
+      { "id": "D", "name": "Promo", "kind": "discount", "quantity": 1, "total": -5, "splitMode": "equal", "assignedTo": [], "perPersonCount": {} },
+      { "id": "T", "name": "Sales tax", "kind": "tax", "quantity": 1, "total": 3.97, "splitMode": "equal", "assignedTo": [], "perPersonCount": {} }
+    ]
+  },
+  {
+    "name": "count mode with indivisible price (3 for 100 so'm... 10 000)",
+    "currency": "UZS",
+    "participants": ["a", "b", "c"],
+    "feeMode": "proportional",
+    "lines": [
+      { "id": "1", "name": "Water", "kind": "item", "quantity": 3, "total": 10000, "splitMode": "count", "assignedTo": [], "perPersonCount": { "a": 1, "b": 1, "c": 1 } },
+      { "id": "2", "name": "Kebab", "kind": "item", "quantity": 1, "total": 1, "splitMode": "equal", "assignedTo": ["a", "b", "c"], "perPersonCount": {} },
+      { "id": "F", "name": "Service", "kind": "fee", "quantity": 1, "total": 7, "splitMode": "equal", "assignedTo": [], "perPersonCount": {} }
+    ]
+  }
+]

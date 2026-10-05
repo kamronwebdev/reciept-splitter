@@ -16,6 +16,7 @@ import usersRoutes from "./routes/users.js";
 import uploadsRoutes from "./routes/uploads.js";
 import { logAuthAttempts } from "./middleware/logAuth.js";
 import { prisma } from "./config/prisma.js";
+import { initReceiptParser } from "./services/receiptParser.js";
 import debugRoutes from "./routes/debug.js";
 
 // Load .env
@@ -35,8 +36,8 @@ const app = express();
 // Behind a proxy (Render) the real client IP is needed for rate limiting.
 if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 // Allow configurable JSON body size (large base64 images for /sessions/scan)
-// Default increased from Express ~100kb to 4mb to fit ~3MB binary image (base64 expands ~33%).
-const JSON_LIMIT = process.env.JSON_BODY_LIMIT || "4mb";
+// Default 8mb: a ~2000px JPEG receipt photo is ~1-3MB binary (base64 adds ~33%).
+const JSON_LIMIT = process.env.JSON_BODY_LIMIT || "8mb";
 app.use(express.json({ limit: JSON_LIMIT }));
 
 // Configure CORS with long preflight caching and multiple origins support
@@ -166,3 +167,5 @@ prisma.$connect().then(
       err?.message ?? err
     )
 );
+
+void initReceiptParser().catch((e) => console.error("[receipt] init failed:", e?.message ?? e));
