@@ -109,6 +109,7 @@ router.post("/avatar", authenticateToken, runUpload, async (req: Request, res: R
       void deleteAvatarByStoredUrl(before.avatarUrl);
     }
 
+    console.log(`[uploads] avatar saved user=${req.user.id} bytes=${file.size} type=${detected.mime} key=${put.key}`);
     const publicUser = serializeUser(user, req);
     return res.json({ success: true, avatarUrl: publicUser.avatarUrl, key: put.key, user: publicUser });
   } catch (err) {

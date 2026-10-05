@@ -31,7 +31,8 @@ export const apiClient = axios.create({
   baseURL: resolveApiUrl(),
   // Free hosting (Render) can take up to ~60s to wake up; do not hang forever.
   timeout: 60000,
-  headers: { 'Content-Type': 'application/json' },
+  // No default Content-Type on purpose: axios sets application/json for plain objects by itself, and a
+  // JSON default would make it serialize FormData bodies to JSON (the file never reaches the server).
 });
 
 /** Never print passwords to the dev console. */
@@ -54,28 +55,9 @@ apiClient.interceptors.request.use(async (config) => {
       (typeof (config.headers as any)?.get === 'function' ? (config.headers as any).get('Authorization') : undefined);
     const token = existing ? null : await getToken();
     if (token) {
-      const headers: any = config.headers ?? {};
-      if (typeof headers.set === 'function') {
-        headers.set('Authorization', `Bearer ${token}`);
-        // Robust FormData detection: some RN environments don't satisfy `instanceof FormData`.
-        const isFormData = !!(
-          config.data &&
-          (typeof (config.data as any).append === 'function' || (typeof FormData !== 'undefined' && config.data instanceof FormData))
-        );
-        if (!isFormData) {
-          headers.set('Content-Type', headers.get?.('Content-Type') ?? 'application/json');
-        }
-      } else {
-        const isFormData = !!(
-          config.data &&
-          (typeof (config.data as any).append === 'function' || (typeof FormData !== 'undefined' && config.data instanceof FormData))
-        );
-        config.headers = {
-          ...headers,
-          Authorization: `Bearer ${token}`,
-          ...(isFormData ? {} : { 'Content-Type': headers['Content-Type'] ?? 'application/json' }),
-        };
-      }
+      // Only the Authorization header is added here; Content-Type is left to axios / the caller.
+      if (typeof (config.headers as any)?.set === 'function') (config.headers as any).set('Authorization', `Bearer ${token}`);
+      else config.headers = { ...(config.headers as any), Authorization: `Bearer ${token}` } as any;
     }
   } catch {
     // If token retrieval fails we keep going; request will likely return 401.
@@ -242,9 +224,13 @@ export interface UploadAvatarResponse {
 }
 
 export async function uploadAvatar(formData: FormData): Promise<UploadAvatarResponse> {
+  const web = Platform.OS === 'web';
   const { data } = await apiClient.post<UploadAvatarResponse>('/uploads/avatar', formData, {
-    // Native: RN's XHR adds the multipart boundary itself. Web: the browser must set it, so the JSON default is removed.
-    headers: { 'Content-Type': Platform.OS === 'web' ? false : 'multipart/form-data' } as any,
+    // Native: React Native's XHR builds the multipart body and adds the boundary for this content type.
+    // Web: never set it by hand, the browser must add the boundary itself.
+    ...(web ? {} : { headers: { 'Content-Type': 'multipart/form-data' } }),
+    // Hand the FormData over untouched (no JSON/urlencoded serialization).
+    transformRequest: (body) => body,
   });
   return data;
 }
