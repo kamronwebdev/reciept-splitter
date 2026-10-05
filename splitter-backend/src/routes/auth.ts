@@ -7,6 +7,7 @@ import {
   PASSWORD_POLICY_MESSAGE,
 } from "../utils/validation.js";
 import { sendError } from "../utils/errors.js";
+import { serializeUser } from "../utils/avatar.js";
 import { signAuthToken, EMAIL_REGEX } from "../utils/authToken.js";
 import { authLimiter } from "../middleware/rateLimit.js";
 
@@ -182,13 +183,7 @@ router.post("/register", authLimiter, async (req, res) => {
     console.log("/auth/register success:", { id: user.id });
     res.json({
       token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        uniqueId: user.uniqueId,
-        avatarUrl: user.avatarUrl ?? null,
-      },
+      user: serializeUser(user, req),
     });
   } catch (err) {
     console.error(err);
@@ -308,13 +303,7 @@ router.post("/login", authLimiter, async (req, res) => {
     console.log("/auth/login success:", { id: user.id });
     res.json({
       token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        uniqueId: user.uniqueId,
-        avatarUrl: user.avatarUrl ?? null,
-      },
+      user: serializeUser(user, req),
     });
   } catch (err) {
     console.error(err);
@@ -380,7 +369,7 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res) => {
       return sendError(res, 404, "USER_NOT_FOUND", "User not found");
     }
 
-    return res.json(user);
+    return res.json(serializeUser(user, req));
   } catch (err) {
     console.error("/auth/me error:", err);
     return sendError(res, 500, "SERVER_ERROR", "Server error");

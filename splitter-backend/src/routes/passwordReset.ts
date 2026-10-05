@@ -5,6 +5,7 @@ import { randomInt } from "node:crypto";
 import { prisma } from "../config/prisma.js";
 import { sendPasswordResetCode } from "../services/email.js";
 import { sendError } from "../utils/errors.js";
+import { serializeUser } from "../utils/avatar.js";
 import { EMAIL_REGEX, normalizeEmail, signAuthToken } from "../utils/authToken.js";
 import { isStrongPassword, PASSWORD_POLICY_MESSAGE } from "../utils/validation.js";
 import {
@@ -236,13 +237,7 @@ router.post("/reset-password", resetPasswordLimiter, async (req, res) => {
 
     return res.json({
       token: signAuthToken(user),
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        uniqueId: user.uniqueId,
-        avatarUrl: user.avatarUrl ?? null,
-      },
+      user: serializeUser(user, req),
     });
   } catch (err) {
     console.error("/auth/reset-password error:", err);

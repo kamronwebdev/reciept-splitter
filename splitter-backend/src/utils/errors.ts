@@ -18,6 +18,10 @@ export type AuthErrorCode =
   | "SESSION_REVOKED"
   | "USER_NOT_FOUND"
   | "WRONG_CURRENT_PASSWORD"
+  | "INVALID_PASSWORD"
+  | "FILE_REQUIRED"
+  | "FILE_TOO_LARGE"
+  | "UNSUPPORTED_TYPE"
   | "SERVER_ERROR";
 
 /** Responds with `{ error, code }` (human readable text + machine readable code). */

@@ -148,3 +148,6 @@ vite.config.ts.timestamp-*
 
 # IDE
 .idea/
+
+# locally stored uploads (dev fallback when R2 is not configured)
+/public/
