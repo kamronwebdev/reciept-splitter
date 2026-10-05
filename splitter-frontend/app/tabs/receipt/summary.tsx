@@ -103,7 +103,7 @@ export default function SummaryScreen() {
               >
                 <XStack ai="center" gap="$3" minHeight={72} px="$4" py="$3">
                   <UserAvatar uri={avatarOf.get(p.uniqueId)} label={p.username} seed={p.uniqueId} size={48} />
-                  <YStack f={1}>
+                  <YStack f={1} ai="flex-start">
                     <Text fontSize={17} fontWeight="700" color="$text" numberOfLines={1}>
                       {name}
                     </Text>

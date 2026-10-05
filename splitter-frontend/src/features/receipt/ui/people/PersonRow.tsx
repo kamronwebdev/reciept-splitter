@@ -29,7 +29,7 @@ export default function PersonRow({ person, selected, onToggle }: Props) {
     >
       <XStack ai="center" gap="$3" minHeight={60} px="$4" py="$2" backgroundColor="$surface">
         <UserAvatar uri={person.avatarUrl} label={person.username} seed={person.uniqueId} size={44} />
-        <YStack f={1}>
+        <YStack f={1} ai="flex-start">
           <Text fontSize={16} fontWeight="600" color="$text" numberOfLines={1}>
             {name}
           </Text>

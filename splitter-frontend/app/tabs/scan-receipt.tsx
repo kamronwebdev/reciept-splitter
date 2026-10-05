@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { useIsFocused } from 'expo-router';
+import { useIsFocused, useFocusEffect } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
@@ -46,8 +46,18 @@ export default function ScanReceiptScreen() {
     }
   }, [perm, requestPerm]);
 
-  // leaving the screen cancels a running request
-  useEffect(() => () => abortRef.current?.abort(), []);
+  // Tab screens stay mounted: when the user leaves (e.g. on to Review items) cancel anything running and
+  // start from the camera next time, instead of showing a stale "processing" or preview state.
+  useFocusEffect(
+    useCallback(
+      () => () => {
+        abortRef.current?.abort();
+        setStage({ name: 'camera' });
+        setUploadFraction(0);
+      },
+      []
+    )
+  );
 
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();

@@ -61,7 +61,7 @@ export default function ItemSplitCard({ item, currency, participants, meId, shar
       gap="$3"
     >
       <XStack jc="space-between" ai="flex-start" gap="$3">
-        <YStack f={1} gap="$1">
+        <YStack f={1} gap="$1" ai="flex-start">
           <Text fontSize={16} fontWeight="700" color="$text" numberOfLines={2}>
             {item.name}
           </Text>

@@ -169,7 +169,7 @@ export default function PeopleScreen() {
                       <YStack w={44} h={44} br={22} ai="center" jc="center" backgroundColor="$primarySoft">
                         <Users size={20} color="$primaryText" />
                       </YStack>
-                      <YStack f={1}>
+                      <YStack f={1} ai="flex-start">
                         <Text fontSize={16} fontWeight="600" color="$text" numberOfLines={1}>
                           {g.name}
                         </Text>

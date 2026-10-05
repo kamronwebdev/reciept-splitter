@@ -47,7 +47,7 @@ export default function ItemRow({ item, currency, onPress, onDelete }: Props) {
         style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
       >
         <XStack ai="center" gap="$3" minHeight={64} px="$4" py="$2.5" backgroundColor="$surface">
-          <YStack f={1} gap="$1">
+          <YStack f={1} gap="$1" ai="flex-start">
             <Text fontSize={16} fontWeight="600" color="$text" numberOfLines={2}>
               {item.name}
             </Text>
