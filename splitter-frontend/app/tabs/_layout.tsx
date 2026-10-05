@@ -46,6 +46,7 @@ function GlobalTabsHeader(props: any) {
   const routeName = props?.route?.name ?? '';
   const showHomeShortcut =
     routeName === 'profile' ||
+    routeName === 'settings' ||
     routeName.startsWith('friends') ||
     routeName.startsWith('groups') ||
     routeName.startsWith('sessions');
@@ -95,7 +96,21 @@ function GlobalTabsHeader(props: any) {
         </XStack>
 
         <XStack ai="center" gap="$3">
-          <Pressable onPress={() => router.push('/tabs/friends/requests')}>
+          <Pressable
+            onPress={() => router.push('/tabs/settings')}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.title', 'Settings')}
+          >
+            <Settings size={22} color="$gray11" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push('/tabs/friends/requests')}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel={t('friends.requests', 'Requests')}
+          >
             <View>
               <Bell size={22} color="$gray11" />
               <DotBadge value={requestsCount} />
