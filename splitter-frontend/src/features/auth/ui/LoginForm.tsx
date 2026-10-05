@@ -17,8 +17,8 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { Mail, Lock } from '@tamagui/lucide-icons';
 
 const schema = z.object({
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().trim().email('Please enter a valid email'),
+  password: z.string().min(1, 'Please enter your password'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -34,6 +34,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (values: LoginRequest) => {
+    if (isLoading) return;
     try {
       setIsLoading(true);
       const res = await login(values);

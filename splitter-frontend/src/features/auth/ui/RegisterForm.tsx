@@ -12,14 +12,15 @@ import { Card } from '@/shared/ui/Card';
 import ScreenFormContainer from '@/shared/ui/ScreenFormContainer';
 import PasswordInput from '@/shared/ui/PasswordInput';
 import { register as registerUser, RegisterRequest, getCurrentUser } from '../api';
+import { isStrongPassword, PASSWORD_POLICY_HINT } from '../model/password';
 import { saveToken } from '@/shared/lib/utils/token-storage';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { User, Mail, Lock } from '@tamagui/lucide-icons';
 
 const schema = z.object({
-  username: z.string().min(2, 'Username must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  username: z.string().trim().min(2, 'Username must be at least 2 characters'),
+  email: z.string().trim().email('Please enter a valid email'),
+  password: z.string().refine(isStrongPassword, PASSWORD_POLICY_HINT),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -35,6 +36,7 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (values: RegisterRequest) => {
+    if (isLoading) return;
     try {
       setIsLoading(true);
       const res = await registerUser(values);

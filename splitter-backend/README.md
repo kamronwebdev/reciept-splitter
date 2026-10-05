@@ -10,6 +10,23 @@ TypeScript + ESM Express API with Prisma (PostgreSQL), JWT auth, and Swagger doc
 - JWT auth middleware + request logging for `/auth/*`
 - Swagger UI at `/api-docs`
 
+## Run
+
+```bash
+npm run dev     # auto-restart on changes (tsx)
+npm start       # single run
+```
+
+On start the server prints its LAN address(es), e.g. `LAN: http://192.168.1.7:3001`. Open `<that>/health` in the
+phone's browser to verify the phone can reach it. Missing `DATABASE_URL`/`JWT_SECRET`, a busy port or an
+unreachable database are reported with a clear message.
+
+## Tests
+
+```bash
+npm test   # node:test via ts-node (money/rounding helpers)
+```
+
 ## Requirements
 
 - Node.js 18+
@@ -40,6 +57,8 @@ Env variables (minimum):
 - `CORS_ORIGINS` — comma-separated allowlist for production (e.g. `http://localhost:5173,http://localhost:3000`)
 - `ALLOW_ALL_CORS=1` — permissive mode (`Access-Control-Allow-Origin: *`, credentials disabled)
 - `DEBUG_AUTH=1` — verbose JWT verification logs
+- `DEBUG_ENV=1` — print env-presence summary on startup
+- `ENABLE_DEBUG_ROUTES=1` — mount `/debug/*` in production (always on outside production)
 - `DEFAULT_AVATAR_URL` — fallback avatar URL (optional)
 
 Receipt parsing (Gemini) optional:

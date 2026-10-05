@@ -1,7 +1,7 @@
 // app/tabs/_layout.tsx
 
 import React, { useCallback, useEffect } from 'react';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, Redirect, useRouter } from 'expo-router';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, View } from 'tamagui';
@@ -110,7 +110,7 @@ function GlobalTabsHeader(props: any) {
 }
 
 export default function TabLayout() {
-  const { user } = useAppStore();
+  const { user, token, isInitialized } = useAppStore();
   const { t } = useTranslation();
 
   const greetingName = user?.username || t('home.header.friendFallback', 'friend');
@@ -130,6 +130,9 @@ export default function TabLayout() {
   const finishTitle = t('navigation.finish', 'Finish');
   const historyTitle = t('navigation.history', 'Recent bills');
   const historyDetailsTitle = t('navigation.historyDetails', 'Bill details');
+
+  // Signed-out (or expired) sessions can never stay inside the tabs.
+  if (isInitialized && !token) return <Redirect href="/" />;
 
   return (
     <Tabs

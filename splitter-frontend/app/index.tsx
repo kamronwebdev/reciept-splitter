@@ -1,6 +1,7 @@
 // app/index.tsx - улучшенная Welcome страница
 import React from 'react';
 import { Redirect, Link } from 'expo-router';
+import { ActivityIndicator } from 'react-native';
 import { YStack, XStack, Text, Circle } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
@@ -16,9 +17,21 @@ const languages = LANGUAGE_OPTIONS.map((option) => ({
 
 export default function Welcome() {
   const token = useAppStore((state) => state.token);
+  const isInitialized = useAppStore((state) => state.isInitialized);
   const { t } = useTranslation();
   const currentLanguage = useAppStore((state) => state.language);
   const setLanguage = useAppStore((state) => state.setLanguage);
+
+  // Wait until the stored token is checked, otherwise the welcome screen flashes for logged-in users
+  if (!isInitialized) {
+    return (
+      <ScreenContainer>
+        <YStack flex={1} justifyContent="center" alignItems="center">
+          <ActivityIndicator size="large" color="#2ECC71" />
+        </YStack>
+      </ScreenContainer>
+    );
+  }
 
   // Если уже залогинен — сразу в табы
   if (token) return <Redirect href="/tabs" />;
