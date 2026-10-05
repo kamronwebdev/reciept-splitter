@@ -40,7 +40,7 @@ export default function GroupDetailsScreen() {
   const [busyHdr, setBusyHdr] = useState<string | number | undefined>();
 
   useEffect(() => { if (gid) openGroup(gid); }, [gid, openGroup]);
-  useEffect(() => { if (!friends?.length) fetchFriends(); }, [friends?.length, fetchFriends]);
+  useEffect(() => { fetchFriends(); }, [fetchFriends]); // once on mount (no refetch-if-empty)
   useEffect(() => {
     if (current?.group?.name) { setNewName(current.group.name!); setEditing(false); }
   }, [current?.group?.name]);

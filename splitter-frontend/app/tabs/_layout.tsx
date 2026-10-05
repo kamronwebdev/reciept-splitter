@@ -41,7 +41,7 @@ function GlobalTabsHeader(props: any) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAppStore();
-  const fetchAll = useFriendsStore((s) => s.fetchAll);
+  const fetchIfStale = useFriendsStore((s) => s.fetchIfStale);
   const { t } = useTranslation();
   const routeName = props?.route?.name ?? '';
   const showHomeShortcut =
@@ -53,21 +53,21 @@ function GlobalTabsHeader(props: any) {
   const onBackToHome = () => router.replace({ pathname: '/tabs' });
 
   useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+    fetchIfStale();
+  }, [fetchIfStale]);
 
   useFocusEffect(
     useCallback(() => {
-      fetchAll();
-    }, [fetchAll])
+      fetchIfStale();
+    }, [fetchIfStale])
   );
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') fetchAll();
+      if (state === 'active') fetchIfStale();
     });
     return () => sub.remove();
-  }, [fetchAll]);
+  }, [fetchIfStale]);
 
   const requestsCount = useFriendsStore((s) => s.requestsRaw?.incoming?.length ?? 0);
   const displayName = user?.username || t('profile.labels.guest', 'Guest');

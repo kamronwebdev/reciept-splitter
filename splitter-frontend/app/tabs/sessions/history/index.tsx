@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useMemo, useState, useCallback } from 'react';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Pressable, RefreshControl } from 'react-native';
 import { YStack, XStack, ScrollView, View } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
@@ -111,23 +111,19 @@ export default function SessionsHistoryScreen() {
   const router = useRouter();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
   const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
   const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
 
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (loading) return;
-    if (!initialized || (currentLimit ?? 0) < HISTORY_LIMIT) {
-      fetchHistory(HISTORY_LIMIT).catch(() => {});
-    } else {
-      // если уже инициализировано — подёргаем обновление по давности
-      refreshIfStale(15_000, HISTORY_LIMIT).catch(() => {});
-    }
-  }, [initialized, loading, currentLimit, fetchHistory, refreshIfStale]);
+  // Load on screen focus only (not on every state change): refreshIfStale skips fresh data,
+  // treats an empty list as fresh and backs off after errors.
+  useFocusEffect(
+    useCallback(() => {
+      refreshIfStale(undefined, HISTORY_LIMIT).catch(() => {});
+    }, [refreshIfStale])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

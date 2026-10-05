@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { getToken, saveToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
 import { resolveApiUrl } from '@/shared/api/api-url';
+import { DEBUG_API } from '@/shared/api/debug';
 
 /** Current API base URL (re-resolved each time). */
 export const getApiUrl = resolveApiUrl;
@@ -63,7 +64,7 @@ apiClient.interceptors.request.use(async (config) => {
     // If token retrieval fails we keep going; request will likely return 401.
   }
 
-  if (__DEV__) {
+  if (DEBUG_API) {
     const method = (config.method || 'GET').toUpperCase();
     const url = `${config.baseURL}${config.url}`;
     console.log(`[API] ${method} ${url}`);
@@ -76,14 +77,14 @@ apiClient.interceptors.request.use(async (config) => {
 
 apiClient.interceptors.response.use(
   (response) => {
-    if (__DEV__) {
+    if (DEBUG_API) {
       console.log('[API] Response:', response.data);
       console.log('[API] Status:', response.status);
     }
     return response;
   },
   (error: AxiosError<any>) => {
-    if (__DEV__) {
+    if (DEBUG_API) {
       console.error('[API] Error details:', {
         message: error.message,
         code: (error as any).code,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
@@ -158,30 +158,13 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
-  const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
   const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
   const forceRefresh = useSessionsHistoryStore(state => state.forceRefresh);
 
-  const hasFetchedRef = useRef(false);
-
-  useEffect(() => {
-    if (loading) return;
-    if (hasFetchedRef.current) return;
-    if (!initialized || (currentLimit ?? 0) < HOME_HISTORY_LIMIT) {
-      hasFetchedRef.current = true;
-      fetchHistory(HOME_HISTORY_LIMIT).catch(() => {
-        hasFetchedRef.current = false;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialized, loading, currentLimit]);
-
   useFocusEffect(
     useCallback(() => {
-      refreshIfStale(15_000, HOME_HISTORY_LIMIT).catch(() => {});
+      refreshIfStale(undefined, HOME_HISTORY_LIMIT).catch(() => {});
     }, [refreshIfStale])
   );
 

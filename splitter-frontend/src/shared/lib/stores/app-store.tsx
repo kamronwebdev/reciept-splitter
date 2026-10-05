@@ -56,7 +56,7 @@ interface AppStore {
 function resetUserScopedState() {
   try {
     queryClient.clear();
-    useFriendsStore.setState({ friends: [], requestsRaw: null, loading: false, error: undefined });
+    useFriendsStore.setState({ friends: [], requestsRaw: null, loading: false, error: undefined, lastFetchedAt: null, lastErrorAt: null });
     useGroupsStore.setState({ groups: [], current: undefined, counts: {}, loading: false, error: undefined });
     useReceiptSessionStore.getState().reset();
     useSessionsHistoryStore.getState().reset();

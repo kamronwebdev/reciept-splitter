@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useMemo } from 'react';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { YStack, XStack, ScrollView } from 'tamagui';
 import { Text, Button } from '@/shared/ui/typography';
 
@@ -90,10 +90,8 @@ export default function HistoryDetailsScreen() {
   const router = useRouter();
   const sessions = useSessionsHistoryStore(state => state.sessions);
   const loading = useSessionsHistoryStore(state => state.loading);
-  const initialized = useSessionsHistoryStore(state => state.initialized);
-  const currentLimit = useSessionsHistoryStore(state => state.limit);
   const error = useSessionsHistoryStore(state => state.error);
-  const fetchHistory = useSessionsHistoryStore(state => state.fetchHistory);
+  const refreshIfStale = useSessionsHistoryStore(state => state.refreshIfStale);
 
   const bill: SessionHistoryEntry | undefined = useMemo(() => {
     if (!historyId) return undefined;
@@ -102,13 +100,13 @@ export default function HistoryDetailsScreen() {
     return sessions.find(session => session.sessionId === id);
   }, [historyId, sessions]);
 
-  useEffect(() => {
-    if (loading) return;
-    const hasBill = Boolean(bill);
-    if (!initialized || (!hasBill && (currentLimit ?? 0) < DETAIL_LIMIT)) {
-      fetchHistory(DETAIL_LIMIT).catch(() => {});
-    }
-  }, [initialized, loading, currentLimit, fetchHistory, bill]);
+  // Load once per focus. If the bill is not in the cached page, ask for a bigger page; refreshIfStale
+  // only does that when the cached page was full, so a missing bill can never cause a request loop.
+  useFocusEffect(
+    useCallback(() => {
+      refreshIfStale(undefined, DETAIL_LIMIT).catch(() => {});
+    }, [refreshIfStale])
+  );
 
   const participants = useMemo(() => buildParticipantsView(bill), [bill]);
   const currency =
