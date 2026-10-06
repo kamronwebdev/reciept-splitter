@@ -19,6 +19,8 @@ import { prisma } from "./config/prisma.js";
 import { initReceiptParser } from "./services/receiptParser.js";
 import debugRoutes from "./routes/debug.js";
 import landingRoutes from "./routes/landing.js";
+import notificationsRoutes from "./routes/notifications.js";
+import balancesRoutes from "./routes/balances.js";
 
 // Load .env
 dotenv.config();
@@ -107,6 +109,8 @@ app.use(landingRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/groups", groupsRoutes);
 app.use("/sessions", sessionsRoutes);
+app.use("/notifications", notificationsRoutes);
+app.use("/balances", balancesRoutes);
 app.use("/users", usersRoutes);
 app.use("/uploads", uploadsRoutes);
 // Debug probes expose provider details; never mount them in production unless explicitly enabled.

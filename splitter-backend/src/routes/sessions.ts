@@ -7,6 +7,8 @@ import { parseReceipt, ReceiptParseError } from "../services/receiptParser.js";
 import { computeSplit, currencyDecimals, fromMinor, toMinor, type FeeMode, type LineKind, type SplitLine } from "../utils/split.js";
 import { sendError, logRouteError } from "../utils/errors.js";
 import { resolveAvatarUrl } from "../utils/avatar.js";
+import { notify } from "../services/notifications.js";
+import { paymentState, sharesFromPayload } from "../services/settle.js";
 
 const router = Router();
 
@@ -528,6 +530,7 @@ router.post(
       } satisfies Record<string, unknown>;
 
       const participantUniqueIds = Array.from(new Set(byParticipant.map((p) => p.uniqueId))).sort();
+      const firstFinalize = !(await prisma.sessionHistoryEntry.findUnique({ where: { sessionId: session.id }, select: { id: true } }));
 
       await prisma.sessionHistoryEntry.upsert({
         where: { sessionId: session.id },
@@ -551,6 +554,29 @@ router.post(
         },
       });
       await prisma.session.update({ where: { id: session.id }, data: { status: "CLOSED", total: grandTotal.toString() } });
+
+      // "You were included in a receipt" (once, not when the same receipt is finalized again)
+      if (firstFinalize) {
+        const creator = await prisma.user.findUnique({ where: { id: session.creatorId }, select: { uniqueId: true, username: true } });
+        const others = byParticipant.filter((p) => p.uniqueId !== creator?.uniqueId);
+        const users = others.length
+          ? await prisma.user.findMany({ where: { uniqueId: { in: others.map((p) => p.uniqueId) } }, select: { id: true, uniqueId: true } })
+          : [];
+        const idByUid = new Map(users.map((u) => [u.uniqueId, u.id]));
+        await Promise.all(
+          others
+            .filter((p) => idByUid.has(p.uniqueId))
+            .map((p) =>
+              notify(idByUid.get(p.uniqueId)!, "RECEIPT_INCLUDED", {
+                ...(creator ? { actor: creator } : {}),
+                sessionId: session.id,
+                sessionName: sessionName || null,
+                amount: p.amountOwed,
+                currency,
+              })
+            )
+        );
+      }
 
       return res.json(responsePayload);
     } catch (err) {
@@ -648,7 +674,26 @@ router.get(
         };
       };
 
+      const creators = await prisma.user.findMany({
+        where: { id: { in: Array.from(new Set(entries.map((e) => e.creatorId))) } },
+        select: { id: true, uniqueId: true },
+      });
+      const creatorUid = new Map(creators.map((c) => [c.id, c.uniqueId]));
+      const paidRows = entries.length
+        ? await prisma.sessionPayment.findMany({ where: { sessionId: { in: entries.map((e) => e.sessionId) }, paidAt: { not: null } } })
+        : [];
+      const paidBySession = new Map<number, Map<string, Date>>();
+      for (const p of paidRows) {
+        if (!paidBySession.has(p.sessionId)) paidBySession.set(p.sessionId, new Map());
+        paidBySession.get(p.sessionId)!.set(p.participantUniqueId, p.paidAt!);
+      }
+
       const response = entries.map((entry) => ({
+        creatorUniqueId: creatorUid.get(entry.creatorId) ?? null,
+        ...paymentState({
+          shares: sharesFromPayload(entry.payload, entry.currency, creatorUid.get(entry.creatorId) ?? ""),
+          paid: paidBySession.get(entry.sessionId) ?? new Map(),
+        }),
         sessionId: entry.sessionId,
         sessionName: entry.sessionName,
         finalizedAt: entry.finalizedAt.toISOString(),
@@ -671,6 +716,79 @@ router.get(
     }
   }
 );
+
+/**
+ * @swagger
+ * /sessions/{id}/payments:
+ *   post:
+ *     summary: Mark a participant's share of a finalized receipt as paid / unpaid
+ *     description: The receipt creator can mark anyone; a participant can mark only their own share.
+ *     tags: [Sessions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [uniqueId, paid]
+ *             properties:
+ *               uniqueId: { type: string }
+ *               paid: { type: boolean }
+ */
+router.post("/:id/payments", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const sessionId = Number(req.params.id);
+    const target = typeof req.body?.uniqueId === "string" ? req.body.uniqueId.trim() : "";
+    const paid = req.body?.paid;
+    if (!Number.isInteger(sessionId) || !target || typeof paid !== "boolean")
+      return sendError(res, 400, "VALIDATION_ERROR", "uniqueId and paid (boolean) are required");
+
+    const entry = await prisma.sessionHistoryEntry.findUnique({
+      where: { sessionId },
+      include: { creator: { select: { id: true, uniqueId: true, username: true } } },
+    });
+    if (!entry) return sendError(res, 404, "SESSION_NOT_FOUND", "Receipt not found or not finalized");
+    const me = await prisma.user.findUnique({ where: { id: req.user.id }, select: { id: true, uniqueId: true, username: true } });
+    if (!me) return sendError(res, 401, "UNAUTHORIZED", "Unauthorized");
+
+    const shares = sharesFromPayload(entry.payload, entry.currency, entry.creator.uniqueId);
+    const share = shares.find((s) => s.uniqueId === target);
+    if (!share) return sendError(res, 400, "VALIDATION_ERROR", "This person has nothing to pay on this receipt");
+    const isCreator = entry.creatorId === me.id;
+    if (!isCreator && target !== me.uniqueId)
+      return sendError(res, 403, "FORBIDDEN", "You can only mark your own share");
+
+    await prisma.sessionPayment.upsert({
+      where: { sessionId_participantUniqueId: { sessionId, participantUniqueId: target } },
+      create: { sessionId, participantUniqueId: target, paidAt: paid ? new Date() : null, markedById: me.id },
+      update: { paidAt: paid ? new Date() : null, markedById: me.id },
+    });
+
+    // tell the other side
+    const otherId = isCreator
+      ? (await prisma.user.findUnique({ where: { uniqueId: target }, select: { id: true } }))?.id
+      : entry.creatorId;
+    if (otherId && otherId !== me.id) {
+      await notify(otherId, "RECEIPT_PAID", {
+        actor: { uniqueId: me.uniqueId, username: me.username },
+        sessionId,
+        sessionName: entry.sessionName,
+        amount: fromMinor(share.minor, currencyDecimals(entry.currency)),
+        currency: entry.currency,
+        paid,
+        participantUniqueId: target,
+      });
+    }
+
+    const rows = await prisma.sessionPayment.findMany({ where: { sessionId, paidAt: { not: null } } });
+    return res.json({ sessionId, ...paymentState({ shares, paid: new Map(rows.map((r) => [r.participantUniqueId, r.paidAt!])) }) });
+  } catch (err) {
+    logRouteError("POST /sessions/:id/payments error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
 
 /**
  * GET /sessions/:id — lightweight ownership/state check. The app uses it to detect a saved draft whose

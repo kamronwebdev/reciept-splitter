@@ -15,6 +15,7 @@ import {
   publicCard,
   resetInviteCode,
 } from "../services/friendCode.js";
+import { actorOf, notify } from "../services/notifications.js";
 
 const router = Router();
 
@@ -142,6 +143,7 @@ router.post(
       if (inviterId === req.user.id) return res.json({ success: true, action: "self", friend, status: "self" });
 
       const action = await befriend(req.user.id, inviterId);
+      if (action !== "existing") await notify(inviterId, "FRIEND_ADDED", { actor: await actorOf(req.user.id) });
       return res.json({ success: true, action, friend, status: "friends" });
     } catch (err) {
       logRouteError("POST /friends/join error:", err);
@@ -232,6 +234,7 @@ router.post("/code/:code/add", authenticateToken, friendCodeLimiter, async (req:
     if (owner.id === req.user.id) return sendError(res, 400, "SELF", "This is your own QR code", { friend });
     const action = await befriend(req.user.id, owner.id);
     if (action === "existing") return sendError(res, 409, "ALREADY_FRIENDS", "You are already friends", { friend });
+    await notify(owner.id, "FRIEND_ADDED", { actor: await actorOf(req.user.id) });
     return res.json({ success: true, action, friend, friendshipStatus: "friends" });
   } catch (err) {
     logRouteError("POST /friends/code/:code/add error:", err);
@@ -437,6 +440,7 @@ router.post(
           where: { id: reciprocal.id },
           data: { status: "ACCEPTED" },
         });
+        await notify(target.id, "FRIEND_ACCEPTED", { actor: await actorOf(me) });
         return res.json({ success: true, action: "accepted", id: accepted.id });
       }
 
@@ -461,6 +465,7 @@ router.post(
       const created = await prisma.friendship.create({
         data: { requesterId: me, receiverId: target.id },
       });
+      await notify(target.id, "FRIEND_REQUEST", { actor: await actorOf(me) });
       return res.json({ success: true, action: "requested", id: created.id });
     } catch (err) {
       console.error("/friends/request error:", err);
@@ -533,6 +538,7 @@ router.patch(
         where: { id: fr.id },
         data: { status: "ACCEPTED" },
       });
+      await notify(otherId, "FRIEND_ACCEPTED", { actor: await actorOf(me) });
       return res.json({ success: true, id: updated.id });
     } catch (err) {
       console.error("/friends/accept error:", err);

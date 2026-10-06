@@ -27,6 +27,22 @@ model User {
   sessionsCreated     Session[]            @relation("SessionCreator")
   sessionParticipates SessionParticipant[]
   sessionHistoryEntries SessionHistoryEntry[]
+  notifications       Notification[]
+}
+
+/// In-app notification (the bell). `type` is one of NOTIFICATION_TYPES in src/services/notifications.ts;
+/// `data` holds ids + text snapshots (names, amounts) needed to render it and open the related screen.
+model Notification {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  type      String
+  data      Json      @default("{}")
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
 }
 
 model PasswordResetCode {
@@ -90,6 +106,21 @@ model Session {
   group           Group?               @relation(fields: [groupId], references: [id])
   participants    SessionParticipant[]
   historyEntry    SessionHistoryEntry?
+  payments        SessionPayment[]
+}
+
+/// "Settle up": whether a participant has paid their share of a finalized receipt back to its creator.
+/// No row (or paidAt = null) means unpaid. The creator's own share is never owed.
+model SessionPayment {
+  id                  Int       @id @default(autoincrement())
+  sessionId           Int
+  participantUniqueId String
+  paidAt              DateTime?
+  markedById          Int?
+  updatedAt           DateTime  @updatedAt
+  session             Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, participantUniqueId])
 }
 
 model SessionHistoryEntry {

@@ -2,6 +2,7 @@ import { Router } from "express";
 import type { Response } from "express";
 import { prisma } from "../config/prisma.js";
 import jwt from "jsonwebtoken";
+import { actorOf, notify } from "../services/notifications.js";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
 
 const router = Router();
@@ -54,7 +55,6 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       data: { name, ownerId: req.user.id },
     });
 
-    console.log("/groups create:", { id: group.id, ownerId: req.user.id });
     return res.json(group);
   } catch (err) {
     console.error("POST /groups error:", err);
@@ -418,11 +418,6 @@ router.post(
         process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get("host")}`;
       const url = `${baseUrl}/groups/join?token=${encodeURIComponent(token)}`;
 
-      console.log("/groups invite created:", {
-        groupId,
-        ownerId: group.ownerId,
-        exp,
-      });
       return res.json({
         token,
         url,
@@ -553,12 +548,6 @@ router.post(
         memberStatus = "created";
       }
 
-      console.log("/groups join:", {
-        groupId,
-        userId,
-        friendshipStatus,
-        memberStatus,
-      });
       return res.json({
         joined: memberStatus !== "owner",
         friendship: friendshipStatus,
@@ -619,7 +608,6 @@ router.patch(
         where: { id: groupId },
         data: { name },
       });
-      console.log("/groups rename:", { id: groupId });
       return res.json(updated);
     } catch (err) {
       console.error("PATCH /groups/:groupId error:", err);
@@ -661,7 +649,6 @@ router.delete(
       // Remove members first due to FK RESTRICT; sessions will get groupId set to NULL.
       await prisma.groupMember.deleteMany({ where: { groupId } });
       await prisma.group.delete({ where: { id: groupId } });
-      console.log("/groups delete:", { id: groupId });
       return res.json({ success: true });
     } catch (err) {
       console.error("DELETE /groups/:groupId error:", err);
@@ -737,7 +724,8 @@ router.post(
           throw e;
         });
       if (!created) return res.status(409).json({ error: "Already a member" });
-      console.log("/groups add member:", { groupId, userId: user.id });
+      const g = await prisma.group.findUnique({ where: { id: groupId }, select: { name: true } });
+      await notify(user.id, "GROUP_ADDED", { actor: await actorOf(req.user.id), groupId, groupName: g?.name ?? "" });
       return res.json({ success: true });
     } catch (err) {
       console.error("POST /groups/:groupId/members error:", err);
@@ -807,7 +795,10 @@ router.delete(
       await prisma.groupMember.delete({
         where: { groupId_userId: { groupId, userId: user.id } },
       });
-      console.log("/groups remove member:", { groupId, userId: user.id });
+      if (!isSelf) {
+        const g = await prisma.group.findUnique({ where: { id: groupId }, select: { name: true } });
+        await notify(user.id, "GROUP_REMOVED", { actor: await actorOf(req.user.id), groupId, groupName: g?.name ?? "" });
+      }
       return res.json({ success: true, removed: true });
     } catch (err) {
       console.error("DELETE /groups/:groupId/members/:uniqueId error:", err);
@@ -871,7 +862,6 @@ router.post(
       });
 
       // Consistent logging with kick flow
-      console.log("/groups leave member:", { groupId, userId: me });
       return res.json({ success: true, message: "Left group" });
     } catch (err) {
       console.error("POST /groups/:groupId/leave error:", err);
@@ -955,11 +945,6 @@ router.patch(
         create: { groupId, userId: previousOwnerId, role: "MEMBER" },
       });
 
-      console.log("/groups transfer ownership:", {
-        groupId,
-        from: previousOwnerId,
-        to: target.id,
-      });
       return res.json({ success: true, transferred: true });
     } catch (err) {
       console.error(

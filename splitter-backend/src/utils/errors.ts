@@ -29,6 +29,8 @@ export type AuthErrorCode =
   | "INVALID_INVITE"
   | "SELF"
   | "ALREADY_FRIENDS"
+  | "NOT_FOUND"
+  | "FORBIDDEN"
   | "SERVER_ERROR";
 
 /** Responds with `{ error, code }` (human readable text + machine readable code). */
