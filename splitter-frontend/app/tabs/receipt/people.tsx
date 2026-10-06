@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { Search, Users } from '@tamagui/lucide-icons';
+import { QrCode, ScanLine, Search, Users } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -32,6 +32,7 @@ export default function PeopleScreen() {
   const me = useAppStore((s) => s.user);
   const friendsRaw = useFriendsStore((s) => s.friends);
   const fetchFriendsIfStale = useFriendsStore((s) => s.fetchIfStale);
+  const refreshFriends = useFriendsStore((s) => s.fetchAll);
   const groups = useGroupsStore((s) => s.groups);
   const fetchGroups = useGroupsStore((s) => s.fetchGroups);
 
@@ -89,6 +90,27 @@ export default function PeopleScreen() {
   const matches = (c: { username: string; uniqueId: string }) => !q || c.username.toLowerCase().includes(q) || c.uniqueId.toLowerCase().includes(q);
   const visibleFriends = friends.filter(matches);
   const visibleGroups = groups.filter((g) => !q || g.name.toLowerCase().includes(q));
+
+  // "Invite by QR" / "Scan QR" leave this step for a moment; friends added meanwhile come back pre-selected
+  const friendsBeforeQr = useRef<Set<string> | null>(null);
+  const openQr = (target: 'my' | 'scan') => {
+    friendsBeforeQr.current = new Set(friends.map((f) => f.uniqueId));
+    if (target === 'my') router.push('/tabs/friends/invite');
+    else router.push({ pathname: '/tabs/scan-invite', params: { from: 'receipt' } } as never);
+  };
+  useFocusEffect(
+    useCallback(() => {
+      if (friendsBeforeQr.current) void refreshFriends();
+    }, [refreshFriends])
+  );
+  useEffect(() => {
+    const before = friendsBeforeQr.current;
+    if (!before) return;
+    const added = friends.filter((f) => !before.has(f.uniqueId)).map((f) => f.uniqueId);
+    if (!added.length) return;
+    friendsBeforeQr.current = new Set(friends.map((f) => f.uniqueId));
+    setSelected((prev) => Array.from(new Set([...prev, ...added])));
+  }, [friends]);
 
   const toggle = (id: string) => setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
@@ -209,7 +231,7 @@ export default function PeopleScreen() {
               {t('receipt.people.emptyBody', 'Add friends to split the bill with them, or let them scan your QR code.')}
             </Text>
             <Button title={t('receipt.people.addFriends', 'Add friends')} variant="primary" size="medium" onPress={() => router.push('/tabs/friends/search')} />
-            <Button title={t('receipt.people.inviteQr', 'Invite by QR')} variant="outline" size="medium" onPress={() => router.push('/tabs/friends/invite')} />
+            <Button title={t('receipt.people.inviteQr', 'Invite by QR')} variant="outline" size="medium" onPress={() => openQr('my')} />
           </YStack>
         ) : visibleFriends.length === 0 ? (
           <Text fontSize={14} color="$textMuted" ta="center" py="$3">
@@ -224,7 +246,28 @@ export default function PeopleScreen() {
             ))}
           </YStack>
         )}
+        {friends.length > 0 && (
+          <XStack gap="$2" pt="$1">
+            <QrLink icon={<QrCode size={18} color="$text" />} label={t('receipt.people.inviteQr', 'Invite by QR')} onPress={() => openQr('my')} />
+            <QrLink icon={<ScanLine size={18} color="$text" />} label={t('friends.qr.scanQr')} onPress={() => openQr('scan')} />
+          </XStack>
+        )}
       </YStack>
     </FlowScreen>
+  );
+}
+
+function QrLink({ icon, label, onPress }: { icon: React.ReactNode; label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1 }}>
+      {({ pressed }) => (
+        <XStack minHeight={48} ai="center" jc="center" gap="$2" px="$3" borderRadius={12} borderWidth={1} borderColor="$borderColor" backgroundColor="$surface" opacity={pressed ? 0.8 : 1}>
+          {icon}
+          <Text fontSize={15} fontWeight="700" color="$text" numberOfLines={2} ta="center" flexShrink={1}>
+            {label}
+          </Text>
+        </XStack>
+      )}
+    </Pressable>
   );
 }
