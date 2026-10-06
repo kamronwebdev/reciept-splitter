@@ -21,3 +21,5 @@ export const forgotPasswordLimiter = limiter(15 * MIN, 10);
 /** guessing codes */
 export const verifyCodeLimiter = limiter(15 * MIN, 30);
 export const resetPasswordLimiter = limiter(15 * MIN, 15);
+/** friend-code lookups / adds and the public landing page (slows down code guessing) */
+export const friendCodeLimiter = limiter(15 * MIN, 120);

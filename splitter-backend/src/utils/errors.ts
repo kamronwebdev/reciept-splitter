@@ -25,6 +25,10 @@ export type AuthErrorCode =
   | "SESSION_NOT_FOUND"
   | "SESSION_FORBIDDEN"
   | "ITEM_NOT_ASSIGNED"
+  | "INVALID_CODE"
+  | "INVALID_INVITE"
+  | "SELF"
+  | "ALREADY_FRIENDS"
   | "SERVER_ERROR";
 
 /** Responds with `{ error, code }` (human readable text + machine readable code). */

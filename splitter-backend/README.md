@@ -73,6 +73,8 @@ Body size tuning:
 
 Avatars: without R2 the files are stored in `public/` and served from `/static`. The DB keeps a relative path and every response builds the absolute URL from the incoming request (so phones on your LAN can load it). Set `PUBLIC_BASE_URL` (e.g. `https://api.example.com`) to force a fixed origin. `AVATAR_MAX_BYTES` (default 2 MB).
 
+Friend QR codes: every user has one permanent personal code (`User.inviteCode`, created on first use, can be reset). The QR holds `<PUBLIC_BASE_URL>/f/<code>`; opened in a browser (normal phone camera) it shows a small landing page with an "Open in Receipt Splitter" button (`receipt-splitter://f/<code>`). Set `PUBLIC_BASE_URL` in production so printed/shared QR codes keep working when the server address changes. Endpoints: `GET /friends/my-code`, `POST /friends/my-code/reset`, `GET /friends/code/:code`, `POST /friends/code/:code/add`. Old time-limited `/friends/join?token=` codes keep working.
+
 R2/Uploads (optional, for server-side avatar upload):
 
 - `R2_ENDPOINT` — e.g. https://<accountid>.r2.cloudflarestorage.com

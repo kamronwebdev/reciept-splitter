@@ -3,6 +3,18 @@ import type { Response } from "express";
 import { prisma } from "../config/prisma.js";
 import jwt from "jsonwebtoken";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
+import { friendCodeLimiter } from "../middleware/rateLimit.js";
+import { logRouteError, sendError } from "../utils/errors.js";
+import {
+  befriend,
+  ensureInviteCode,
+  findUserByCode,
+  friendshipState,
+  inviteLinks,
+  normalizeInviteCode,
+  publicCard,
+  resetInviteCode,
+} from "../services/friendCode.js";
 
 const router = Router();
 
@@ -76,7 +88,6 @@ router.post(
       const baseUrl =
         process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get("host")}`;
       const url = `${baseUrl}/friends/join?token=${encodeURIComponent(token)}`;
-      console.log("/friends invite created:", { inviterId: req.user.id, exp });
       return res.json({
         token,
         url,
@@ -93,23 +104,11 @@ router.post(
  * @swagger
  * /friends/join:
  *   post:
- *     summary: Accept friend invite via token (auth required)
+ *     summary: Accept an old (time-limited) friend invite token (auth required)
+ *     description: Kept for QR codes printed/shared before personal codes existed. Returns the inviter's card.
  *     tags: [Friends]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [token]
- *             properties:
- *               token:
- *                 type: string
- *     responses:
- *       200:
- *         description: Friendship created/accepted or already exists
  */
 router.post(
   "/join",
@@ -119,61 +118,126 @@ router.post(
       if (!req.user) return res.status(401).json({ error: "Unauthorized" });
       const token =
         typeof req.body?.token === "string" ? req.body.token.trim() : "";
-      if (!token) return res.status(400).json({ error: "token is required" });
+      if (!token) return sendError(res, 400, "INVALID_INVITE", "token is required");
 
       const secret = getFriendInviteSecret();
-      if (!secret)
-        return res.status(500).json({ error: "Invite secret missing" });
+      if (!secret) return sendError(res, 500, "SERVER_ERROR", "Invite secret missing");
 
       let decoded: any;
       try {
         decoded = jwt.verify(token, secret);
-      } catch (e) {
-        console.warn("/friends join invalid token:", e);
-        return res.status(400).json({ error: "Invalid or expired token" });
+      } catch {
+        return sendError(res, 400, "INVALID_INVITE", "Invalid or expired invite");
       }
+      const inviterId = Number(decoded?.inviterId);
+      if (!decoded || decoded.typ !== "friend_invite" || !Number.isFinite(inviterId))
+        return sendError(res, 400, "INVALID_INVITE", "Invalid invite");
 
-      if (!decoded || decoded.typ !== "friend_invite" || !decoded.inviterId)
-        return res.status(400).json({ error: "Invalid token payload" });
-
-      const inviterId = Number(decoded.inviterId);
-      const me = req.user.id;
-      if (!Number.isFinite(inviterId))
-        return res.status(400).json({ error: "Invalid token claims" });
-      if (inviterId === me) return res.json({ success: true, action: "self" });
-
-      const existing = await prisma.friendship.findFirst({
-        where: {
-          OR: [
-            { requesterId: inviterId, receiverId: me },
-            { requesterId: me, receiverId: inviterId },
-          ],
-        },
+      const inviter = await prisma.user.findUnique({
+        where: { id: inviterId },
+        select: { id: true, uniqueId: true, username: true, avatarUrl: true },
       });
+      if (!inviter) return sendError(res, 400, "INVALID_INVITE", "Invalid invite");
+      const friend = publicCard(inviter, req);
+      if (inviterId === req.user.id) return res.json({ success: true, action: "self", friend, status: "self" });
 
-      if (existing) {
-        if (existing.status === "ACCEPTED") {
-          return res.json({ success: true, action: "existing" });
-        }
-        const updated = await prisma.friendship.update({
-          where: { id: existing.id },
-          data: { status: "ACCEPTED" },
-        });
-        console.log("/friends join accepted:", { id: updated.id });
-        return res.json({ success: true, action: "accepted" });
-      }
-
-      const created = await prisma.friendship.create({
-        data: { requesterId: inviterId, receiverId: me, status: "ACCEPTED" },
-      });
-      console.log("/friends join created:", { id: created.id });
-      return res.json({ success: true, action: "created" });
+      const action = await befriend(req.user.id, inviterId);
+      return res.json({ success: true, action, friend, status: "friends" });
     } catch (err) {
-      console.error("POST /friends/join error:", err);
-      return res.status(500).json({ error: "Server error" });
+      logRouteError("POST /friends/join error:", err);
+      return sendError(res, 500, "SERVER_ERROR", "Server error");
     }
   }
 );
+
+/**
+ * @swagger
+ * /friends/my-code:
+ *   get:
+ *     summary: My permanent friend QR code ({ code, url, deepLink }); created on first use
+ *     tags: [Friends]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/my-code", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const code = await ensureInviteCode(req.user.id);
+    return res.json(inviteLinks(code, req));
+  } catch (err) {
+    logRouteError("GET /friends/my-code error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
+
+/**
+ * @swagger
+ * /friends/my-code/reset:
+ *   post:
+ *     summary: Replace my friend QR code (the old code and its QR stop working)
+ *     tags: [Friends]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/my-code/reset", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const code = await resetInviteCode(req.user.id);
+    return res.json(inviteLinks(code, req));
+  } catch (err) {
+    logRouteError("POST /friends/my-code/reset error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
+
+/**
+ * @swagger
+ * /friends/code/{code}:
+ *   get:
+ *     summary: Public card of a friend-QR owner + friendship status with me
+ *     description: friendshipStatus is none | pending_outgoing | pending_incoming | friends | self. 404 INVALID_CODE.
+ *     tags: [Friends]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.get("/code/:code", authenticateToken, friendCodeLimiter, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const owner = await findUserByCode(normalizeInviteCode(req.params.code));
+    if (!owner) return sendError(res, 404, "INVALID_CODE", "This QR code is not valid anymore");
+    const friendshipStatus = await friendshipState(req.user.id, owner.id);
+    return res.json({ ...publicCard(owner, req), friendshipStatus });
+  } catch (err) {
+    logRouteError("GET /friends/code/:code error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
+
+/**
+ * @swagger
+ * /friends/code/{code}/add:
+ *   post:
+ *     summary: Become friends with the QR owner (accepted immediately; a pending request either way is accepted)
+ *     description: Errors INVALID_CODE (404), SELF (400), ALREADY_FRIENDS (409, includes friend).
+ *     tags: [Friends]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post("/code/:code/add", authenticateToken, friendCodeLimiter, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const owner = await findUserByCode(normalizeInviteCode(req.params.code));
+    if (!owner) return sendError(res, 404, "INVALID_CODE", "This QR code is not valid anymore");
+    const friend = publicCard(owner, req);
+    if (owner.id === req.user.id) return sendError(res, 400, "SELF", "This is your own QR code", { friend });
+    const action = await befriend(req.user.id, owner.id);
+    if (action === "existing") return sendError(res, 409, "ALREADY_FRIENDS", "You are already friends", { friend });
+    return res.json({ success: true, action, friend, friendshipStatus: "friends" });
+  } catch (err) {
+    logRouteError("POST /friends/code/:code/add error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
 
 /**
  * @swagger
@@ -197,7 +261,6 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
     const userId = req.user.id;
-    console.log("GET /friends for:", userId);
 
     const [asRequester, asReceiver] = await Promise.all([
       prisma.friendship.findMany({
@@ -217,7 +280,6 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     ]
       .sort((a, b) => b.since.getTime() - a.since.getTime())
       .map((u) => ({ ...u, avatarUrl: u.avatarUrl ?? null }));
-    console.log("GET /friends count:", friends.length);
     return res.json(friends);
   } catch (err) {
     console.error("/friends error:", err);
@@ -257,19 +319,11 @@ router.get(
           orderBy: { createdAt: "desc" },
         }),
       ]);
-      console.log("GET /friends/requests counts:", {
-        incoming: incoming.length,
-        outgoing: outgoing.length,
-      });
 
       const payload = {
         incoming: incoming.map((r) => ({ id: r.id, from: r.requester })),
         outgoing: outgoing.map((r) => ({ id: r.id, to: r.receiver })),
       };
-      console.log("GET /friends/requests response sizes:", {
-        incoming: payload.incoming.length,
-        outgoing: payload.outgoing.length,
-      });
       return res.json(payload);
     } catch (err) {
       console.error("/friends/requests error:", err);
@@ -309,9 +363,7 @@ router.get(
   async (req: AuthRequest, res: Response) => {
     try {
       const q = String(req.query.q || "").trim();
-      console.log("GET /friends/search q:", q);
       if (!q) {
-        console.log("GET /friends/search empty query");
         return res.json([]);
       }
       const user = await prisma.user.findUnique({
@@ -321,7 +373,6 @@ router.get(
       const result = user
         ? [{ ...user, avatarUrl: user.avatarUrl ?? null }]
         : [];
-      console.log("GET /friends/search result count:", result.length);
       return res.json(result);
     } catch (err) {
       console.error("/friends/search error:", err);
@@ -363,7 +414,6 @@ router.post(
       // Correctly parse unique ID as a string to avoid JSON errors.
       // Body is parsed by express.json() in server.ts, we strictly require a string here.
       const { uniqueId } = req.body ?? {};
-      console.log("POST /friends/request body:", { uniqueId });
       if (typeof uniqueId !== "string" || !uniqueId.trim()) {
         return res.status(400).json({ error: "uniqueId is required" });
       }
@@ -387,7 +437,6 @@ router.post(
           where: { id: reciprocal.id },
           data: { status: "ACCEPTED" },
         });
-        console.log("/friends/request auto-accepted:", { id: accepted.id });
         return res.json({ success: true, action: "accepted", id: accepted.id });
       }
 
@@ -412,7 +461,6 @@ router.post(
       const created = await prisma.friendship.create({
         data: { requesterId: me, receiverId: target.id },
       });
-      console.log("/friends/request created:", { id: created.id });
       return res.json({ success: true, action: "requested", id: created.id });
     } catch (err) {
       console.error("/friends/request error:", err);
@@ -457,7 +505,6 @@ router.patch(
       // Correctly parse unique ID as a string to avoid JSON errors.
       // Body is parsed by express.json() in server.ts, we strictly require a string here.
       const { uniqueId, requesterId } = req.body ?? {};
-      console.log("PATCH /friends/accept body:", { uniqueId, requesterId });
 
       let otherId: number | null = null;
       if (typeof requesterId === "number") {
@@ -486,7 +533,6 @@ router.patch(
         where: { id: fr.id },
         data: { status: "ACCEPTED" },
       });
-      console.log("/friends/accept updated:", { id: updated.id });
       return res.json({ success: true, id: updated.id });
     } catch (err) {
       console.error("/friends/accept error:", err);
@@ -531,7 +577,6 @@ router.patch(
       // Correctly parse unique ID as a string to avoid JSON errors.
       // Body is parsed by express.json() in server.ts, we strictly require a string here.
       const { uniqueId, requesterId } = req.body ?? {};
-      console.log("PATCH /friends/reject body:", { uniqueId, requesterId });
 
       let otherId: number | null = null;
       if (typeof requesterId === "number") {
@@ -560,7 +605,6 @@ router.patch(
         where: { id: fr.id },
         data: { status: "REJECTED" },
       });
-      console.log("/friends/reject updated:", { id: updated.id });
       return res.json({ success: true, id: updated.id });
     } catch (err) {
       console.error("/friends/reject error:", err);
@@ -597,7 +641,6 @@ router.delete(
       const uniqueId = String(req.params.uniqueId || "").trim();
       if (!uniqueId) return res.status(400).json({ error: "Invalid uniqueId" });
 
-      console.log("DELETE /friends by uniqueId:", { me, uniqueId });
 
       const other = await prisma.user.findUnique({
         where: { uniqueId },
@@ -617,7 +660,6 @@ router.delete(
       if (!fr) return res.json({ success: true, removed: false });
 
       await prisma.friendship.delete({ where: { id: fr.id } });
-      console.log("DELETE /friends removed:", { linkId: fr.id });
       return res.json({ success: true, removed: true });
     } catch (err) {
       console.error("DELETE /friends/:uniqueId error:", err);

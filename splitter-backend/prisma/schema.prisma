@@ -16,6 +16,8 @@ model User {
   createdAt           DateTime             @default(now())
   avatarUrl           String?
   tokenVersion        Int                  @default(0)
+  /// permanent personal friend-QR code (created lazily, reset by the user); null until first used
+  inviteCode          String?              @unique
   passwordResetCodes  PasswordResetCode[]
   receivedFriendships Friendship[]         @relation("UserFriendshipReceiver")
   sentFriendships     Friendship[]         @relation("UserFriendshipRequester")

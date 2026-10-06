@@ -18,6 +18,7 @@ import { logAuthAttempts } from "./middleware/logAuth.js";
 import { prisma } from "./config/prisma.js";
 import { initReceiptParser } from "./services/receiptParser.js";
 import debugRoutes from "./routes/debug.js";
+import landingRoutes from "./routes/landing.js";
 
 // Load .env
 dotenv.config();
@@ -101,6 +102,8 @@ app.use("/static", express.static(path.join(process.cwd(), "public")));
 // Auth routes with logging
 app.use("/auth", logAuthAttempts, authRoutes, passwordResetRoutes);
 app.use("/user", userRoutes);
+// browser landing pages for invite QR codes (/f/:code, GET /friends/join) before the API routers
+app.use(landingRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/groups", groupsRoutes);
 app.use("/sessions", sessionsRoutes);
