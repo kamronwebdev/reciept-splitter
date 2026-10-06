@@ -6,37 +6,37 @@ type Props = {
   title?: string;
   description?: string;
   children: React.ReactNode;
-  /** red accent (danger zone) */
+  /** red header (danger zone) */
   danger?: boolean;
-  /** right side of the title row */
+  /** right side of the header row */
   right?: React.ReactNode;
 };
 
-/** Titled card used by Profile and Settings. */
+/**
+ * iOS inset-grouped section with free content (forms, controls): small header above a rounded card,
+ * the description as a footnote under it. For plain rows use ListSection / ListRow.
+ */
 export default function Section({ title, description, children, danger, right }: Props) {
   return (
-    <YStack
-      backgroundColor="$surface"
-      borderWidth={1}
-      borderColor={danger ? '$danger' : '$borderColor'}
-      borderRadius={16}
-      padding="$4"
-      gap="$3"
-    >
-      {!!title && (
-        <XStack ai="center" jc="space-between" minHeight={28}>
-          <Text fontSize={16} fontWeight="700" color={danger ? '$danger' : '$text'} accessibilityRole="header">
-            {title}
-          </Text>
+    <YStack gap="$1.5">
+      {(!!title || right) && (
+        <XStack ai={right ? 'center' : 'flex-end'} jc="space-between" px="$4" minHeight={20}>
+          {!!title && (
+            <Text variant="footnote" color={danger ? '$danger' : '$textMuted'} textTransform="uppercase" letterSpacing={0.4} accessibilityRole="header">
+              {title}
+            </Text>
+          )}
           {right}
         </XStack>
       )}
+      <YStack backgroundColor="$surface" borderRadius={12} p="$4" gap="$3">
+        {children}
+      </YStack>
       {!!description && (
-        <Text fontSize={13} color="$textMuted">
+        <Text variant="footnote" color="$textMuted" px="$4">
           {description}
         </Text>
       )}
-      {children}
     </YStack>
   );
 }

@@ -120,11 +120,22 @@
     "back": "Back",
     "retry": "Try again",
     "close": "Close",
-    "done": "Done"
+    "done": "Done",
+    "clear": "Clear"
   },
   "friends": {
     "title": "Friends",
-    "requests": "Requests",
+    "requests": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "accepted": "You and {{target}} are now friends",
+      "rejected": "Request from {{target}} declined",
+      "emptyIncoming": "No incoming requests",
+      "emptyOutgoing": "No outgoing requests",
+      "requestedLabel": "Requested",
+      "tabIncoming": "Incoming",
+      "tabOutgoing": "Sent"
+    },
     "add": "Add Friend",
     "empty": "No friends yet. Scan a friend's QR code or show them yours.",
     "searchPlaceholder": "Enter uniqueId, e.g. USER#1234",
@@ -214,7 +225,30 @@
     "filter": "Search your friends",
     "noMatches": "No friends match your search",
     "addById": "Add by ID",
-    "addTitle": "Add friend"
+    "addTitle": "Add friend",
+    "common": {
+      "unknownUser": "Unknown user"
+    },
+    "listHeader_one": "{{count}} friend",
+    "listHeader_other": "{{count}} friends",
+    "removeTitle": "Remove {{name}}?",
+    "removeMessage": "You can add each other again later.",
+    "removed": "{{name}} was removed",
+    "swipeHint": "Swipe left on a friend to remove them.",
+    "search": {
+      "button": "Search",
+      "inviteSent": "Request sent to {{target}}",
+      "noResults": "No one found with this ID",
+      "orInPerson": "Or add someone in person",
+      "placeholder": "Friend's ID, e.g. USER#1234"
+    },
+    "status": {
+      "add": "Add",
+      "friend": "Friend",
+      "incoming": "Wants to add you",
+      "requested": "Requested",
+      "you": "You"
+    }
   },
   "home": {
     "header": {
@@ -652,5 +686,69 @@
       "RECEIPT_UNPAID_YOURS": "{{name}} marked your share of “{{receipt}}” as not paid",
       "UNKNOWN": "New notification"
     }
+  },
+  "groups": {
+    "actions": {
+      "scanInvite": "Join with a QR code"
+    },
+    "common": {
+      "untitled": "Group"
+    },
+    "emptyTitle": "No groups yet",
+    "emptyMessage": "Create a group for people you often split bills with.",
+    "scanFooter": "Scan a group's invite QR to join it.",
+    "list": {
+      "members_one": "{{count}} member",
+      "members_other": "{{count}} members",
+      "members_zero": "No members yet"
+    },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin"
+    },
+    "create": {
+      "action": "Create",
+      "emptyState": "Give the group a name, then add members.",
+      "inGroup": "in the group",
+      "notInGroup": "not in the group",
+      "manageMembers": "Members",
+      "namePlaceholder": "Group name",
+      "noFriends": "No friends to add yet",
+      "notice": {
+        "success": "Group created"
+      }
+    },
+    "detail": {
+      "add": "Add",
+      "addFromFriends": "Add from friends",
+      "added": "{{name}} added",
+      "delete": "Delete group",
+      "deleteTitle": "Delete this group?",
+      "deleteMessage": "The group will be deleted for everyone. This can't be undone.",
+      "leave": "Leave group",
+      "leaveTitle": "Leave this group?",
+      "leaveMessage": "You can join again with an invite.",
+      "members": "Members",
+      "nameTitle": "Group name",
+      "noFriendsToAdd": "All your friends are already in this group.",
+      "remove": "Remove",
+      "removeTitle": "Remove {{name}}?",
+      "removeMessage": "They will no longer see this group.",
+      "removed": "{{name}} was removed",
+      "renamed": "Group renamed",
+      "saveName": "Save name",
+      "showQr": "Invite with a QR code",
+      "swipeHint": "Swipe left on a member to remove them."
+    },
+    "invite": {
+      "description": "Scan to join this group",
+      "error": "Couldn't create the invite.",
+      "invalid": "Group not found.",
+      "new": "New QR code"
+    }
+  },
+  "history": {
+    "search": "Search receipts or people",
+    "noMatches": "No receipts match your search."
   }
 }

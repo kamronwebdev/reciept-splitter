@@ -111,8 +111,8 @@ export default function NotificationsScreen() {
                             <Bell size={18} color="$primaryText" />
                           </YStack>
                         )}
-                        <YStack f={1} gap={2}>
-                          <Text variant="subheadline" color="$text" fontWeight={item.read ? '400' : '600'}>
+                        <YStack f={1} gap={2} ai="flex-start">
+                          <Text variant="subheadline" color="$text" ta="left" fontWeight={item.read ? '400' : '600'}>
                             {notificationText(item, t, meId)}
                           </Text>
                           <Text variant="caption" color="$textMuted">

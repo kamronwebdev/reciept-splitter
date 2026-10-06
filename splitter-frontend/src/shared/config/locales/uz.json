@@ -120,7 +120,8 @@
     "back": "Orqaga",
     "retry": "Qayta urinish",
     "close": "Yopish",
-    "done": "Tayyor"
+    "done": "Tayyor",
+    "clear": "Tozalash"
   },
   "home": {
     "header": {
@@ -483,7 +484,17 @@
   },
   "friends": {
     "title": "Do'stlar",
-    "requests": "So'rovlar",
+    "requests": {
+      "accept": "Qabul qilish",
+      "decline": "Rad etish",
+      "accepted": "Siz va {{target}} endi do'stsiz",
+      "rejected": "{{target}} so'rovi rad etildi",
+      "emptyIncoming": "Kiruvchi so'rovlar yo'q",
+      "emptyOutgoing": "Yuborilgan so'rovlar yo'q",
+      "requestedLabel": "Yuborilgan",
+      "tabIncoming": "Kiruvchi",
+      "tabOutgoing": "Yuborilgan"
+    },
     "add": "Do'st qo'shish",
     "empty": "Hali do'stlar yo'q. Do'stingizning QR kodini skanerlang yoki o'zingiznikini ko'rsating.",
     "searchPlaceholder": "uniqueId kiriting, masalan USER#1234",
@@ -573,7 +584,30 @@
     "filter": "Do'stlaringizni qidiring",
     "noMatches": "Qidiruvga mos do'st topilmadi",
     "addById": "ID orqali qo'shish",
-    "addTitle": "Do'st qo'shish"
+    "addTitle": "Do'st qo'shish",
+    "common": {
+      "unknownUser": "Noma'lum foydalanuvchi"
+    },
+    "listHeader_one": "{{count}} ta do'st",
+    "listHeader_other": "{{count}} ta do'st",
+    "removeTitle": "{{name}} o'chirilsinmi?",
+    "removeMessage": "Keyinroq yana do'st bo'lishingiz mumkin.",
+    "removed": "{{name}} o'chirildi",
+    "swipeHint": "Do'stni o'chirish uchun uni chapga suring.",
+    "search": {
+      "button": "Qidirish",
+      "inviteSent": "{{target}}ga so'rov yuborildi",
+      "noResults": "Bu ID bilan hech kim topilmadi",
+      "orInPerson": "Yoki yonma-yon qo'shing",
+      "placeholder": "Do'st ID si, masalan USER#1234"
+    },
+    "status": {
+      "add": "Qo'shish",
+      "friend": "Do'st",
+      "incoming": "Sizni qo'shmoqchi",
+      "requested": "Yuborilgan",
+      "you": "Siz"
+    }
   },
   "tabs": {
     "home": "Asosiy",
@@ -652,5 +686,69 @@
       "RECEIPT_UNPAID_YOURS": "{{name}} «{{receipt}}» dagi ulushingizni to'lanmagan deb belgiladi",
       "UNKNOWN": "Yangi bildirishnoma"
     }
+  },
+  "groups": {
+    "actions": {
+      "scanInvite": "QR kod orqali qo'shilish"
+    },
+    "common": {
+      "untitled": "Guruh"
+    },
+    "emptyTitle": "Hali guruhlar yo'q",
+    "emptyMessage": "Tez-tez birga hisob bo'ladigan odamlar uchun guruh yarating.",
+    "scanFooter": "Guruhga qo'shilish uchun uning taklif QR kodini skanerlang.",
+    "list": {
+      "members_one": "{{count}} a'zo",
+      "members_other": "{{count}} a'zo",
+      "members_zero": "Hali a'zolar yo'q"
+    },
+    "roles": {
+      "owner": "Egasi",
+      "admin": "Admin"
+    },
+    "create": {
+      "action": "Yaratish",
+      "emptyState": "Guruhga nom bering, so'ng a'zolarni qo'shing.",
+      "inGroup": "guruhda",
+      "notInGroup": "guruhda emas",
+      "manageMembers": "A'zolar",
+      "namePlaceholder": "Guruh nomi",
+      "noFriends": "Hali qo'shiladigan do'stlar yo'q",
+      "notice": {
+        "success": "Guruh yaratildi"
+      }
+    },
+    "detail": {
+      "add": "Qo'shish",
+      "addFromFriends": "Do'stlardan qo'shish",
+      "added": "{{name}} qo'shildi",
+      "delete": "Guruhni o'chirish",
+      "deleteTitle": "Guruh o'chirilsinmi?",
+      "deleteMessage": "Guruh hamma uchun o'chiriladi. Buni qaytarib bo'lmaydi.",
+      "leave": "Guruhdan chiqish",
+      "leaveTitle": "Guruhdan chiqasizmi?",
+      "leaveMessage": "Taklif orqali yana qo'shilishingiz mumkin.",
+      "members": "A'zolar",
+      "nameTitle": "Guruh nomi",
+      "noFriendsToAdd": "Barcha do'stlaringiz allaqachon bu guruhda.",
+      "remove": "Chiqarish",
+      "removeTitle": "{{name}} chiqarilsinmi?",
+      "removeMessage": "U endi bu guruhni ko'rmaydi.",
+      "removed": "{{name}} chiqarildi",
+      "renamed": "Guruh nomi o'zgartirildi",
+      "saveName": "Nomni saqlash",
+      "showQr": "QR kod bilan taklif qilish",
+      "swipeHint": "A'zoni chiqarish uchun uni chapga suring."
+    },
+    "invite": {
+      "description": "Guruhga qo'shilish uchun skanerlang",
+      "error": "Taklif yaratib bo'lmadi.",
+      "invalid": "Guruh topilmadi.",
+      "new": "Yangi QR kod"
+    }
+  },
+  "history": {
+    "search": "Chek yoki odamni qidirish",
+    "noMatches": "Qidiruvga mos chek yo'q."
   }
 }

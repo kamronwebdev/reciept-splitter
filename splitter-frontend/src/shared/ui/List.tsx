@@ -92,11 +92,11 @@ export function ListRow({
     <XStack minHeight={44} px="$4" py={subtitle ? '$2' : '$2.5'} ai="center" gap="$3" backgroundColor={pressed ? '$surfaceAlt' : 'transparent'} opacity={disabled ? 0.5 : 1}>
       {left}
       <YStack f={1} gap={2} ai="flex-start">
-        <Text variant="body" color={color} numberOfLines={numberOfLines}>
+        <Text variant="body" color={color} numberOfLines={numberOfLines} ta="left">
           {title}
         </Text>
         {!!subtitle && (
-          <Text variant="subheadline" color="$textMuted" numberOfLines={2}>
+          <Text variant="subheadline" color="$textMuted" numberOfLines={2} ta="left">
             {subtitle}
           </Text>
         )}

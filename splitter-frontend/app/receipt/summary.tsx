@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, Share } from 'react-native';
+import { Platform, Pressable, Share, Switch } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
 import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
@@ -16,17 +15,39 @@ import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session
 import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import { useCloseReceiptFlow } from '@/features/receipt/model/close-flow';
 import { queryClient } from '@/shared/config/query-client';
+import { useSetPaid } from '@/features/balances/model/queries';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
+import { haptic } from '@/shared/lib/haptics';
+import { toast } from '@/shared/ui/Toast';
+import { errorMessage } from '@/shared/lib/utils/error-message';
 
 /** Step 5: the result. Who owes what (expandable), the total, Share and Done. */
 export default function SummaryScreen() {
   const { t, i18n } = useTranslation();
-  const router = useRouter();
   const meId = useAppStore((s) => s.user?.uniqueId);
-  const setFlash = useAppStore((s) => s.setFlashMessage);
   const finalized = useReceiptSessionStore((s) => s.finalized);
   const participants = useReceiptSessionStore((s) => s.participants);
   const reset = useReceiptSessionStore((s) => s.reset);
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  // settle up right away: "Paid" per person (the creator is never owed by themselves)
+  const [paid, setPaidState] = useState<Record<string, boolean>>({});
+  const setPaid = useSetPaid();
+  const { colors } = useAppTheme();
+  const togglePaid = (uniqueId: string, value: boolean) => {
+    if (!finalized) return;
+    haptic.select();
+    setPaidState((p) => ({ ...p, [uniqueId]: value }));
+    setPaid.mutate(
+      { sessionId: finalized.sessionId, uniqueId, paid: value },
+      {
+        onSuccess: (res) => setPaidState(Object.fromEntries(Object.entries(res.payments).map(([k, v]) => [k, !!v]))),
+        onError: (e) => {
+          setPaidState((p) => ({ ...p, [uniqueId]: !value }));
+          toast.error(errorMessage(t, e));
+        },
+      }
+    );
+  };
 
   const avatarOf = useMemo(() => new Map(participants.map((p) => [p.uniqueId, p.avatarUrl ?? null])), [participants]);
 
@@ -60,7 +81,7 @@ export default function SummaryScreen() {
       // no share sheet (web): copy the summary instead
       try {
         await Clipboard.setStringAsync(shareText);
-        setFlash(t('receipt.summary.copied', 'Summary copied'));
+        toast.success(t('receipt.summary.copied', 'Summary copied'));
       } catch {
         /* nothing else to try */
       }
@@ -84,7 +105,7 @@ export default function SummaryScreen() {
         </>
       }
     >
-      <YStack backgroundColor="$surface" borderRadius={16} borderWidth={1} borderColor="$borderColor" p="$4" gap="$1" ai="center">
+      <YStack backgroundColor="$surface" borderRadius={16} p="$4" gap="$1" ai="center">
         <Text fontSize={14} color="$textMuted" numberOfLines={1}>
           {title} · {date}
         </Text>
@@ -101,7 +122,7 @@ export default function SummaryScreen() {
           const isOpen = !!open[p.uniqueId];
           const name = p.uniqueId === meId ? t('receipt.people.you', 'You') : p.username;
           return (
-            <YStack key={p.uniqueId} backgroundColor="$surface" borderRadius={16} borderWidth={1} borderColor="$borderColor" overflow="hidden">
+            <YStack key={p.uniqueId} backgroundColor="$surface" borderRadius={16} overflow="hidden">
               <Pressable
                 onPress={() => setOpen((o) => ({ ...o, [p.uniqueId]: !o[p.uniqueId] }))}
                 accessibilityRole="button"
@@ -124,6 +145,19 @@ export default function SummaryScreen() {
                   {isOpen ? <ChevronUp size={18} color="$textSubtle" /> : <ChevronDown size={18} color="$textSubtle" />}
                 </XStack>
               </Pressable>
+              {p.uniqueId !== meId && p.amountOwed > 0 && (
+                <XStack ai="center" jc="space-between" px="$4" pb="$3" gap="$3">
+                  <Text variant="subheadline" color={paid[p.uniqueId] ? '$success' : '$textMuted'}>
+                    {paid[p.uniqueId] ? t('settle.paid') : t('settle.notPaid')}
+                  </Text>
+                  <Switch
+                    value={!!paid[p.uniqueId]}
+                    onValueChange={(v) => togglePaid(p.uniqueId, v)}
+                    trackColor={{ true: colors.primary, false: colors.surfaceAlt }}
+                    accessibilityLabel={t('settle.paidA11y', { name })}
+                  />
+                </XStack>
+              )}
               {isOpen && (
                 <YStack px="$4" pb="$3" gap="$1.5" borderTopWidth={1} borderColor="$borderColor" pt="$3">
                   {(p.lines ?? []).map((l, i) => (

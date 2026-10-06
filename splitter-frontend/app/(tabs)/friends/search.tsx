@@ -1,208 +1,145 @@
-import { useMemo, useState, useEffect } from 'react';
-import { YStack, XStack, Input, Separator, Spinner } from 'tamagui';
-import { Button, Paragraph, Text } from '@/shared/ui/typography';
+// app/(tabs)/friends/search.tsx — add a friend by their ID (or go to the QR options).
+import React, { useMemo, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { QrCode, ScanLine, UserSearch } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
-
-import { useFriendsStore } from '@/features/friends/model/friends.store';
+import { Text } from '@/shared/ui/typography';
+import Screen from '@/shared/ui/Screen';
+import SearchField from '@/shared/ui/SearchField';
+import { Button } from '@/shared/ui/Button';
+import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
+import { ListSkeleton } from '@/shared/ui/Skeleton';
+import EmptyState from '@/shared/ui/EmptyState';
+import UserAvatar from '@/shared/ui/UserAvatar';
+import { toast } from '@/shared/ui/Toast';
+import { errorMessage } from '@/shared/lib/utils/error-message';
 import { useAppStore } from '@/shared/lib/stores/app-store';
+import { useFriendsStore } from '@/features/friends/model/friends.store';
+import { handleOf } from '@/features/friends/lib/format';
 
-function useAutoNotice() {
-  const [text, setText] = useState<string | undefined>();
-  const [kind, setKind] = useState<'success' | 'error' | undefined>();
-
-  useEffect(() => {
-    if (!text) return;
-    const timeout = setTimeout(() => {
-      setText(undefined);
-      setKind(undefined);
-    }, 2500);
-    return () => clearTimeout(timeout);
-  }, [text]);
-
-  return {
-    showSuccess: (message: string) => {
-      setKind('success');
-      setText(message);
-    },
-    showError: (message: string) => {
-      setKind('error');
-      setText(message);
-    },
-    node: text ? (
-      <Paragraph col={kind === 'error' ? '$red10' : '$green10'}>{text}</Paragraph>
-    ) : null,
-  };
-}
-
-type UserLite = { uniqueId?: string; username?: string; displayName?: string; id?: number };
+type UserLite = { uniqueId?: string; username?: string; displayName?: string; avatarUrl?: string | null };
 
 export default function FriendsSearchScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
   const { search, send, requestsRaw, friends } = useFriendsStore();
   const meUniqueId = useAppStore((s) => s.user?.uniqueId);
-  const { t } = useTranslation();
-
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<UserLite[]>([]);
+  const [results, setResults] = useState<UserLite[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [sendingId, setSendingId] = useState<string | null>(null);
-  const [sentLocal, setSentLocal] = useState<Set<string>>(new Set());
-  const notice = useAutoNotice();
+  const [sent, setSent] = useState<Set<string>>(new Set());
 
-  const outgoingSet = useMemo(() => {
-    const set = new Set<string>();
-    (requestsRaw?.outgoing ?? []).forEach((request: any) => {
-      const uid = request?.to?.uniqueId ?? request?.toUniqueId ?? request?.uniqueId;
-      if (uid) set.add(uid);
-    });
-    return set;
-  }, [requestsRaw?.outgoing]);
+  const known = useMemo(() => {
+    const friendsSet = new Set((friends ?? []).map((f: any) => f?.uniqueId ?? f?.user?.uniqueId).filter(Boolean));
+    const out = new Set((requestsRaw?.outgoing ?? []).map((r: any) => r?.to?.uniqueId).filter(Boolean));
+    const inc = new Set((requestsRaw?.incoming ?? []).map((r: any) => r?.from?.uniqueId).filter(Boolean));
+    return { friendsSet, out, inc };
+  }, [friends, requestsRaw]);
 
-  const incomingSet = useMemo(() => {
-    const set = new Set<string>();
-    (requestsRaw?.incoming ?? []).forEach((request: any) => {
-      const uid = request?.from?.uniqueId ?? request?.fromUniqueId ?? request?.uniqueId;
-      if (uid) set.add(uid);
-    });
-    return set;
-  }, [requestsRaw?.incoming]);
-
-  const friendsSet = useMemo(() => {
-    const set = new Set<string>();
-    (friends ?? []).forEach((friend: any) => {
-      const uid = friend?.user?.uniqueId ?? friend?.uniqueId;
-      if (uid) set.add(uid);
-    });
-    return set;
-  }, [friends]);
-  async function doSearch() {
-    if (!query.trim()) return;
+  const doSearch = async () => {
+    const q = query.trim();
+    if (!q || loading) return;
     setLoading(true);
     try {
-      const response = await search(query.trim());
-      setResults(response || []);
-      if (!response || response.length === 0) {
-        notice.showSuccess(t('friends.search.noResults', 'No results found'));
-      }
-    } catch (error: any) {
-      notice.showError(error?.message ?? t('friends.search.error', 'Search failed'));
+      setResults((await search(q)) as UserLite[]);
+    } catch (e) {
+      toast.error(errorMessage(t, e));
       setResults([]);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function sendInvite(uniqueId?: string, label?: string) {
-    if (!uniqueId) return;
-    setSendingId(uniqueId);
+  const add = async (u: UserLite) => {
+    if (!u.uniqueId) return;
+    setSendingId(u.uniqueId);
     try {
-      await send(uniqueId);
-      setSentLocal((prev) => new Set(prev).add(uniqueId));
-      const target = label ?? uniqueId ?? t('friends.common.unknownUser', 'Unknown user');
-      notice.showSuccess(t('friends.search.inviteSent', { target }));
-    } catch (error: any) {
-      notice.showError(error?.message ?? t('friends.search.inviteFailed', 'Could not send invite'));
+      await send(u.uniqueId);
+      setSent((prev) => new Set(prev).add(u.uniqueId!));
+      toast.success(t('friends.search.inviteSent', { target: u.username || u.uniqueId }));
+    } catch (e) {
+      toast.error(errorMessage(t, e));
     } finally {
       setSendingId(null);
     }
-  }
-
-  const onSubmit = () => {
-    if (!loading) doSearch();
   };
 
-  const statusLabels = useMemo(
-    () => ({
-      add: t('friends.status.add', 'Add'),
-      you: t('friends.status.you', 'You'),
-      friend: t('friends.status.friend', 'Friend'),
-      requested: t('friends.status.requested', 'Requested'),
-      incoming: t('friends.status.incoming', 'Incoming'),
-    }),
-    [t]
-  );
+  const statusOf = (uid?: string) => {
+    if (!uid) return null;
+    if (uid === meUniqueId) return t('friends.status.you', 'You');
+    if (known.friendsSet.has(uid)) return t('friends.status.friend', 'Friend');
+    if (known.out.has(uid) || sent.has(uid)) return t('friends.status.requested', 'Requested');
+    if (known.inc.has(uid)) return t('friends.status.incoming', 'Incoming');
+    return null;
+  };
 
   return (
-    <YStack f={1} p="$4" gap="$3">
-      <XStack gap="$2" ai="center">
-        <Input
-          f={1}
-          value={query}
-          onChangeText={setQuery}
-          placeholder={t('friends.search.placeholder', 'Enter uniqueId, e.g. USER#1234')}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onSubmitEditing={onSubmit}
-          returnKeyType="search"
-        />
-        <Button onPress={doSearch} disabled={!query || loading}>
-          {loading ? <Spinner size="small" /> : t('friends.search.button', 'Search')}
-        </Button>
-      </XStack>
-
-      {notice.node}
-      <Separator />
+    <Screen gap={16}>
+      <SearchField
+        value={query}
+        onChangeText={setQuery}
+        placeholder={t('friends.search.placeholder', 'Enter uniqueId, e.g. USER#1234')}
+        autoCapitalize="none"
+        onSubmitEditing={doSearch}
+        clearLabel={t('common.clear')}
+      />
+      <Button title={t('friends.search.button')} variant="secondary" onPress={doSearch} loading={loading} disabled={!query.trim()} />
 
       {loading ? (
-        <YStack gap="$2">
-          <Spinner />
-        </YStack>
+        <ListSkeleton rows={1} />
+      ) : results === null ? (
+        <ListSection header={t('friends.search.orInPerson')}>
+          <ListRow
+            key="scan"
+            left={
+              <IconTile>
+                <ScanLine size={17} color="$onPrimary" />
+              </IconTile>
+            }
+            title={t('friends.qr.scanQr')}
+            chevron
+            onPress={() => router.push('/scan-invite')}
+          />
+          <ListRow
+            key="myqr"
+            left={
+              <IconTile>
+                <QrCode size={17} color="$onPrimary" />
+              </IconTile>
+            }
+            title={t('friends.qr.myQr')}
+            chevron
+            onPress={() => router.push('/my-qr')}
+          />
+        </ListSection>
       ) : results.length === 0 ? (
-        <Paragraph col="$gray10">{t('friends.search.hint', 'Search by uniqueId to find someone')}</Paragraph>
+        <EmptyState icon={<UserSearch size={28} color="$primaryText" />} message={t('friends.search.noResults', 'No results found')} />
       ) : (
-        results.map((user, index) => {
-          const uid = user.uniqueId;
-          const fallbackTitle = user.displayName || user.username || uid;
-          const title = fallbackTitle ?? t('friends.common.unknownUser', 'Unknown user');
-
-          const isMe = !!uid && !!meUniqueId && uid === meUniqueId;
-          const isFriend = !!uid && friendsSet.has(uid);
-          const isOutgoing = !!uid && (outgoingSet.has(uid) || sentLocal.has(uid));
-          const isIncoming = !!uid && incomingSet.has(uid);
-
-          let actionLabel = statusLabels.add;
-          let disabled = false;
-
-          if (isMe) {
-            actionLabel = statusLabels.you;
-            disabled = true;
-          } else if (isFriend) {
-            actionLabel = statusLabels.friend;
-            disabled = true;
-          } else if (isOutgoing) {
-            actionLabel = statusLabels.requested;
-            disabled = true;
-          } else if (isIncoming) {
-            actionLabel = statusLabels.incoming;
-            disabled = true;
-          }
-
-          const isBusy = sendingId === uid;
-
-          return (
-            <XStack
-              key={`${uid ?? 'u'}-${index}`}
-              h={60}
-              ai="center"
-              jc="space-between"
-              px="$4"
-              bg="$color1"
-            >
-              <YStack>
-                <Text fontSize={17} fontWeight="600">{title}</Text>
-                {!!uid && <Paragraph fontSize={14} color="$gray10">{uid}</Paragraph>}
-              </YStack>
-
-              <Button
-                size="$2"
-                onPress={() => sendInvite(uid, title)}
-                disabled={!uid || disabled || isBusy}
-              >
-                {isBusy ? '...' : actionLabel}
-              </Button>
-            </XStack>
-          );
-        })
+        <ListSection>
+          {results.map((u, i) => {
+            const status = statusOf(u.uniqueId);
+            const name = u.displayName || u.username || u.uniqueId || t('friends.common.unknownUser', 'Unknown user');
+            return (
+              <ListRow
+                key={`${u.uniqueId ?? i}`}
+                left={<UserAvatar uri={u.avatarUrl} label={name} seed={u.uniqueId} size={40} textSize={15} />}
+                title={name}
+                subtitle={handleOf(u.uniqueId)}
+                right={
+                  status ? (
+                    <Text variant="footnote" color="$textMuted">
+                      {status}
+                    </Text>
+                  ) : (
+                    <Button title={t('friends.status.add', 'Add')} size="small" variant="secondary" loading={sendingId === u.uniqueId} onPress={() => void add(u)} />
+                  )
+                }
+              />
+            );
+          })}
+        </ListSection>
       )}
-    </YStack>
+    </Screen>
   );
 }

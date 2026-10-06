@@ -1,331 +1,259 @@
+// app/(tabs)/groups/[groupId].tsx — one group: header, members, add from friends (owner), QR, delete / leave.
 import React, { useEffect, useMemo, useState } from 'react';
-import { YStack, XStack, Separator, Input, Spinner } from 'tamagui';
-import { Paragraph, Button, Text } from '@/shared/ui/typography';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Crown, Pencil, Trash2, Check, X as IconX, ChevronLeft, QrCode } from '@tamagui/lucide-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { XStack, YStack } from 'tamagui';
+import { QrCode, UsersRound } from '@tamagui/lucide-icons';
+import { useTranslation } from 'react-i18next';
 
+import { Text } from '@/shared/ui/typography';
+import Screen from '@/shared/ui/Screen';
+import Section from '@/shared/ui/Section';
+import Input from '@/shared/ui/Input';
+import SearchField from '@/shared/ui/SearchField';
+import { Button } from '@/shared/ui/Button';
+import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
+import { ListSkeleton } from '@/shared/ui/Skeleton';
+import EmptyState from '@/shared/ui/EmptyState';
+import UserAvatar from '@/shared/ui/UserAvatar';
+import SwipeRow from '@/shared/ui/SwipeRow';
+import { showActionSheet } from '@/shared/ui/ActionSheet';
+import { toast } from '@/shared/ui/Toast';
+import { confirmAction } from '@/shared/lib/utils/confirm';
+import { errorMessage } from '@/shared/lib/utils/error-message';
+import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
-import UserAvatar from '@/shared/ui/UserAvatar';
-import { confirmAction } from '@/shared/lib/utils/confirm';
-import { useAppStore } from '@/shared/lib/stores/app-store';
-
-const fmtUid = (uid?: string) => (uid ? `@${uid.toLowerCase().replace('user#','user')}` : '');
-
-function computeIsOwner(
-  current: { group?: { ownerId?: number }, role?: 'owner'|'member' } | undefined,
-  me?: { id?: number } | null
-): boolean {
-  if (!current) return false;
-  if (current.role === 'owner') return true;
-  if (typeof current.group?.ownerId === 'number' && typeof me?.id === 'number') {
-    return current.group.ownerId === me.id;
-  }
-  return false;
-}
+import { handleOf } from '@/features/friends/lib/format';
 
 export default function GroupDetailsScreen() {
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
   const gid = Number(groupId);
   const router = useRouter();
+  const { t } = useTranslation();
+  const me = useAppStore((s) => s.user);
+  const { current, loading, openGroup, renameGroup, deleteGroup, addMember, removeMember } = useGroupsStore();
+  const friends = useFriendsStore((s) => s.friends);
+  const fetchFriendsIfStale = useFriendsStore((s) => s.fetchIfStale);
 
-  const { current, loading, error, openGroup, renameGroup, deleteGroup, addMember, removeMember } = useGroupsStore();
-  const { friends, fetchAll: fetchFriends } = useFriendsStore();
-  const me = useAppStore(s => s.user);
-
-  const [editing, setEditing] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [name, setName] = useState('');
   const [filter, setFilter] = useState('');
-  const [opUid, setOpUid] = useState<string | null>(null);
-  const [busyHdr, setBusyHdr] = useState<string | number | undefined>();
+  const [busyUid, setBusyUid] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (gid) openGroup(gid); }, [gid, openGroup]);
-  useEffect(() => { fetchFriends(); }, [fetchFriends]); // once on mount (no refetch-if-empty)
   useEffect(() => {
-    if (current?.group?.name) { setNewName(current.group.name!); setEditing(false); }
-  }, [current?.group?.name]);
+    if (gid) openGroup(gid);
+  }, [gid, openGroup]);
+  useEffect(() => {
+    fetchFriendsIfStale();
+  }, [fetchFriendsIfStale]);
 
-  const canManage = useMemo(() => computeIsOwner(current, me), [current, me]);
-  const title = current?.group?.name ?? 'Group';
-  const members = useMemo(() => current?.members ?? [], [current]);
-  const ownerId = current?.group?.ownerId;
+  const group = current?.group?.id === gid ? current : undefined;
+  useEffect(() => {
+    if (group?.group?.name) setName(group.group.name);
+  }, [group?.group?.name]);
 
-  const memberSetUpper = useMemo(
-    () => new Set((members ?? []).map(m => (m?.uniqueId || '').toUpperCase())),
-    [members]
-  );
-
-  const candidatesBase = useMemo(() => {
-    return (friends ?? [])
-      .map((f: any) => {
-        const uid = f?.user?.uniqueId ?? f?.uniqueId ?? '';
-        const label = f?.user?.displayName || f?.user?.username || f?.displayName || f?.username || uid;
-        return { uniqueId: uid, username: label, displayName: f?.user?.displayName ?? f?.displayName, avatarUrl: (f?.avatarUrl ?? f?.user?.avatarUrl ?? null) as string | null };
-      })
-      .filter(u => !!u.uniqueId && !memberSetUpper.has(u.uniqueId.toUpperCase()));
-  }, [friends, memberSetUpper]);
-
+  const isOwner = !!group && (group.role === 'owner' || (typeof group.group?.ownerId === 'number' && group.group.ownerId === me?.id));
+  const members = useMemo(() => group?.members ?? [], [group]);
+  const memberIds = useMemo(() => new Set(members.map((m) => (m.uniqueId || '').toUpperCase())), [members]);
   const candidates = useMemo(() => {
-    const q = filter.toLowerCase();
-    return candidatesBase.filter(u => {
-      const name = (u.displayName || u.username || u.uniqueId || '').toLowerCase();
-      const uid  = (u.uniqueId || '').toLowerCase();
-      return !filter || name.includes(q) || uid.includes(q);
-    });
-  }, [candidatesBase, filter]);
+    const q = filter.trim().toLowerCase();
+    return (friends ?? [])
+      .map((f: any) => ({ uniqueId: (f?.uniqueId ?? f?.user?.uniqueId) as string, name: (f?.username ?? f?.user?.username ?? f?.uniqueId) as string, avatarUrl: (f?.avatarUrl ?? null) as string | null }))
+      .filter((f) => f.uniqueId && !memberIds.has(f.uniqueId.toUpperCase()))
+      .filter((f) => !q || f.name.toLowerCase().includes(q) || f.uniqueId.toLowerCase().includes(q));
+  }, [friends, memberIds, filter]);
 
-  async function onRenameConfirm() {
-    if (!gid || !newName.trim() || newName.trim() === title) { setEditing(false); return; }
-    setBusyHdr('rename');
-    try { await renameGroup(gid, newName.trim()); await openGroup(gid); }
-    finally { setBusyHdr(undefined); setEditing(false); }
-  }
-
-  function onDeleteAsk() {
-    confirmAction({
-      title: 'Delete group',
-      message: 'Are you sure you want to delete this group? This action cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      destructive: true,
-      onConfirm: async () => {
-        if (!gid) return;
-        setBusyHdr('delete');
-        try { await deleteGroup(gid); router.replace('/groups' as never); }
-        finally { setBusyHdr(undefined); }
-      },
-    });
-  }
-
-  async function onAdd(uid: string) {
-    if (!gid) return;
-    setOpUid(uid);
-    try { await addMember(gid, uid); await openGroup(gid); }
-    finally { setOpUid(null); }
-  }
-
-  async function onRemove(uid: string) {
-    if (!gid) return;
-    setOpUid(uid);
-    try { await removeMember(gid, uid); await openGroup(gid); }
-    finally { setOpUid(null); }
-  }
-
-  const openGroupQR = () => {
-    if (!groupId) return;
-    router.push({ pathname: '/groups/invite', params: { groupId } });
+  const run = async (uid: string | null, fn: () => Promise<unknown>, success?: string) => {
+    setBusyUid(uid);
+    try {
+      await fn();
+      await openGroup(gid);
+      if (success) toast.success(success);
+    } catch (e) {
+      toast.error(errorMessage(t, e));
+    } finally {
+      setBusyUid(null);
+    }
   };
 
-  if (loading && !current) return <YStack f={1} ai="center" jc="center"><Spinner /></YStack>;
-  if (error) return <YStack f={1} p="$4"><Paragraph col="$red10">{error}</Paragraph></YStack>;
-  if (!current) return <YStack f={1} p="$4"><Paragraph>No group</Paragraph></YStack>;
+  const saveName = async () => {
+    if (!name.trim() || name.trim() === group?.group?.name) return;
+    setSaving(true);
+    await run(null, () => renameGroup(gid, name.trim()), t('groups.detail.renamed'));
+    setSaving(false);
+  };
+
+  const askRemove = (uid: string, label: string) =>
+    confirmAction({
+      title: t('groups.detail.removeTitle', { name: label }),
+      message: t('groups.detail.removeMessage'),
+      confirmText: t('groups.detail.remove'),
+      cancelText: t('common.cancel'),
+      destructive: true,
+      onConfirm: () => run(uid, () => removeMember(gid, uid), t('groups.detail.removed', { name: label })),
+    });
+
+  const askDelete = () =>
+    confirmAction({
+      title: t('groups.detail.deleteTitle'),
+      message: t('groups.detail.deleteMessage'),
+      confirmText: t('groups.detail.delete'),
+      cancelText: t('common.cancel'),
+      destructive: true,
+      onConfirm: async () => {
+        try {
+          await deleteGroup(gid);
+          router.back();
+        } catch (e) {
+          toast.error(errorMessage(t, e));
+        }
+      },
+    });
+
+  const askLeave = () =>
+    confirmAction({
+      title: t('groups.detail.leaveTitle'),
+      message: t('groups.detail.leaveMessage'),
+      confirmText: t('groups.detail.leave'),
+      cancelText: t('common.cancel'),
+      destructive: true,
+      onConfirm: async () => {
+        try {
+          await removeMember(gid, me?.uniqueId ?? '');
+          await useGroupsStore.getState().fetchGroups();
+          router.back();
+        } catch (e) {
+          toast.error(errorMessage(t, e));
+        }
+      },
+    });
+
+  if (!group) {
+    return (
+      <Screen>
+        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<UsersRound size={28} color="$primaryText" />} message={t('errors.NOT_FOUND')} />}
+      </Screen>
+    );
+  }
+
+  const title = group.group?.name ?? t('groups.common.untitled', 'Group');
 
   return (
-    <YStack f={1} p="$4" gap="$3" bg="$background">
-      {/* Back (text-only) with chevron) */}
-      <XStack>
-        <Button
-          onPress={() => router.replace('/groups' as never)}
-          size="$2"
-          h={22}
-          px={0}
-          unstyled
-          chromeless
-          bg="transparent"
-          borderWidth={0}
-          color="$gray12"
-          pressStyle={{ opacity: 0.6 }}
-          icon={<ChevronLeft size={18} color="$gray12" />}
-        >
-          Back to Groups
-        </Button>
-      </XStack>
+    <>
+      <Stack.Screen options={{ title }} />
+      <Screen>
+        {/* header */}
+        <YStack ai="center" gap="$2" pt="$2">
+          <UserAvatar label={title} seed={`group-${gid}`} size={80} textSize={30} />
+          <Text variant="title2" ta="center" accessibilityRole="header">
+            {title}
+          </Text>
+          <Text variant="subheadline" color="$textMuted">
+            {t('groups.list.members', { count: members.length })}
+          </Text>
+        </YStack>
 
-      {/* Title row: title + inline actions */}
-      <XStack ai="center" gap="$2">
-        <XStack f={1} ai="center" gap="$2" minHeight={22}>
-          {!editing ? (
-            <Text numberOfLines={1} fontSize={14} fontWeight="400">
-              {title}
-            </Text>
-          ) : (
-            <Input
-              value={newName}
-              onChangeText={setNewName}
-              autoFocus
-              f={1}
-              h={38}
-              px={10}
-              borderRadius={8}
-              fontSize={14}
-              bg="$backgroundPress"
-              color="$gray12"
-              placeholderTextColor="$gray10"
-              borderWidth={0}
-              returnKeyType="done"
-              onSubmitEditing={onRenameConfirm}
+        {isOwner && (
+          <ListSection>
+            <ListRow
+              key="qr"
+              left={
+                <IconTile>
+                  <QrCode size={17} color="$onPrimary" />
+                </IconTile>
+              }
+              title={t('groups.detail.showQr')}
+              chevron
+              onPress={() => router.push({ pathname: '/groups/invite', params: { groupId: String(gid) } })}
             />
-          )}
-        </XStack>
-
-        {canManage && !editing && (
-          <XStack ai="center" gap="$1">
-            <Button
-              chromeless
-              circular
-              size="$2"
-              aria-label="Rename"
-              icon={<Pencil size={18} color="$gray12" />}
-              onPress={() => setEditing(true)}
-            />
-            <Button
-              chromeless
-              circular
-              size="$2"
-              aria-label="Delete group"
-              icon={<Trash2 size={18} color="$red10" />}
-              onPress={onDeleteAsk}
-              disabled={busyHdr === 'delete'}
-            />
-          </XStack>
+          </ListSection>
         )}
 
-        {canManage && editing && (
-          <XStack ai="center" gap="$1">
-            <Button
-              chromeless
-              circular
-              size="$2"
-              aria-label="Confirm rename"
-              icon={<Check size={18} color="$green10" />}
-              onPress={onRenameConfirm}
-              disabled={busyHdr === 'rename'}
-            />
-            <Button
-              chromeless
-              circular
-              size="$2"
-              aria-label="Cancel rename"
-              icon={<IconX size={18} color="$gray11" />}
-              onPress={() => { setNewName(title); setEditing(false); }}
-            />
-          </XStack>
-        )}
-      </XStack>
-
-      {/* INVITE ACTIONS — только QR (сканер перенесён на список групп) */}
-      {canManage && (
-        <>
-          <XStack jc="flex-end" ai="center" py="$2">
-            <Button
-              onPress={openGroupQR}
-              theme="gray"
-              size="$3"
-              borderRadius="$3"
-              icon={<QrCode size={18} />}
-            >
-              Show group QR
-            </Button>
-          </XStack>
-          <Separator />
-        </>
-      )}
-
-      {/* MEMBERS */}
-      <Paragraph fow="700" fos="$6">Members</Paragraph>
-      {members.length === 0 ? (
-        <Paragraph col="$gray10">No members yet</Paragraph>
-      ) : (
-        <YStack borderWidth={1} borderColor="$gray5" borderRadius={8} overflow="hidden">
-          {members.map((m, idx) => {
+        <ListSection header={t('groups.detail.members')} footer={isOwner ? t('groups.detail.swipeHint') : undefined}>
+          {members.map((m) => {
             const uid = m.uniqueId;
             const label = m.displayName || m.username || uid;
-            const avatarUrl = m.avatarUrl ?? m.user?.avatarUrl ?? null;
-            const isOwnerMember =
-              m.role === 'owner' ||
-              (typeof m.id === 'number' && typeof ownerId === 'number' && ownerId === m.id);
-            const busy = opUid === uid;
-
-            return (
-              <React.Fragment key={uid ?? `${label}-${idx}`}>
-                <XStack h={60} ai="center" jc="space-between" px="$4" bg="$green3">
-                  <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
-                    <YStack>
-                      <Text fontSize={17} fontWeight="600">{label}</Text>
-                      {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}
-                    </YStack>
-                  </XStack>
-
-                  <XStack ai="center" gap="$2">
-                    {isOwnerMember && <Crown size={18} color="$yellow10" />}
-                    {canManage && !isOwnerMember && (
-                      <Button size="$2" theme="red" onPress={() => uid && onRemove(uid)} disabled={!uid || busy}>
-                        {busy ? '...' : 'Remove'}
-                      </Button>
-                    )}
-                  </XStack>
-                </XStack>
-                {idx < (members.length - 1) && <Separator />}
-              </React.Fragment>
+            const owner = m.role === 'owner' || (typeof m.id === 'number' && m.id === group.group?.ownerId);
+            const canRemove = isOwner && !owner;
+            const row = (
+              <YStack backgroundColor="$surface">
+                <ListRow
+                  left={<UserAvatar uri={m.avatarUrl ?? m.user?.avatarUrl} label={label} seed={uid} size={40} textSize={15} />}
+                  title={uid === me?.uniqueId ? `${label} (${t('receipt.people.you', 'You')})` : label}
+                  subtitle={handleOf(uid)}
+                  right={
+                    owner ? (
+                      <XStack px="$2" py={2} borderRadius={6} backgroundColor="$primarySoft">
+                        <Text variant="caption" fontWeight="700" color="$primaryText">
+                          {t('groups.roles.owner')}
+                        </Text>
+                      </XStack>
+                    ) : null
+                  }
+                  {...(canRemove
+                    ? {
+                        onLongPress: () =>
+                          showActionSheet({
+                            title: label,
+                            actions: [{ label: t('groups.detail.remove'), destructive: true, onPress: () => askRemove(uid, label) }],
+                            cancelLabel: t('common.cancel'),
+                          }),
+                      }
+                    : {})}
+                />
+              </YStack>
+            );
+            return canRemove ? (
+              <SwipeRow key={uid} actions={[{ label: t('groups.detail.remove'), destructive: true, onPress: () => askRemove(uid, label) }]}>
+                {row}
+              </SwipeRow>
+            ) : (
+              <React.Fragment key={uid}>{row}</React.Fragment>
             );
           })}
-        </YStack>
-      )}
+        </ListSection>
 
-      <Separator />
+        {isOwner && (
+          <YStack gap="$3">
+            <Text variant="footnote" color="$textMuted" textTransform="uppercase" px="$4" accessibilityRole="header">
+              {t('groups.detail.addFromFriends')}
+            </Text>
+            <SearchField value={filter} onChangeText={setFilter} placeholder={t('friends.filter')} clearLabel={t('common.clear')} />
+            {candidates.length === 0 ? (
+              <Text variant="subheadline" color="$textMuted" ta="center">
+                {t('groups.detail.noFriendsToAdd')}
+              </Text>
+            ) : (
+              <ListSection>
+                {candidates.map((f) => (
+                  <ListRow
+                    key={f.uniqueId}
+                    left={<UserAvatar uri={f.avatarUrl} label={f.name} seed={f.uniqueId} size={36} textSize={14} />}
+                    title={f.name}
+                    subtitle={handleOf(f.uniqueId)}
+                    right={<Button title={t('groups.detail.add')} size="small" variant="secondary" loading={busyUid === f.uniqueId} onPress={() => void run(f.uniqueId, () => addMember(gid, f.uniqueId), t('groups.detail.added', { name: f.name }))} />}
+                  />
+                ))}
+              </ListSection>
+            )}
+          </YStack>
+        )}
 
-      {/* ADD FROM FRIENDS */}
-      <Paragraph fow="700" fos="$6">Add from friends</Paragraph>
-      <Input
-        value={filter}
-        onChangeText={setFilter}
-        placeholder="Search friends…"
-        h={41}
-        px={16}
-        borderRadius={10}
-        fontSize={14}
-        fontWeight="500"
-        color="$gray12"
-        placeholderTextColor="$gray10"
-        bg="$backgroundPress"
-        borderWidth={0}
-        returnKeyType="search"
-      />
+        {isOwner && (
+          <Section title={t('groups.detail.nameTitle')}>
+            <Input value={name} onChangeText={setName} placeholder={t('groups.create.namePlaceholder', 'Group name')} accessibilityLabel={t('groups.detail.nameTitle')} />
+            <Button title={t('groups.detail.saveName')} variant="secondary" onPress={saveName} loading={saving} disabled={!name.trim() || name.trim() === group.group?.name} />
+          </Section>
+        )}
 
-      {(candidates ?? []).length === 0 ? (
-        <Paragraph col="$gray10" mt="$2">No friends to add</Paragraph>
-      ) : (
-        <YStack borderWidth={1} borderColor="$gray5" borderRadius={8} overflow="hidden" mt="$2">
-          {candidates.map((u, idx) => {
-            const uid = u.uniqueId;
-            const label = u.displayName || u.username || uid;
-            const avatarUrl = u.avatarUrl ?? null;
-            const busy = opUid === uid;
-
-            return (
-              <React.Fragment key={uid ?? `${label}-${idx}`}>
-                <XStack h={60} ai="center" jc="space-between" px="$4">
-                  <XStack ai="center" gap="$3">
-                    <UserAvatar uri={avatarUrl ?? undefined} label={(label || "U").slice(0, 1).toUpperCase()} size={36} textSize={14} />
-                    <YStack>
-                      <Text fontSize={17} fontWeight="600">{label}</Text>
-                      {!!uid && <Paragraph fontSize={14} color="$gray10">{fmtUid(uid)}</Paragraph>}
-                    </YStack>
-                  </XStack>
-
-                  {canManage && (
-                    <Button size="$2" onPress={() => uid && onAdd(uid)} disabled={!uid || busy}>
-                      {busy ? '...' : 'Add'}
-                    </Button>
-                  )}
-                </XStack>
-                {idx < (candidates.length - 1) && <Separator />}
-              </React.Fragment>
-            );
-          })}
-        </YStack>
-      )}
-    </YStack>
+        <ListSection>
+          {isOwner ? (
+            <ListRow key="delete" title={t('groups.detail.delete')} destructive onPress={askDelete} />
+          ) : (
+            <ListRow key="leave" title={t('groups.detail.leave')} destructive onPress={askLeave} />
+          )}
+        </ListSection>
+      </Screen>
+    </>
   );
 }

@@ -45,7 +45,7 @@ export default function ReceiptFlowLayout() {
       <Stack.Screen name="review" options={{ title: t('receipt.titles.items', 'Review items') }} />
       <Stack.Screen name="people" options={{ title: t('receipt.titles.people', 'Who is splitting?') }} />
       <Stack.Screen name="split" options={{ title: t('receipt.titles.split', 'Split items') }} />
-      <Stack.Screen name="summary" options={{ title: t('receipt.titles.summary', 'Summary'), headerRight: () => null, headerBackVisible: false, gestureEnabled: false }} />
+      <Stack.Screen name="summary" options={{ title: t('receipt.titles.summary', 'Summary'), headerRight: () => null, headerLeft: () => null, headerBackVisible: false, gestureEnabled: false }} />
     </Stack>
   );
 }

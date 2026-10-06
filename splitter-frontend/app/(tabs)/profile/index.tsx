@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/shared/ui/Button';
+import Screen from '@/shared/ui/Screen';
+import { ListRow, ListSection } from '@/shared/ui/List';
 import Banner from '@/shared/ui/Banner';
 import { useAppStore } from '@/shared/lib/stores/app-store';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { confirmLogout } from '@/features/auth/lib/confirm-logout';
 import { getCurrentUser, getUserStats } from '@/features/auth/api';
 import { authErrorMessage } from '@/features/auth/model/auth-errors';
@@ -24,7 +23,6 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { colors } = useAppTheme();
   const user = useAppStore((s) => s.user);
   const setUser = useAppStore((s) => s.setUser);
   const setFlash = useAppStore((s) => s.setFlashMessage);
@@ -95,13 +93,7 @@ export default function ProfileScreen() {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView
-        style={{ flex: 1, backgroundColor: colors.background }}
-        contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 16 }}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
-      >
+      <Screen refreshing={refreshing} onRefresh={onRefresh} keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}>
         {refreshError && <Banner kind="error" message={t('profile.refreshFailed', 'Could not refresh your profile. Pull down to try again.')} />}
         {!!avatarError && <Banner kind="error" message={avatarError} />}
 
@@ -120,15 +112,10 @@ export default function ProfileScreen() {
         <PasswordChangeForm />
         <DeleteAccountSection />
 
-        <YStack pt="$2">
-          <Button
-            title={t('profile.logout', 'Log out')}
-            variant="secondary"
-            size="large"
-            onPress={() => confirmLogout(t, router)}
-          />
-        </YStack>
-      </ScrollView>
+        <ListSection>
+          <ListRow title={t('profile.logout', 'Log out')} destructive onPress={() => confirmLogout(t, router)} />
+        </ListSection>
+      </Screen>
 
       <AvatarSheet
         visible={sheetOpen}

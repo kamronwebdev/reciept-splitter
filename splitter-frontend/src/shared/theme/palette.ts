@@ -42,9 +42,10 @@ export interface Palette {
 
 export const palettes: Record<Scheme, Palette> = {
   light: {
-    background: '#FFFFFF',
+    // iOS grouped look: light gray screens, white cards/lists
+    background: '#F2F4F3',
     surface: '#FFFFFF',
-    surfaceAlt: '#F3F5F4',
+    surfaceAlt: '#ECEFED',
     border: '#E4E7EB',
     text: '#14211A',
     textMuted: '#4B5A52',
@@ -84,7 +85,7 @@ export const palettes: Record<Scheme, Palette> = {
     warning: '#F0B34A',
     overlay: 'rgba(0,0,0,0.65)',
     shadow: 'rgba(0,0,0,0.5)',
-    groupedBackground: '#0A0F0D',
+    groupedBackground: '#0E1512',
     separator: 'rgba(174,189,181,0.18)',
     bar: 'rgba(18,26,22,0.94)',
     inactive: '#7C8A83',

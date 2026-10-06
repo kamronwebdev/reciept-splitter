@@ -19,9 +19,7 @@ import CountBadge from '@/shared/ui/CountBadge';
 import AppIcon from '@/shared/ui/AppIcon';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { useAppStore } from '@/shared/lib/stores/app-store';
-import { shortDate } from '@/shared/lib/utils/time';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
-import type { SessionHistoryEntry } from '@/features/sessions/api/history.api';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useBalances } from '@/features/balances/model/queries';
@@ -29,12 +27,13 @@ import BalanceCard from '@/features/balances/ui/BalanceCard';
 import { useUnreadCount, notificationKeys } from '@/features/notifications/model/queries';
 import { useReceiptLauncher } from '@/features/receipt/model/launcher';
 import { formatMoney } from '@/features/receipt/lib/money';
+import ReceiptRow from '@/features/sessions/ui/ReceiptRow';
 
 const RECENT = 5;
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
   const qc = useQueryClient();
@@ -167,7 +166,7 @@ export default function HomeScreen() {
       ) : (
         <ListSection header={t('home.recent')} headerRight={<HeaderLink title={t('home.seeAll')} onPress={() => router.push('/home/history')} />}>
           {recent.map((s) => (
-            <RecentRow key={s.sessionId} entry={s} meId={me?.uniqueId} locale={i18n.language} onPress={() => router.push({ pathname: '/home/history/[historyId]', params: { historyId: String(s.sessionId) } })} />
+            <ReceiptRow key={s.sessionId} entry={s} meId={me?.uniqueId} onPress={() => router.push({ pathname: '/home/history/[historyId]', params: { historyId: String(s.sessionId) } })} />
           ))}
         </ListSection>
       )}
@@ -210,34 +209,5 @@ export default function HomeScreen() {
         </XStack>
       )}
     </Screen>
-  );
-}
-
-function RecentRow({ entry, meId, locale, onPress }: { entry: SessionHistoryEntry; meId?: string | undefined; locale: string; onPress: () => void }) {
-  const { t } = useTranslation();
-  const currency = entry.currency || 'UZS';
-  const mine = entry.totals?.byParticipant?.find((p) => p.uniqueId === meId)?.amountOwed;
-  const people = entry.participantUniqueIds?.length || entry.participants?.length || 0;
-  const subtitle = [
-    shortDate(entry.finalizedAt, locale),
-    t('home.people', { count: people }),
-    mine != null ? t('home.yourShare', { amount: formatMoney(mine, currency) }) : null,
-    entry.settled ? t('settle.settled') : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  return (
-    <ListRow
-      title={entry.sessionName || t('receipt.summary.untitled', 'Bill')}
-      subtitle={subtitle}
-      right={
-        <Text variant="subheadline" fontWeight="600" numberOfLines={1} flexShrink={0}>
-          {formatMoney(entry.grandTotal, currency)}
-        </Text>
-      }
-      chevron
-      onPress={onPress}
-      numberOfLines={1}
-    />
   );
 }

@@ -120,11 +120,22 @@
     "back": "戻る",
     "retry": "再試行",
     "close": "閉じる",
-    "done": "完了"
+    "done": "完了",
+    "clear": "クリア"
   },
   "friends": {
     "title": "友だち",
-    "requests": "リクエスト",
+    "requests": {
+      "accept": "承認",
+      "decline": "拒否",
+      "accepted": "{{target}}さんと友達になりました",
+      "rejected": "{{target}}さんのリクエストを拒否しました",
+      "emptyIncoming": "受信したリクエストはありません",
+      "emptyOutgoing": "送信したリクエストはありません",
+      "requestedLabel": "送信済み",
+      "tabIncoming": "受信",
+      "tabOutgoing": "送信済み"
+    },
     "add": "友だちを追加",
     "empty": "まだ友達がいません。友達のQRコードを読み取るか、自分のQRを見せましょう。",
     "searchPlaceholder": "ID を入力してください (例: USER#1234)",
@@ -214,7 +225,29 @@
     "filter": "友達を検索",
     "noMatches": "一致する友達がいません",
     "addById": "IDで追加",
-    "addTitle": "友達を追加"
+    "addTitle": "友達を追加",
+    "common": {
+      "unknownUser": "不明なユーザー"
+    },
+    "listHeader_other": "友達{{count}}人",
+    "removeTitle": "{{name}}さんを削除しますか？",
+    "removeMessage": "あとでまた友達になれます。",
+    "removed": "{{name}}さんを削除しました",
+    "swipeHint": "友達を左にスワイプすると削除できます。",
+    "search": {
+      "button": "検索",
+      "inviteSent": "{{target}}さんにリクエストを送りました",
+      "noResults": "このIDのユーザーは見つかりません",
+      "orInPerson": "または対面で追加",
+      "placeholder": "友達のID（例：USER#1234）"
+    },
+    "status": {
+      "add": "追加",
+      "friend": "友達",
+      "incoming": "あなたを追加したい",
+      "requested": "送信済み",
+      "you": "あなた"
+    }
   },
   "home": {
     "header": {
@@ -646,5 +679,68 @@
       "RECEIPT_UNPAID_YOURS": "{{name}}さんが「{{receipt}}」のあなたの分を未払いにしました",
       "UNKNOWN": "新しい通知"
     }
+  },
+  "groups": {
+    "actions": {
+      "scanInvite": "QRコードで参加"
+    },
+    "common": {
+      "untitled": "グループ"
+    },
+    "emptyTitle": "まだグループがありません",
+    "emptyMessage": "よく割り勘する人たちのグループを作りましょう。",
+    "scanFooter": "グループの招待QRを読み取ると参加できます。",
+    "list": {
+      "members_other": "メンバー{{count}}人",
+      "members_zero": "まだメンバーがいません"
+    },
+    "roles": {
+      "owner": "オーナー",
+      "admin": "管理者"
+    },
+    "create": {
+      "action": "作成",
+      "emptyState": "グループ名を付けてから、メンバーを追加します。",
+      "inGroup": "参加中",
+      "notInGroup": "未参加",
+      "manageMembers": "メンバー",
+      "namePlaceholder": "グループ名",
+      "noFriends": "追加できる友達がまだいません",
+      "notice": {
+        "success": "グループを作成しました"
+      }
+    },
+    "detail": {
+      "add": "追加",
+      "addFromFriends": "友達から追加",
+      "added": "{{name}}さんを追加しました",
+      "delete": "グループを削除",
+      "deleteTitle": "このグループを削除しますか？",
+      "deleteMessage": "全員のグループが削除されます。元に戻せません。",
+      "leave": "グループを退出",
+      "leaveTitle": "このグループを退出しますか？",
+      "leaveMessage": "招待からもう一度参加できます。",
+      "members": "メンバー",
+      "nameTitle": "グループ名",
+      "noFriendsToAdd": "友達は全員このグループに参加しています。",
+      "remove": "削除",
+      "removeTitle": "{{name}}さんを削除しますか？",
+      "removeMessage": "このグループが見えなくなります。",
+      "removed": "{{name}}さんを削除しました",
+      "renamed": "グループ名を変更しました",
+      "saveName": "名前を保存",
+      "showQr": "QRコードで招待",
+      "swipeHint": "メンバーを左にスワイプすると削除できます。"
+    },
+    "invite": {
+      "description": "読み取るとこのグループに参加できます",
+      "error": "招待を作成できませんでした。",
+      "invalid": "グループが見つかりません。",
+      "new": "新しいQRコード"
+    }
+  },
+  "history": {
+    "search": "レシートや人を検索",
+    "noMatches": "一致するレシートはありません。"
   }
 }

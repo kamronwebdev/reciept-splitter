@@ -1,177 +1,96 @@
-import { useEffect, useMemo } from 'react';
+// app/(tabs)/groups/index.tsx — my groups (grouped list), New group (+), join by scanning an invite.
+import React, { useCallback, useEffect, useState } from 'react';
+import { Pressable } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { YStack } from 'tamagui';
+import { Plus, ScanLine, UsersRound } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
-import { Scan } from '@tamagui/lucide-icons';
-import { YStack, Card, XStack, Spinner, Separator, View } from 'tamagui';
-import { Paragraph, Button } from '@/shared/ui/typography';
-
-import { useGroupsStore } from '@/features/groups/model/groups.store';
-import type { GroupMember } from '@/features/groups/api/groups.api';
+import Screen from '@/shared/ui/Screen';
+import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
+import { ListSkeleton } from '@/shared/ui/Skeleton';
+import EmptyState from '@/shared/ui/EmptyState';
+import Banner from '@/shared/ui/Banner';
 import UserAvatar from '@/shared/ui/UserAvatar';
-import Fab from '@/shared/ui/Fab';
-
-function AvatarStack({
-  members,
-  totalCount,
-  max = 5,
-}: {
-  members?: GroupMember[];
-  totalCount?: number;
-  max?: number;
-}) {
-  const list = Array.isArray(members) ? members : [];
-  const total = typeof totalCount === 'number' ? totalCount : list.length;
-  const shownMembers = list.slice(0, Math.min(max, list.length));
-  const hasMembers = shownMembers.length > 0;
-  const placeholderCount = hasMembers ? 0 : Math.min(total, max);
-  const extra = Math.max(0, total - (hasMembers ? shownMembers.length : placeholderCount));
-
-  if (!hasMembers && placeholderCount === 0) {
-    return null;
-  }
-
-  const labelFor = (member: GroupMember) => {
-    const source = member.displayName || member.username || member.uniqueId || '';
-    return source.trim().charAt(0).toUpperCase() || 'U';
-  };
-
-  return (
-    <XStack ai="center">
-      {shownMembers.map((member, index) => (
-        <View key={`${member.uniqueId ?? 'member'}-${index}`} ml={index === 0 ? 0 : -10}>
-          <UserAvatar
-            uri={member.avatarUrl ?? member.user?.avatarUrl ?? undefined}
-            label={labelFor(member)}
-            seed={member.uniqueId}
-            size={34}
-            textSize={14}
-          />
-        </View>
-      ))}
-      {!hasMembers &&
-        Array.from({ length: placeholderCount }).map((_, index) => (
-          <View key={`placeholder-${index}`} w={34} h={34} br={17} bg="$gray5" ml={index === 0 ? 0 : -10} />
-        ))}
-      {extra > 0 && (
-        <View
-          w={28}
-          h={28}
-          br={14}
-          bg="$gray8"
-          ai="center"
-          jc="center"
-          ml={hasMembers || placeholderCount > 0 ? -10 : 0}
-        >
-          <Paragraph size="$1" col="$onPrimary">
-            +{extra}
-          </Paragraph>
-        </View>
-      )}
-    </XStack>
-  );
-}
+import AppIcon from '@/shared/ui/AppIcon';
+import { useAppTheme } from '@/shared/theme/useAppTheme';
+import { useGroupsStore } from '@/features/groups/model/groups.store';
 
 export default function GroupsListScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { colors } = useAppTheme();
   const { groups, counts, loading, error, fetchGroups } = useGroupsStore();
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadedOnce, setLoadedOnce] = useState(false);
 
   useEffect(() => {
-    fetchGroups();
+    fetchGroups().finally(() => setLoadedOnce(true));
   }, [fetchGroups]);
 
-  const hasNoGroups = groups.length === 0;
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchGroups();
+    setRefreshing(false);
+  }, [fetchGroups]);
 
-  const cards = useMemo(
-    () =>
-      groups.map((group) => {
-        const members = Array.isArray(group.members) ? group.members : [];
-        const storedCount = counts?.[group.id];
-        const apiCount = typeof group.counts?.members === 'number' ? group.counts.members : undefined;
-        const memberCount =
-          typeof storedCount === 'number'
-            ? storedCount
-            : typeof apiCount === 'number'
-            ? apiCount
-            : members.length;
-
-        const countLabel = t('groups.list.members', { count: memberCount });
-        const groupName = group.name ?? t('groups.common.untitled', 'Group');
-        const emptyMembersLabel = t('groups.list.members_zero', 'No members yet');
-
-        return (
-          <Card
-            key={group.id}
-            pressStyle={{ scale: 0.98 }}
-            onPress={() =>
-              router.push({
-                pathname: '/groups/[groupId]',
-                params: { groupId: String(group.id) },
-              } as never)
-            }
-            h={62}
-            br={12}
-            bw={1}
-            bc="$gray5"
-            px="$4"
-            ai="center"
-            jc="center"
-          >
-            <XStack w="100%" jc="space-between" ai="center">
-              <YStack>
-                <Paragraph fow="700" fos={16}>
-                  {groupName}
-                </Paragraph>
-                <Paragraph size={12} col="$gray10">
-                  {memberCount === 0 ? emptyMembersLabel : countLabel}
-                </Paragraph>
-              </YStack>
-              <AvatarStack members={members} totalCount={memberCount} />
-            </XStack>
-          </Card>
-        );
-      }),
-    [counts, groups, router, t]
-  );
-
-  if (loading && hasNoGroups) {
-    return (
-      <YStack f={1} ai="center" jc="center">
-        <Spinner />
-      </YStack>
-    );
-  }
+  const countOf = (g: (typeof groups)[number]) => counts?.[g.id] ?? g.counts?.members ?? g.members?.length ?? 0;
 
   return (
-    <YStack f={1} p="$4" gap="$3" bg="$background">
-      <Paragraph fow="700" fos="$7">
-        {t('groups.title', 'Groups')}
-      </Paragraph>
-      <Separator />
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Pressable onPress={() => router.push('/groups/create')} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('navigation.groups.create')} style={{ padding: 4 }}>
+              <AppIcon sf="plus" fallback={Plus} color={colors.primaryText} size={24} />
+            </Pressable>
+          ),
+        }}
+      />
+      <Screen refreshing={refreshing} onRefresh={refresh}>
+        {!!error && !groups.length && <Banner kind="error" message={t('errors.NETWORK')} actionLabel={t('common.retry')} onAction={refresh} />}
 
-      <XStack jc="flex-end" ai="center">
-        <Button
-          onPress={() =>
-            router.push({ pathname: '/scan-invite', params: { from: 'groups-index' } } as never)
-          }
-          size="$3"
-          borderRadius="$3"
-          theme="active"
-          icon={<Scan size={18} />}
-        >
-          {t('groups.actions.scanInvite', 'Scan invite')}
-        </Button>
-      </XStack>
+        {loading && !loadedOnce ? (
+          <ListSkeleton rows={3} />
+        ) : groups.length === 0 ? (
+          <YStack backgroundColor="$surface" borderRadius={16}>
+            <EmptyState
+              icon={<UsersRound size={28} color="$primaryText" />}
+              title={t('groups.emptyTitle')}
+              message={t('groups.emptyMessage')}
+              actionLabel={t('navigation.groups.create')}
+              onAction={() => router.push('/groups/create')}
+            />
+          </YStack>
+        ) : (
+          <ListSection>
+            {groups.map((g) => (
+              <ListRow
+                key={g.id}
+                left={<UserAvatar label={g.name} seed={`group-${g.id}`} size={44} textSize={17} />}
+                inset={72}
+                title={g.name ?? t('groups.common.untitled', 'Group')}
+                subtitle={countOf(g) ? t('groups.list.members', { count: countOf(g) }) : t('groups.list.members_zero', 'No members yet')}
+                chevron
+                onPress={() => router.push({ pathname: '/groups/[groupId]', params: { groupId: String(g.id) } })}
+              />
+            ))}
+          </ListSection>
+        )}
 
-      {error && <Paragraph col="$red10">{error}</Paragraph>}
-
-      {hasNoGroups ? (
-        <Paragraph col="$gray10">{t('groups.empty', 'No groups yet. Tap + to create.')}</Paragraph>
-      ) : (
-        <YStack gap="$3">{cards}</YStack>
-      )}
-
-      <Fab onPress={() => router.push('/groups/create' as never)} />
-    </YStack>
+        <ListSection footer={t('groups.scanFooter')}>
+          <ListRow
+            key="scan"
+            left={
+              <IconTile>
+                <ScanLine size={17} color="$onPrimary" />
+              </IconTile>
+            }
+            title={t('groups.actions.scanInvite', 'Scan invite')}
+            chevron
+            onPress={() => router.push('/scan-invite')}
+          />
+        </ListSection>
+      </Screen>
+    </>
   );
 }

@@ -141,8 +141,9 @@ function JsTabs({ labels, badges }: TabsProps) {
           borderTopColor: colors.separator,
           borderTopWidth: Platform.OS === 'web' ? 1 : 0.5,
           // 49pt bar + home indicator area; the label sits under the icon like iOS
-          height: 49 + Math.max(insets.bottom, Platform.OS === 'web' ? 4 : 0),
-          paddingBottom: Math.max(insets.bottom, Platform.OS === 'web' ? 4 : 0),
+          // 49pt bar + home indicator area (web/Android have no home indicator: a little extra room for labels)
+          height: Platform.OS === 'web' ? 58 : 49 + insets.bottom,
+          paddingBottom: Platform.OS === 'web' ? 6 : insets.bottom,
           elevation: 0,
         },
         tabBarBadgeStyle: { backgroundColor: colors.badge, color: colors.onBadge, fontSize: 11 },
