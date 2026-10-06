@@ -25,6 +25,12 @@ function semantic(p: Palette) {
     warning: p.warning,
     overlay: p.overlay,
     shadowColor: p.shadow,
+    groupedBackground: p.groupedBackground,
+    separator: p.separator,
+    bar: p.bar,
+    inactive: p.inactive,
+    badge: p.badge,
+    onBadge: p.onBadge,
   }
 }
 

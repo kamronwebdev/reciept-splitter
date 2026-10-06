@@ -27,6 +27,17 @@ export interface Palette {
   warning: string;
   overlay: string; // modal scrims
   shadow: string;
+  /** iOS "grouped" screen background behind inset list sections */
+  groupedBackground: string;
+  /** hairline list separators */
+  separator: string;
+  /** tab bar / sticky bars (slightly translucent) */
+  bar: string;
+  /** inactive tab icons and chevrons */
+  inactive: string;
+  /** small badges (unread counts) */
+  badge: string;
+  onBadge: string;
 }
 
 export const palettes: Record<Scheme, Palette> = {
@@ -48,6 +59,12 @@ export const palettes: Record<Scheme, Palette> = {
     warning: '#B7791F',
     overlay: 'rgba(0,0,0,0.45)',
     shadow: 'rgba(0,0,0,0.12)',
+    groupedBackground: '#F2F4F3',
+    separator: 'rgba(60,67,63,0.18)',
+    bar: 'rgba(249,250,249,0.94)',
+    inactive: '#8A948F',
+    badge: '#E5484D',
+    onBadge: '#FFFFFF',
   },
   dark: {
     background: '#0E1512',
@@ -67,6 +84,12 @@ export const palettes: Record<Scheme, Palette> = {
     warning: '#F0B34A',
     overlay: 'rgba(0,0,0,0.65)',
     shadow: 'rgba(0,0,0,0.5)',
+    groupedBackground: '#0A0F0D',
+    separator: 'rgba(174,189,181,0.18)',
+    bar: 'rgba(18,26,22,0.94)',
+    inactive: '#7C8A83',
+    badge: '#FF6369',
+    onBadge: '#FFFFFF',
   },
 };
 

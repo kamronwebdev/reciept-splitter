@@ -10,6 +10,8 @@ import { AppStoreProvider, useAppStoreHydrated } from '@/shared/lib/stores/app-s
 import { FONT_ASSETS } from '@/shared/theme/fonts';
 import { palettes } from '@/shared/theme/palette';
 import { useSystemScheme } from '@/shared/theme/useAppTheme';
+import { ToastHost } from '@/shared/ui/Toast';
+import { ActionSheetHost } from '@/shared/ui/ActionSheet';
 
 // Keep the native splash screen up until fonts and saved settings are ready: no flash of the wrong theme/font.
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -33,7 +35,11 @@ export default function AppProviders({ children }: { children: ReactNode }) {
     <TamaguiProvider>
       <AppStoreProvider>
         <QueryProvider>
-          <I18nProvider>{children}</I18nProvider>
+          <I18nProvider>
+            {children}
+            <ToastHost />
+            <ActionSheetHost />
+          </I18nProvider>
         </QueryProvider>
       </AppStoreProvider>
     </TamaguiProvider>
