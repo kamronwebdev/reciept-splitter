@@ -37,6 +37,7 @@ function ThemedStack() {
         <Stack.Screen name="forgot-password" options={{ title: '' }} />
         <Stack.Screen name="reset-code" options={{ title: '' }} />
         <Stack.Screen name="reset-password" options={{ title: '', gestureEnabled: false }} />
+        <Stack.Screen name="f/[code]" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

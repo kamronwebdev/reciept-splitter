@@ -14,6 +14,7 @@ import { useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import Banner from '@/shared/ui/Banner';
 import { confirmAction } from '@/shared/lib/utils/confirm';
+import { takePendingFriendCode } from '@/shared/lib/utils/invite';
 import { useReceiptHydrated, useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import UserAvatar from '@/shared/ui/UserAvatar';
@@ -199,6 +200,14 @@ export default function TabLayout() {
     if (draftHydrated && token && userId !== undefined) void useReceiptSessionStore.getState().validateDraft();
   }, [draftHydrated, token, userId]);
 
+  // a friend link opened while signed out: show its card now
+  const router = useRouter();
+  useEffect(() => {
+    if (!token) return;
+    const code = takePendingFriendCode();
+    if (code) router.push({ pathname: '/tabs/scan-invite', params: { code } });
+  }, [token, router]);
+
   // Signed-out (or expired) sessions can never stay inside the tabs.
   if (isInitialized && !token) return <Redirect href="/" />;
 
@@ -251,7 +260,7 @@ export default function TabLayout() {
       <Tabs.Screen name="groups/create"  options={{ href: null, title: newGroupTitle }} />
       <Tabs.Screen name="groups/[groupId]" options={{ href: null, title: groupDetailsTitle }} />
 
-      <Tabs.Screen name="scan-invite" options={{ href: null, title: scanInviteTitle }} />
+      <Tabs.Screen name="scan-invite" options={{ href: null, title: scanInviteTitle, headerShown: false }} />
       <Tabs.Screen name="friends/invite" options={{ href: null, title: friendQrTitle }} />
       <Tabs.Screen name="groups/invite" options={{ href: null, title: groupQrTitle }} />
 

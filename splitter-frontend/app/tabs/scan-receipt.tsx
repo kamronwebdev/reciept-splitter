@@ -14,7 +14,7 @@ import { getImageSize, prepareReceiptImage, type LocalImage, type PreparedImage 
 import CameraStage from '@/features/receipt/ui/scan/CameraStage';
 import PreviewStage from '@/features/receipt/ui/scan/PreviewStage';
 import ProcessingStage from '@/features/receipt/ui/scan/ProcessingStage';
-import MessageStage, { type MessageAction } from '@/features/receipt/ui/scan/MessageStage';
+import MessageStage, { type MessageAction } from '@/shared/ui/MessageScreen';
 
 type Stage =
   | { name: 'camera' }

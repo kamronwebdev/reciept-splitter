@@ -37,7 +37,24 @@
       "expo-font",
       "expo-localization",
       "expo-secure-store",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": false,
+          "savePhotosPermission": "Receipt Splitter saves your friend QR code to your photos.",
+          "isAccessMediaLocationEnabled": false,
+          "granularPermissions": [
+            "photo"
+          ]
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Receipt Splitter uses the camera to scan receipts and friends' QR codes."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

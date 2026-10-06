@@ -125,12 +125,94 @@
     "title": "友だち",
     "requests": "リクエスト",
     "add": "友だちを追加",
-    "empty": "まだ友だちがいません。+ をタップして追加しましょう。",
+    "empty": "まだ友達がいません。友達のQRコードを読み取るか、自分のQRを見せましょう。",
     "searchPlaceholder": "ID を入力してください (例: USER#1234)",
     "send": "リクエストを送信",
     "remove": "削除",
     "loading": "読み込み中...",
-    "error": "読み込みに失敗しました"
+    "error": "読み込みに失敗しました",
+    "qr": {
+      "scanQr": "QRをスキャン",
+      "myQr": "マイQR",
+      "requestsLink": "友達リクエスト",
+      "requestsCount": "新着{{count}}件",
+      "addHint": "対面で友達を追加：一人が「マイQR」を開き、もう一人が「QRをスキャン」をタップします。",
+      "my": {
+        "title": "マイQRコード",
+        "subtitle": "友達がこのコードを読み取るとあなたを追加できます",
+        "share": "共有",
+        "save": "画像を保存",
+        "copy": "リンクをコピー",
+        "copied": "リンクをコピーしました",
+        "saved": "写真に保存しました",
+        "saveFailed": "画像を保存できませんでした。もう一度お試しください。",
+        "photosDenied": "QRコードを保存するには、設定で写真へのアクセスを許可してください。",
+        "shareMessage": "Receipt Splitterで友達になろう：{{url}}",
+        "shareTitle": "Receipt Splitterで友達になろう",
+        "reset": "QRコードをリセット",
+        "resetTitle": "QRコードをリセットしますか？",
+        "resetMessage": "古いQRコード、共有したリンクやスクリーンショットは使えなくなります。今の友達はそのままです。",
+        "resetConfirm": "リセット",
+        "resetDone": "新しいQRコードの準備ができました",
+        "loadError": "QRコードを読み込めませんでした。",
+        "newFriend": "{{name}}さんがあなたを友達に追加しました",
+        "permanentNote": "このコードに有効期限はありません。誤って共有した場合はリセットしてください。"
+      },
+      "scan": {
+        "title": "QRをスキャン",
+        "hint": "友達のQRコードにカメラを向けてください",
+        "fromPhotos": "写真から選ぶ",
+        "light": "ライト",
+        "checking": "コードを確認しています…",
+        "noQrInImage": "この画像にQRコードが見つかりません。より鮮明なスクリーンショットをお試しください。",
+        "permissionTitle": "カメラへのアクセスが必要です",
+        "permissionBody": "カメラはQRコードの読み取りにのみ使用します。写真からQRコードのスクリーンショットを選ぶこともできます。",
+        "allowCamera": "カメラを許可",
+        "openSettings": "設定を開く"
+      },
+      "card": {
+        "add": "友達に追加",
+        "alreadyFriends": "すでに友達です",
+        "self": "あなたです",
+        "selfHint": "これはあなたのQRコードです。友達に見せて読み取ってもらいましょう。",
+        "pendingIncoming": "{{name}}さんから友達リクエストが届いています",
+        "accept": "リクエストを承認",
+        "pendingOutgoing": "すでにリクエストを送信済みです。対面でスキャンするとすぐに追加されます。",
+        "friendsHint": "すでに友達です。",
+        "addedTitle": "友達になりました！",
+        "addedBody": "{{name}}さんが友達リストに追加されました。",
+        "done": "完了",
+        "scanAnother": "続けてスキャン"
+      },
+      "group": {
+        "joining": "グループに参加しています…",
+        "joined": "{{name}}に参加しました",
+        "joinedGeneric": "グループに参加しました",
+        "alreadyMember": "すでにこのグループのメンバーです",
+        "owner": "これはあなたのグループです",
+        "friendsToo": "グループのオーナーと友達になりました。",
+        "open": "グループを開く"
+      },
+      "errors": {
+        "NOT_OUR_QR": "Receipt SplitterのQRコードではありません",
+        "NOT_OUR_QR_body": "このQRコードは友達やグループの招待ではありません。友達に「友達 → マイQR」を開いてもらってください。",
+        "INVALID_CODE": "このQRコードは無効です",
+        "INVALID_CODE_body": "リセットされたか、有効期限が切れています。もう一度QRコードを見せてもらってください。",
+        "NETWORK": "接続できません",
+        "NETWORK_body": "インターネット接続を確認して、もう一度お試しください。",
+        "RATE_LIMITED": "試行回数が多すぎます",
+        "RATE_LIMITED_body": "しばらくしてからもう一度お試しください。",
+        "UNKNOWN": "問題が発生しました",
+        "UNKNOWN_body": "もう一度お試しください。",
+        "tryAgain": "再試行",
+        "scanAgain": "もう一度スキャン"
+      },
+      "validLimited": "期間限定で有効",
+      "expiresAt": "有効期限：{{time}}"
+    },
+    "filter": "友達を検索",
+    "noMatches": "一致する友達がいません",
+    "addById": "IDで追加"
   },
   "home": {
     "header": {
@@ -168,7 +250,7 @@
     "header": {
       "copyId": "IDをコピー",
       "copied": "コピーしました",
-      "shareQr": "招待QRを共有",
+      "shareQr": "マイQRコード",
       "idLabel": "ID"
     },
     "avatar": {
@@ -242,8 +324,8 @@
       "create": "新しいグループ",
       "details": "グループ"
     },
-    "scanInvite": "招待をスキャン",
-    "friendQr": "友だちのQRコード",
+    "scanInvite": "QRをスキャン",
+    "friendQr": "マイQRコード",
     "groupQr": "グループQRコード",
     "scanReceipt": "レシートをスキャン",
     "participants": "参加者",

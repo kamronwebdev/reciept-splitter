@@ -157,7 +157,7 @@
     "header": {
       "copyId": "ID ni nusxalash",
       "copied": "Nusxalandi",
-      "shareQr": "Taklif QR kodimni ulashish",
+      "shareQr": "Mening QR kodim",
       "idLabel": "ID"
     },
     "avatar": {
@@ -231,8 +231,8 @@
       "create": "Yangi guruh",
       "details": "Guruh"
     },
-    "scanInvite": "Taklifni skanerlash",
-    "friendQr": "Do'st QR kodi",
+    "scanInvite": "QR skanerlash",
+    "friendQr": "Mening QR kodim",
     "groupQr": "Guruh QR kodi",
     "scanReceipt": "Chekni skanerlash",
     "participants": "Ishtirokchilar",
@@ -473,5 +473,98 @@
       "done": "Tayyor",
       "copied": "Xulosa nusxalandi"
     }
+  },
+  "friends": {
+    "title": "Do'stlar",
+    "requests": "So'rovlar",
+    "add": "Do'st qo'shish",
+    "empty": "Hali do'stlar yo'q. Do'stingizning QR kodini skanerlang yoki o'zingiznikini ko'rsating.",
+    "searchPlaceholder": "uniqueId kiriting, masalan USER#1234",
+    "send": "So'rov yuborish",
+    "remove": "O'chirish",
+    "loading": "Yuklanmoqda...",
+    "error": "Yuklab bo'lmadi",
+    "qr": {
+      "scanQr": "QR skanerlash",
+      "myQr": "Mening QR kodim",
+      "requestsLink": "Do'stlik so'rovlari",
+      "requestsCount": "{{count}} ta yangi",
+      "addHint": "Do'stlarni yonma-yon qo'shing: biringiz \"Mening QR kodim\"ni ochadi, ikkinchingiz \"QR skanerlash\"ni bosadi.",
+      "my": {
+        "title": "Mening QR kodim",
+        "subtitle": "Do'stlaringiz sizni qo'shish uchun shu kodni skanerlaydi",
+        "share": "Ulashish",
+        "save": "Rasmni saqlash",
+        "copy": "Havolani nusxalash",
+        "copied": "Havola nusxalandi",
+        "saved": "Rasmlarga saqlandi",
+        "saveFailed": "Rasmni saqlab bo'lmadi. Qayta urinib ko'ring.",
+        "photosDenied": "QR kodni saqlash uchun Sozlamalarda Rasmlarga ruxsat bering.",
+        "shareMessage": "Receipt Splitter'da meni do'st qilib qo'shing: {{url}}",
+        "shareTitle": "Receipt Splitter'da meni qo'shing",
+        "reset": "QR kodni yangilash",
+        "resetTitle": "QR kod yangilansinmi?",
+        "resetMessage": "Eski QR kod, ulashilgan havolalar va skrinshotlar ishlamay qoladi. Mavjud do'stlaringiz saqlanib qoladi.",
+        "resetConfirm": "Yangilash",
+        "resetDone": "Yangi QR kodingiz tayyor",
+        "loadError": "QR kodni yuklab bo'lmadi.",
+        "newFriend": "{{name}} sizni do'st qilib qo'shdi",
+        "permanentNote": "Bu kodning muddati tugamaydi. Adashib ulashgan bo'lsangiz, uni yangilang."
+      },
+      "scan": {
+        "title": "QR skanerlash",
+        "hint": "Kamerani do'stingizning QR kodiga qarating",
+        "fromPhotos": "Rasmlardan tanlash",
+        "light": "Chiroq",
+        "checking": "Kod tekshirilmoqda…",
+        "noQrInImage": "Bu rasmda QR kod topilmadi. Aniqroq skrinshot tanlang.",
+        "permissionTitle": "Kameraga ruxsat kerak",
+        "permissionBody": "Kamera faqat QR kodlarni skanerlash uchun ishlatiladi. QR kod skrinshotini rasmlardan ham tanlashingiz mumkin.",
+        "allowCamera": "Kameraga ruxsat berish",
+        "openSettings": "Sozlamalarni ochish"
+      },
+      "card": {
+        "add": "Do'st qo'shish",
+        "alreadyFriends": "Allaqachon do'stsiz",
+        "self": "Bu sizsiz",
+        "selfHint": "Bu sizning QR kodingiz. Uni do'stingizga ko'rsating, u skanerlasin.",
+        "pendingIncoming": "{{name}} sizga allaqachon do'stlik so'rovi yuborgan",
+        "accept": "So'rovni qabul qilish",
+        "pendingOutgoing": "Siz allaqachon so'rov yuborgansiz. Yonma-yon skanerlash uni darhol qo'shadi.",
+        "friendsHint": "Siz allaqachon do'stsiz.",
+        "addedTitle": "Endi do'stsiz!",
+        "addedBody": "{{name}} do'stlaringiz ro'yxatida.",
+        "done": "Tayyor",
+        "scanAnother": "Yana skanerlash"
+      },
+      "group": {
+        "joining": "Guruhga qo'shilmoqda…",
+        "joined": "Siz {{name}} guruhiga qo'shildingiz",
+        "joinedGeneric": "Siz guruhga qo'shildingiz",
+        "alreadyMember": "Siz allaqachon bu guruhdasiz",
+        "owner": "Bu sizning guruhingiz",
+        "friendsToo": "Siz va guruh egasi endi do'stsiz.",
+        "open": "Guruhlarni ochish"
+      },
+      "errors": {
+        "NOT_OUR_QR": "Bu Receipt Splitter QR kodi emas",
+        "NOT_OUR_QR_body": "Bu QR kod do'stlik yoki guruh taklifi emas. Do'stingizdan Do'stlar → Mening QR kodimni ochishini so'rang.",
+        "INVALID_CODE": "Bu QR kod endi yaroqsiz",
+        "INVALID_CODE_body": "U yangilangan yoki muddati tugagan. Do'stingizdan QR kodini qayta ko'rsatishini so'rang.",
+        "NETWORK": "Internet yo'q",
+        "NETWORK_body": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
+        "RATE_LIMITED": "Juda ko'p urinish",
+        "RATE_LIMITED_body": "Biroz kutib, qayta urinib ko'ring.",
+        "UNKNOWN": "Nimadir xato ketdi",
+        "UNKNOWN_body": "Qayta urinib ko'ring.",
+        "tryAgain": "Qayta urinish",
+        "scanAgain": "Qayta skanerlash"
+      },
+      "validLimited": "Cheklangan vaqt amal qiladi",
+      "expiresAt": "Amal qilish muddati: {{time}}"
+    },
+    "filter": "Do'stlaringizni qidiring",
+    "noMatches": "Qidiruvga mos do'st topilmadi",
+    "addById": "ID orqali qo'shish"
   }
 }

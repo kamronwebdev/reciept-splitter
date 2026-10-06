@@ -125,12 +125,94 @@
     "title": "Friends",
     "requests": "Requests",
     "add": "Add Friend",
-    "empty": "No friends yet. Tap + to add.",
+    "empty": "No friends yet. Scan a friend's QR code or show them yours.",
     "searchPlaceholder": "Enter uniqueId, e.g. USER#1234",
     "send": "Send request",
     "remove": "Remove",
     "loading": "Loading...",
-    "error": "Failed to load"
+    "error": "Failed to load",
+    "qr": {
+      "scanQr": "Scan QR",
+      "myQr": "My QR",
+      "requestsLink": "Friend requests",
+      "requestsCount": "{{count}} new",
+      "addHint": "Add friends in person: one of you opens My QR, the other taps Scan QR.",
+      "my": {
+        "title": "My QR code",
+        "subtitle": "Friends scan this code to add you",
+        "share": "Share",
+        "save": "Save image",
+        "copy": "Copy link",
+        "copied": "Link copied",
+        "saved": "Saved to Photos",
+        "saveFailed": "Could not save the image. Please try again.",
+        "photosDenied": "Allow access to Photos in Settings to save the QR code.",
+        "shareMessage": "Add me on Receipt Splitter: {{url}}",
+        "shareTitle": "Add me on Receipt Splitter",
+        "reset": "Reset QR code",
+        "resetTitle": "Reset your QR code?",
+        "resetMessage": "Your old QR code, shared links and screenshots will stop working. Friends you already have stay.",
+        "resetConfirm": "Reset",
+        "resetDone": "Your new QR code is ready",
+        "loadError": "Could not load your QR code.",
+        "newFriend": "{{name}} added you as a friend",
+        "permanentNote": "This code doesn't expire. Reset it if you shared it by mistake."
+      },
+      "scan": {
+        "title": "Scan QR",
+        "hint": "Point the camera at a friend's QR code",
+        "fromPhotos": "Choose from photos",
+        "light": "Light",
+        "checking": "Checking the code…",
+        "noQrInImage": "No QR code found in this picture. Try a clearer screenshot.",
+        "permissionTitle": "Camera access is needed",
+        "permissionBody": "The camera is only used to scan QR codes. You can also choose a screenshot of a QR code from your photos.",
+        "allowCamera": "Allow camera access",
+        "openSettings": "Open Settings"
+      },
+      "card": {
+        "add": "Add friend",
+        "alreadyFriends": "Already friends",
+        "self": "That's you",
+        "selfHint": "This is your own QR code. Show it to a friend so they can scan it.",
+        "pendingIncoming": "{{name}} already sent you a friend request",
+        "accept": "Accept request",
+        "pendingOutgoing": "You already sent a request. Scanning in person adds them right away.",
+        "friendsHint": "You are already friends.",
+        "addedTitle": "You're now friends!",
+        "addedBody": "{{name}} is in your friends list.",
+        "done": "Done",
+        "scanAnother": "Scan another"
+      },
+      "group": {
+        "joining": "Joining the group…",
+        "joined": "You joined {{name}}",
+        "joinedGeneric": "You joined the group",
+        "alreadyMember": "You're already in this group",
+        "owner": "This is your own group",
+        "friendsToo": "You and the group owner are now friends.",
+        "open": "Open groups"
+      },
+      "errors": {
+        "NOT_OUR_QR": "Not a Receipt Splitter QR code",
+        "NOT_OUR_QR_body": "This QR code is not a friend or group invite. Ask your friend to open Friends → My QR.",
+        "INVALID_CODE": "This QR code is no longer valid",
+        "INVALID_CODE_body": "It was reset or has expired. Ask your friend to show their QR code again.",
+        "NETWORK": "No connection",
+        "NETWORK_body": "Check your internet connection and try again.",
+        "RATE_LIMITED": "Too many attempts",
+        "RATE_LIMITED_body": "Please wait a moment and try again.",
+        "UNKNOWN": "Something went wrong",
+        "UNKNOWN_body": "Please try again.",
+        "tryAgain": "Try again",
+        "scanAgain": "Scan again"
+      },
+      "validLimited": "Valid for a limited time",
+      "expiresAt": "Expires: {{time}}"
+    },
+    "filter": "Search your friends",
+    "noMatches": "No friends match your search",
+    "addById": "Add by ID"
   },
   "home": {
     "header": {
@@ -168,7 +250,7 @@
     "header": {
       "copyId": "Copy ID",
       "copied": "Copied",
-      "shareQr": "Share my invite QR",
+      "shareQr": "My QR code",
       "idLabel": "ID"
     },
     "avatar": {
@@ -242,8 +324,8 @@
       "create": "New group",
       "details": "Group"
     },
-    "scanInvite": "Scan Invite",
-    "friendQr": "My Friend QR",
+    "scanInvite": "Scan QR",
+    "friendQr": "My QR code",
     "groupQr": "Group QR",
     "scanReceipt": "Scan Receipt",
     "participants": "Participants",

@@ -1,319 +1,245 @@
-// app/tabs/scan-invite.tsx
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View, Image, Animated, Modal } from 'react-native';
-import { useIsFocused } from 'expo-router';
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { YStack, XStack } from 'tamagui';
-import { Button, Paragraph } from '@/shared/ui/typography';
-import { ChevronLeft } from '@tamagui/lucide-icons';
+// app/tabs/scan-invite.tsx — scan a friend's personal QR (or a group invite) and act on it.
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Linking, Platform, View } from 'react-native';
+import { scanFromURLAsync, useCameraPermissions } from 'expo-camera';
+import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect, useIsFocused, useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-import { parseInviteFromScan } from '@/shared/lib/utils/invite';
-import { FriendsApi } from '@/features/friends/api/friends.api';
+import { CAMERA } from '@/shared/theme/palette';
+import MessageScreen, { type MessageAction } from '@/shared/ui/MessageScreen';
+import { parseScannedInvite, type ScannedInvite } from '@/shared/lib/utils/invite';
+import { ApiError } from '@/features/auth/api';
+import { FriendsApi, type FriendCard } from '@/features/friends/api/friends.api';
+import { useFriendsStore } from '@/features/friends/model/friends.store';
+import { friendQrErrorCode } from '@/features/friends/model/qr-errors';
 import { GroupsApi } from '@/features/groups/api/groups.api';
+import { useGroupsStore } from '@/features/groups/model/groups.store';
+import QrCameraStage from '@/features/friends/ui/scan/QrCameraStage';
+import ScanResultSheet, { type ScanResult } from '@/features/friends/ui/scan/ScanResultSheet';
 
-import { CAMERA, BRAND } from '@/shared/theme/palette';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
-type FromParam = 'friends-requests' | 'groups-index' | undefined;
+type FromParam = 'friends' | 'friends-requests' | 'groups-index' | 'receipt';
 
-interface UserData {
-  avatar?: string;
-  name: string;
-  username: string;
-  bio?: string;
-}
+const isNative = Platform.OS !== 'web';
+/** the same QR is usually still in front of the camera after "Scan another": ignore it for a moment */
+const SAME_CODE_COOLDOWN_MS = 2500;
+
+const haptic = {
+  scanned: () => isNative && Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined),
+  success: () => isNative && Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined),
+  warning: () => isNative && Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined),
+};
 
 export default function ScanInviteScreen() {
-  const { colors } = useAppTheme();
-  const [perm, requestPerm] = useCameraPermissions();
-  const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const lock = useRef(false);
-  const isFocused = useIsFocused();
+  const { t } = useTranslation();
   const router = useRouter();
-  const { from } = useLocalSearchParams<{ from?: FromParam }>();
+  const isFocused = useIsFocused();
+  const params = useLocalSearchParams<{ from?: FromParam; code?: string }>();
+  const refreshFriends = useFriendsStore((s) => s.fetchAll);
+  const refreshGroups = useGroupsStore((s) => s.fetchGroups);
 
-  // Анимации для модалки
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const [perm, requestPerm] = useCameraPermissions();
+  const [result, setResult] = useState<ScanResult | null>(null);
+  const handling = useRef(false);
+  const lastScan = useRef<{ data: string; at: number } | null>(null);
+  const askedRef = useRef(false);
 
+  // ask once when the screen opens
   useEffect(() => {
-    if (isFocused && !perm?.granted) requestPerm();
-    if (!isFocused) {
-      setStatus('idle');
-      lock.current = false;
+    if (isFocused && perm && !perm.granted && perm.canAskAgain && !askedRef.current) {
+      askedRef.current = true;
+      requestPerm().catch(() => undefined);
     }
-  }, [isFocused, perm?.granted, requestPerm]);
+  }, [isFocused, perm, requestPerm]);
 
-  useEffect(() => {
-    if (status === 'ok') {
-      // Запускаем анимацию появления
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      fadeAnim.setValue(0);
-      scaleAnim.setValue(0.8);
-    }
-  }, [status, fadeAnim, scaleAnim]);
+  // the tab screen stays mounted: start clean every time it is opened
+  useFocusEffect(
+    useCallback(
+      () => () => {
+        setResult(null);
+        handling.current = false;
+        lastScan.current = null;
+      },
+      []
+    )
+  );
 
-  const goBack = () => {
-    if (from === 'friends-requests') router.replace('/tabs/friends/requests' as never);
-    else if (from === 'groups-index') router.replace('/tabs/groups' as never);
-    else router.back();
-  };
+  const goBack = useCallback(() => {
+    if (params.from === 'groups-index') router.replace('/tabs/groups' as never);
+    else if (router.canGoBack()) router.back();
+    else router.replace('/tabs/friends' as never);
+  }, [params.from, router]);
 
-  async function redeem(data: string) {
+  const lookupCode = useCallback(async (code: string) => {
+    setResult({ kind: 'checking' });
     try {
-      const parsed = parseInviteFromScan(data);
-      if (!parsed) throw new Error('not-our-qr');
-
-      setStatus('loading');
-      
-      let response;
-      if (parsed.kind === 'friend') {
-        response = await FriendsApi.joinByToken(parsed.token);
-      } else {
-        response = await GroupsApi.joinByToken(parsed.token);
-      }
-
-      // Извлекаем данные пользователя из ответа API
-      // Адаптируйте под структуру вашего API
-      if (response?.data) {
-        setUserData({
-          avatar: response.data.avatar || response.data.photo,
-          name: response.data.name || response.data.fullName,
-          username: response.data.username || `@${response.data.login}`,
-          bio: response.data.bio || `${response.data.name} endi sizning do'stingiz!`
-        });
-      }
-
-      setStatus('ok');
-      setTimeout(goBack, 3000); // 3 секунды показываем успех
-    } catch {
-      setStatus('error');
-      setTimeout(() => {
-        setStatus('idle');
-        lock.current = false;
-      }, 900);
+      const card = await FriendsApi.lookupCode(code);
+      setResult({ kind: 'card', code, card });
+    } catch (e) {
+      haptic.warning();
+      const errorCode = friendQrErrorCode(e);
+      setResult({ kind: 'error', code: errorCode, ...(errorCode === 'NETWORK' || errorCode === 'UNKNOWN' ? { retry: () => void lookupCode(code) } : {}) });
     }
+  }, []);
+
+  const redeem = useCallback(
+    async (invite: ScannedInvite) => {
+      if (invite.kind === 'friend-code') return lookupCode(invite.code);
+
+      if (invite.kind === 'friend') {
+        // old, time-limited friend QR codes
+        setResult({ kind: 'checking' });
+        try {
+          const res = await FriendsApi.joinByToken(invite.token);
+          if (res.action === 'self' && res.friend) {
+            setResult({ kind: 'card', code: '', card: { ...res.friend, friendshipStatus: 'self' } });
+            return;
+          }
+          haptic.success();
+          setResult({ kind: 'added', friend: res.friend ?? null });
+          void refreshFriends();
+        } catch (e) {
+          haptic.warning();
+          const code = friendQrErrorCode(e);
+          setResult({ kind: 'error', code, ...(code === 'NETWORK' || code === 'UNKNOWN' ? { retry: () => void redeem(invite) } : {}) });
+        }
+        return;
+      }
+
+      setResult({ kind: 'group-joining' });
+      try {
+        const r = await GroupsApi.joinByToken(invite.token);
+        haptic.success();
+        setResult({ kind: 'group-done', result: r });
+        void refreshGroups();
+        void refreshFriends();
+      } catch (e) {
+        haptic.warning();
+        const code = friendQrErrorCode(e);
+        setResult({ kind: 'error', code, ...(code === 'NETWORK' || code === 'UNKNOWN' ? { retry: () => void redeem(invite) } : {}) });
+      }
+    },
+    [lookupCode, refreshFriends, refreshGroups]
+  );
+
+  const handleData = useCallback(
+    (data: string) => {
+      if (handling.current) return;
+      const last = lastScan.current;
+      if (last && last.data === data && Date.now() - last.at < SAME_CODE_COOLDOWN_MS) return;
+      handling.current = true;
+      lastScan.current = { data, at: Date.now() };
+      haptic.scanned();
+      const invite = parseScannedInvite(data);
+      if (!invite) {
+        haptic.warning();
+        setResult({ kind: 'error', code: 'NOT_OUR_QR' });
+        return;
+      }
+      void redeem(invite);
+    },
+    [redeem]
+  );
+
+  // receipt-splitter://f/<code> deep links land here with ?code=
+  useEffect(() => {
+    if (!isFocused || !params.code) return;
+    const code = params.code;
+    router.setParams({ code: undefined } as never);
+    handling.current = true;
+    void redeem({ kind: 'friend-code', code });
+  }, [isFocused, params.code, redeem, router]);
+
+  const add = useCallback(
+    async (code: string) => {
+      setResult((r) => (r?.kind === 'card' ? { ...r, busy: true } : r));
+      try {
+        const res = await FriendsApi.addByCode(code);
+        haptic.success();
+        setResult({ kind: 'added', friend: res.friend });
+        void refreshFriends();
+      } catch (e) {
+        if (e instanceof ApiError && (e.code === 'ALREADY_FRIENDS' || e.code === 'SELF')) {
+          const friend = e.data?.friend as FriendCard | undefined;
+          setResult((r) =>
+            r?.kind === 'card'
+              ? { kind: 'card', code, card: { ...(friend ?? r.card), friendshipStatus: e.code === 'SELF' ? 'self' : 'friends' } }
+              : r
+          );
+          return;
+        }
+        haptic.warning();
+        const errorCode = friendQrErrorCode(e);
+        setResult({ kind: 'error', code: errorCode, ...(errorCode === 'NETWORK' || errorCode === 'UNKNOWN' ? { retry: () => void lookupCode(code) } : {}) });
+      }
+    },
+    [lookupCode, refreshFriends]
+  );
+
+  const scanAnother = useCallback(() => {
+    setResult(null);
+    if (lastScan.current) lastScan.current.at = Date.now();
+    handling.current = false;
+  }, []);
+
+  const pickPhoto = useCallback(async () => {
+    if (handling.current) return;
+    try {
+      const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 1, allowsEditing: false });
+      if (picked.canceled || !picked.assets?.length) return;
+      handling.current = true;
+      setResult({ kind: 'checking' });
+      const found = await scanFromURLAsync(picked.assets[0]!.uri, ['qr']);
+      const data = found.find((f) => parseScannedInvite(f.data))?.data ?? found[0]?.data;
+      if (!data) {
+        haptic.warning();
+        setResult({ kind: 'no-qr' });
+        return;
+      }
+      handling.current = false;
+      lastScan.current = null;
+      handleData(data);
+    } catch {
+      handling.current = true;
+      setResult({ kind: 'no-qr' });
+    }
+  }, [handleData]);
+
+  const sheet = (
+    <ScanResultSheet
+      result={result}
+      onAdd={(code) => void add(code)}
+      onDone={goBack}
+      onScanAnother={scanAnother}
+      onOpenGroups={() => router.replace('/tabs/groups' as never)}
+    />
+  );
+
+  if (!perm) return <View style={{ flex: 1, backgroundColor: CAMERA.black }} />;
+
+  if (!perm.granted) {
+    const actions: MessageAction[] = [];
+    if (perm.canAskAgain) actions.push({ title: t('friends.qr.scan.allowCamera'), onPress: () => void requestPerm(), variant: 'primary' });
+    else if (isNative) actions.push({ title: t('friends.qr.scan.openSettings'), onPress: () => void Linking.openSettings().catch(() => undefined), variant: 'primary' });
+    actions.push({ title: t('friends.qr.scan.fromPhotos'), onPress: () => void pickPhoto(), variant: 'outline' });
+    actions.push({ title: t('common.back', 'Back'), onPress: goBack, variant: 'secondary' });
+    return (
+      <>
+        <MessageScreen kind="permission" title={t('friends.qr.scan.permissionTitle')} message={t('friends.qr.scan.permissionBody')} actions={actions} />
+        {sheet}
+      </>
+    );
   }
 
   return (
-    <View style={S.root}>
-      {/* Header (светлый текст поверх камеры) */}
-      <View style={S.headerAbs}>
-        <XStack ai="center" jc="space-between" px="$3" py="$2">
-          <Button
-            size="$2"
-            h={28}
-            chromeless
-            onPress={goBack}
-            icon={<ChevronLeft size={18} color={CAMERA.onCamera} />}
-            color={CAMERA.onCamera}
-          >
-            Back
-          </Button>
-          <Paragraph fow="700" fos="$6" col={CAMERA.onCamera}>Scan invite</Paragraph>
-          <YStack w={54} />
-        </XStack>
-      </View>
-
-      {/* Камера только на фокусе */}
-      <View style={S.cameraWrap}>
-        {isFocused && perm?.granted ? (
-          <CameraView
-            style={S.camera}
-            barcodeScannerSettings={{ barcodeTypes: ['qr'] as const }}
-            onBarcodeScanned={(res) => {
-              if (lock.current || status === 'loading') return;
-              lock.current = true;
-              redeem(res.data);
-            }}
-          />
-        ) : (
-          <YStack f={1} ai="center" jc="center">
-            <Paragraph col="$gray1">Allow camera access</Paragraph>
-          </YStack>
-        )}
-      </View>
-
-      {/* Loading статус */}
-      {status === 'loading' && (
-        <View style={S.overlay}>
-          <YStack ai="center" gap="$2">
-            <ActivityIndicator color={CAMERA.onCamera} />
-            <Paragraph col={CAMERA.onCamera}>Connecting…</Paragraph>
-          </YStack>
-        </View>
+    <>
+      {isFocused ? (
+        <QrCameraStage scanning={!result} onScanned={handleData} onPickPhoto={() => void pickPhoto()} onBack={goBack} />
+      ) : (
+        <View style={{ flex: 1, backgroundColor: CAMERA.black }} />
       )}
-
-      {/* Error статус */}
-      {status === 'error' && (
-        <View style={S.overlay}>
-          <Paragraph col={CAMERA.onCamera}>Error 😕</Paragraph>
-        </View>
-      )}
-
-      {/* Success Modal */}
-      <Modal
-        visible={status === 'ok'}
-        transparent
-        animationType="none"
-        statusBarTranslucent
-      >
-        <View style={S.modalOverlay}>
-          <Animated.View
-            style={[
-              S.successModal,
-              { backgroundColor: colors.surface },
-              {
-                opacity: fadeAnim,
-                transform: [{ scale: scaleAnim }],
-              },
-            ]}
-          >
-            {/* Галочка успеха */}
-            <View style={S.checkmark}>
-              <Paragraph fos={24} fow="bold" col={CAMERA.onCamera}>✓</Paragraph>
-            </View>
-
-            {/* Аватар */}
-            <View style={S.avatarContainer}>
-              {userData?.avatar ? (
-                <Image
-                  source={{ uri: userData.avatar }}
-                  style={S.avatar}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View style={[S.avatar, S.avatarPlaceholder, { backgroundColor: colors.surfaceAlt }]}>
-                  <Paragraph fos={32} col="$textSubtle">
-                    {userData?.name?.[0]?.toUpperCase() || '?'}
-                  </Paragraph>
-                </View>
-              )}
-            </View>
-
-            {/* Информация о пользователе */}
-            <YStack ai="center" px="$4" pt="$2" gap="$1">
-              <Paragraph fos={20} fow="700" col="$text" ta="center">
-                {userData?.name || 'User'}
-              </Paragraph>
-              <Paragraph fos={14} col="$textMuted" ta="center">
-                {userData?.username || '@user'}
-              </Paragraph>
-            </YStack>
-
-            {/* Био */}
-            {userData?.bio && (
-              <YStack px="$6" pt="$4">
-                <Paragraph fos={14} col="$text" ta="center" lh={20}>
-                  {userData.bio}
-                </Paragraph>
-              </YStack>
-            )}
-
-            <View style={{ height: 24 }} />
-          </Animated.View>
-        </View>
-      </Modal>
-    </View>
+      {sheet}
+    </>
   );
 }
-
-const S = StyleSheet.create({
-  root: { 
-    flex: 1, 
-    backgroundColor: CAMERA.black 
-  },
-  headerAbs: {
-    position: 'absolute',
-    top: 0, 
-    left: 0, 
-    right: 0,
-    zIndex: 10,
-    paddingTop: 8,
-    backgroundColor: CAMERA.topScrim,
-  },
-  cameraWrap: { 
-    flex: 1, 
-    backgroundColor: CAMERA.black 
-  },
-  camera: { 
-    flex: 1 
-  },
-  overlay: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-    backgroundColor: CAMERA.pill,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: CAMERA.modalScrim,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  successModal: {
-    width: 358,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: BRAND,
-    // Для Android/iOS тени используем elevation + shadowColor
-    elevation: 10,
-    shadowColor: BRAND,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    position: 'relative',
-  },
-  checkmark: {
-    position: 'absolute',
-    top: -12,
-    right: -12,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: BRAND,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-    // Тень для галочки
-    elevation: 5,
-    shadowColor: BRAND,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  avatarContainer: {
-    alignItems: 'center',
-    paddingTop: 16,
-    paddingBottom: 12,
-  },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 2,
-    borderColor: BRAND,
-  },
-  avatarPlaceholder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

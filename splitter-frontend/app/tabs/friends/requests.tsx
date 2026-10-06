@@ -284,7 +284,7 @@ export default function FriendsRequestsUnified() {
           theme="active"
           icon={<Scan size={18} />}
         >
-          {t('friends.requests.scanInvite', 'Scan invite')}
+          {t('friends.qr.scanQr')}
         </Button>
         <Button
           onPress={() => router.push('/tabs/friends/invite' as never)}
@@ -293,7 +293,7 @@ export default function FriendsRequestsUnified() {
           theme="gray"
           icon={<QrCode size={18} />}
         >
-          {t('friends.requests.showMyQr', 'Show my QR')}
+          {t('friends.qr.myQr')}
         </Button>
       </XStack>
 

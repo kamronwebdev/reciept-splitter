@@ -31,6 +31,11 @@ describe('auth locales', () => {
     const missing = keys((en as any).receipt).map((k) => `receipt.${k}`).filter((k) => !have.has(k));
     expect(missing).toEqual([]);
   });
+  it.each([['uz', uz], ['ja', ja]] as const)('%s has every friends.qr key that en has', (_l, loc) => {
+    const have = new Set(keys(loc));
+    const missing = keys((en as any).friends.qr).map((k) => `friends.qr.${k}`).filter((k) => !have.has(k));
+    expect(missing).toEqual([]);
+  });
   it('contains the new keys', () => {
     const have = new Set(keys(en));
     for (const k of AUTH_NEW) expect(have.has(k)).toBe(true);
