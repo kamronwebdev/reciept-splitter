@@ -38,7 +38,7 @@ export default function Welcome() {
   }
 
   // Если уже залогинен — сразу в табы
-  if (token) return <Redirect href="/tabs" />;
+  if (token) return <Redirect href="/home" />;
 
   // The stored session was rejected by the server: explain it on the login screen
   if (sessionExpired) return <Redirect href="/login" />;

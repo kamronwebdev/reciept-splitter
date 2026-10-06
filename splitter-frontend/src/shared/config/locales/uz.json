@@ -119,7 +119,8 @@
     "continue": "Davom etish",
     "back": "Orqaga",
     "retry": "Qayta urinish",
-    "close": "Yopish"
+    "close": "Yopish",
+    "done": "Tayyor"
   },
   "home": {
     "header": {
@@ -133,21 +134,27 @@
       "friends": "Do'stlar",
       "groups": "Guruhlar"
     },
-    "recent": {
-      "title": "So'nggi hisoblar",
-      "showMore": "Ko'proq ko'rish",
-      "loading": "Hisoblar yuklanmoqda...",
-      "empty": "Hali hisoblar mavjud emas",
-      "summary": "{{date}} • {{participants}}",
-      "fallbackName": "Hisob",
-      "participants": "{{count}} ishtirokchi",
-      "participants_one": "{{count}} ishtirokchi",
-      "participants_other": "{{count}} ishtirokchi",
-      "amount": "{{currency}} {{amount}}"
-    },
+    "recent": "So'nggi cheklar",
     "features": {
       "title": "Nimalar qilishingiz mumkin"
-    }
+    },
+    "greetingSmall": "Salom,",
+    "scanReceipt": "Chekni skanerlash",
+    "enterManually": "Qo'lda kiritish",
+    "attention": "E'tiboringizni kutmoqda",
+    "friendRequests_one": "{{count}} ta do'stlik so'rovi",
+    "friendRequests_other": "{{count}} ta do'stlik so'rovi",
+    "youOwe": "{{name}}ga qarzingiz bor",
+    "seeAll": "Hammasi",
+    "empty": {
+      "title": "Hali cheklar yo'q",
+      "message": "Chekni skanerlang, kim nima yeganini tanlang — har kim o'z ulushini ko'radi."
+    },
+    "myGroups": "Guruhlarim",
+    "newGroup": "Yangi guruh",
+    "people_one": "{{count}} kishi",
+    "people_other": "{{count}} kishi",
+    "yourShare": "siz: {{amount}}"
   },
   "profile": {
     "title": "Profil",
@@ -565,6 +572,85 @@
     },
     "filter": "Do'stlaringizni qidiring",
     "noMatches": "Qidiruvga mos do'st topilmadi",
-    "addById": "ID orqali qo'shish"
+    "addById": "ID orqali qo'shish",
+    "addTitle": "Do'st qo'shish"
+  },
+  "tabs": {
+    "home": "Asosiy",
+    "groups": "Guruhlar",
+    "scan": "Skaner",
+    "friends": "Do'stlar",
+    "profile": "Profil"
+  },
+  "errors": {
+    "NETWORK": "Internet yo'q. Aloqani tekshirib, qayta urinib ko'ring.",
+    "RATE_LIMITED": "Juda ko'p urinish. Biroz kuting.",
+    "FORBIDDEN": "Buni qila olmaysiz.",
+    "NOT_FOUND": "Bu endi mavjud emas.",
+    "SERVER_ERROR": "Serverda xatolik. Qayta urinib ko'ring.",
+    "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring."
+  },
+  "time": {
+    "now": "hozir",
+    "minutes_one": "{{count}} daq",
+    "minutes_other": "{{count}} daq",
+    "hours_one": "{{count}} soat",
+    "hours_other": "{{count}} soat",
+    "days_one": "{{count}} kun",
+    "days_other": "{{count}} kun"
+  },
+  "balances": {
+    "title": "Balans",
+    "none": "—",
+    "allSettled": "Barcha hisob-kitoblar yopilgan.",
+    "owedToMe": "Sizga qarzdor",
+    "iOwe": "Sizning qarzingiz",
+    "loadError": "Balansni yuklab bo'lmadi.",
+    "emptyPeople": "Hozircha hech kim qarzdor emas.",
+    "owesYou": "sizga {{amount}} qarzdor",
+    "youOweThem": "siz {{amount}} qarzdorsiz",
+    "footer": "Ulush to'langanini belgilash uchun chekni oching."
+  },
+  "settle": {
+    "settled": "Yopilgan",
+    "notFound": "Bu chek topilmadi.",
+    "allPaid": "Hamma to'ladi",
+    "people": "Ulushlar",
+    "footerCreator": "Kimdir sizga pulni qaytarganda \"To'landi\"ni yoqing.",
+    "footerParticipant": "Ulushingizni to'lagach, \"To'landi\"ni yoqing.",
+    "paidTheBill": "Hisobni to'lagan",
+    "paid": "To'landi",
+    "notPaid": "To'lanmagan",
+    "paidA11y": "{{name}} to'ladi"
+  },
+  "notifications": {
+    "title": "Bildirishnomalar",
+    "unreadA11y_one": "{{count}} ta o'qilmagan",
+    "unreadA11y_other": "{{count}} ta o'qilmagan",
+    "today": "Bugun",
+    "earlier": "Avvalroq",
+    "markRead": "O'qilgan deb belgilash",
+    "markAllRead": "Hammasini o'qish",
+    "delete": "O'chirish",
+    "unread": "O'qilmagan",
+    "empty": "Yangi bildirishnomalar yo'q.",
+    "someone": "Kimdir",
+    "types": {
+      "FRIEND_REQUEST": "{{name}} sizga do'stlik so'rovi yubordi",
+      "FRIEND_ACCEPTED": "{{name}} do'stlik so'rovingizni qabul qildi",
+      "FRIEND_ADDED": "{{name}} sizni do'st qilib qo'shdi",
+      "GROUP_ADDED": "{{name}} sizni {{group}} guruhiga qo'shdi",
+      "GROUP_JOIN_REQUEST": "{{name}} {{group}} guruhiga qo'shilmoqchi",
+      "GROUP_JOIN_APPROVED": "Siz {{group}} guruhiga qo'shildingiz",
+      "GROUP_ROLE_ADMIN": "Siz endi {{group}} guruhining adminisiz",
+      "GROUP_ROLE_MEMBER": "Siz endi {{group}} guruhining admini emassiz",
+      "GROUP_REMOVED": "Siz {{group}} guruhidan chiqarildingiz",
+      "RECEIPT_INCLUDED": "{{name}} sizni «{{receipt}}» chekiga qo'shdi. Ulushingiz: {{amount}}",
+      "RECEIPT_PAID": "{{name}} «{{receipt}}» uchun {{amount}} to'ladi",
+      "RECEIPT_UNPAID": "{{name}} «{{receipt}}» dagi ulushini to'lanmagan deb belgiladi",
+      "RECEIPT_PAID_YOURS": "{{name}} «{{receipt}}» dagi ulushingizni to'langan deb belgiladi",
+      "RECEIPT_UNPAID_YOURS": "{{name}} «{{receipt}}» dagi ulushingizni to'lanmagan deb belgiladi",
+      "UNKNOWN": "Yangi bildirishnoma"
+    }
   }
 }

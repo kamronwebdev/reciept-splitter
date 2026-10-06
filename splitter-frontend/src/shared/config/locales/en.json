@@ -118,8 +118,9 @@
     "confirm": "Confirm",
     "continue": "Continue",
     "back": "Back",
-    "retry": "Retry",
-    "close": "Close"
+    "retry": "Try again",
+    "close": "Close",
+    "done": "Done"
   },
   "friends": {
     "title": "Friends",
@@ -212,7 +213,8 @@
     },
     "filter": "Search your friends",
     "noMatches": "No friends match your search",
-    "addById": "Add by ID"
+    "addById": "Add by ID",
+    "addTitle": "Add friend"
   },
   "home": {
     "header": {
@@ -226,21 +228,27 @@
       "friends": "Friends",
       "groups": "Groups"
     },
-    "recent": {
-      "title": "Recent bills",
-      "showMore": "Show more",
-      "loading": "Loading recent bills...",
-      "empty": "No bills yet",
-      "summary": "{{date}} • {{participants}}",
-      "fallbackName": "Bill",
-      "participants": "{{count}} participants",
-      "participants_one": "{{count}} participant",
-      "participants_other": "{{count}} participants",
-      "amount": "{{currency}} {{amount}}"
-    },
+    "recent": "Recent receipts",
     "features": {
       "title": "What you can do"
-    }
+    },
+    "greetingSmall": "Hello,",
+    "scanReceipt": "Scan receipt",
+    "enterManually": "Enter manually",
+    "attention": "Needs your attention",
+    "friendRequests_one": "{{count}} friend request",
+    "friendRequests_other": "{{count}} friend requests",
+    "youOwe": "You owe {{name}}",
+    "seeAll": "See all",
+    "empty": {
+      "title": "No receipts yet",
+      "message": "Scan a receipt, choose who had what, and everyone sees their share."
+    },
+    "myGroups": "My groups",
+    "newGroup": "New group",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "yourShare": "you: {{amount}}"
   },
   "profile": {
     "title": "Profile",
@@ -565,6 +573,84 @@
       "share": "Share",
       "done": "Done",
       "copied": "Summary copied"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "groups": "Groups",
+    "scan": "Scan",
+    "friends": "Friends",
+    "profile": "Profile"
+  },
+  "errors": {
+    "NETWORK": "No connection. Check your internet and try again.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment.",
+    "FORBIDDEN": "You can't do this.",
+    "NOT_FOUND": "It no longer exists.",
+    "SERVER_ERROR": "Something went wrong on our side. Please try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "time": {
+    "now": "now",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "days_one": "{{count}} d",
+    "days_other": "{{count}} d"
+  },
+  "balances": {
+    "title": "Balance",
+    "none": "—",
+    "allSettled": "You're all settled up.",
+    "owedToMe": "You are owed",
+    "iOwe": "You owe",
+    "loadError": "Couldn't load balances.",
+    "emptyPeople": "Nobody owes anything right now.",
+    "owesYou": "owes you {{amount}}",
+    "youOweThem": "you owe {{amount}}",
+    "footer": "Open a receipt to mark shares as paid."
+  },
+  "settle": {
+    "settled": "Settled",
+    "notFound": "This receipt was not found.",
+    "allPaid": "Everyone has paid",
+    "people": "Shares",
+    "footerCreator": "Turn on \"Paid\" when someone has paid you back.",
+    "footerParticipant": "Turn on \"Paid\" after you've paid your share.",
+    "paidTheBill": "Paid the bill",
+    "paid": "Paid",
+    "notPaid": "Not paid",
+    "paidA11y": "{{name}} paid"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadA11y_one": "{{count}} unread",
+    "unreadA11y_other": "{{count}} unread",
+    "today": "Today",
+    "earlier": "Earlier",
+    "markRead": "Mark as read",
+    "markAllRead": "Read all",
+    "delete": "Delete",
+    "unread": "Unread",
+    "empty": "You're all caught up.",
+    "someone": "Someone",
+    "types": {
+      "FRIEND_REQUEST": "{{name}} sent you a friend request",
+      "FRIEND_ACCEPTED": "{{name}} accepted your friend request",
+      "FRIEND_ADDED": "{{name}} added you as a friend",
+      "GROUP_ADDED": "{{name}} added you to {{group}}",
+      "GROUP_JOIN_REQUEST": "{{name}} wants to join {{group}}",
+      "GROUP_JOIN_APPROVED": "You joined {{group}}",
+      "GROUP_ROLE_ADMIN": "You are now an admin of {{group}}",
+      "GROUP_ROLE_MEMBER": "You are no longer an admin of {{group}}",
+      "GROUP_REMOVED": "You were removed from {{group}}",
+      "RECEIPT_INCLUDED": "{{name}} added you to “{{receipt}}”. Your share: {{amount}}",
+      "RECEIPT_PAID": "{{name}} paid {{amount}} for “{{receipt}}”",
+      "RECEIPT_UNPAID": "{{name}} marked their share of “{{receipt}}” as not paid",
+      "RECEIPT_PAID_YOURS": "{{name}} marked your share of “{{receipt}}” as paid",
+      "RECEIPT_UNPAID_YOURS": "{{name}} marked your share of “{{receipt}}” as not paid",
+      "UNKNOWN": "New notification"
     }
   }
 }

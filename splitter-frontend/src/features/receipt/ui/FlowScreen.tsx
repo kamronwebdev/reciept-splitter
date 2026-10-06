@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Redirect } from 'expo-router';
 import { YStack } from 'tamagui';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import StepIndicator from './StepIndicator';
+import { useCloseReceiptFlow } from '../model/close-flow';
 import { useReceiptHydrated, useReceiptSessionStore, type ReceiptStep } from '../model/receipt-session.store';
 
 type Props = {
@@ -22,7 +22,11 @@ export default function FlowScreen({ step, children, footer }: Props) {
   const active = useReceiptSessionStore((s) => s.active);
   const hydrated = useReceiptHydrated();
   // opened without a receipt (deep link, finished and reset): go home instead of showing an empty step
-  if (hydrated && !active) return <Redirect href="/tabs" />;
+  const close = useCloseReceiptFlow();
+  useEffect(() => {
+    if (hydrated && !active) close();
+  }, [hydrated, active, close]);
+  if (hydrated && !active) return null;
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>

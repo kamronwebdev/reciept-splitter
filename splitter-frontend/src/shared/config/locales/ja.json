@@ -119,7 +119,8 @@
     "continue": "続ける",
     "back": "戻る",
     "retry": "再試行",
-    "close": "閉じる"
+    "close": "閉じる",
+    "done": "完了"
   },
   "friends": {
     "title": "友だち",
@@ -212,7 +213,8 @@
     },
     "filter": "友達を検索",
     "noMatches": "一致する友達がいません",
-    "addById": "IDで追加"
+    "addById": "IDで追加",
+    "addTitle": "友達を追加"
   },
   "home": {
     "header": {
@@ -226,21 +228,25 @@
       "friends": "友だち",
       "groups": "グループ"
     },
-    "recent": {
-      "title": "最近の明細",
-      "showMore": "もっと見る",
-      "loading": "最近の明細を読み込み中...",
-      "empty": "まだ明細がありません",
-      "summary": "{{date}} • {{participants}}",
-      "fallbackName": "明細",
-      "participants": "{{count}} 人",
-      "participants_one": "{{count}} 人",
-      "participants_other": "{{count}} 人",
-      "amount": "{{currency}} {{amount}}"
-    },
+    "recent": "最近のレシート",
     "features": {
       "title": "できること"
-    }
+    },
+    "greetingSmall": "こんにちは、",
+    "scanReceipt": "レシートをスキャン",
+    "enterManually": "手入力",
+    "attention": "確認が必要",
+    "friendRequests_other": "友達リクエスト{{count}}件",
+    "youOwe": "{{name}}さんへの支払い",
+    "seeAll": "すべて",
+    "empty": {
+      "title": "まだレシートがありません",
+      "message": "レシートをスキャンして、誰が何を頼んだか選ぶだけで、みんなの負担額がわかります。"
+    },
+    "myGroups": "マイグループ",
+    "newGroup": "新規グループ",
+    "people_other": "{{count}}人",
+    "yourShare": "あなた：{{amount}}"
   },
   "profile": {
     "title": "プロフィール",
@@ -565,6 +571,80 @@
       "share": "共有",
       "done": "完了",
       "copied": "まとめをコピーしました"
+    }
+  },
+  "tabs": {
+    "home": "ホーム",
+    "groups": "グループ",
+    "scan": "スキャン",
+    "friends": "友達",
+    "profile": "プロフィール"
+  },
+  "errors": {
+    "NETWORK": "接続できません。インターネット接続を確認してください。",
+    "RATE_LIMITED": "試行回数が多すぎます。しばらくお待ちください。",
+    "FORBIDDEN": "この操作はできません。",
+    "NOT_FOUND": "すでに存在しません。",
+    "SERVER_ERROR": "サーバーで問題が発生しました。もう一度お試しください。",
+    "UNKNOWN": "問題が発生しました。もう一度お試しください。"
+  },
+  "time": {
+    "now": "今",
+    "minutes_other": "{{count}}分",
+    "hours_other": "{{count}}時間",
+    "days_other": "{{count}}日"
+  },
+  "balances": {
+    "title": "残高",
+    "none": "—",
+    "allSettled": "精算はすべて完了しています。",
+    "owedToMe": "受け取る額",
+    "iOwe": "支払う額",
+    "loadError": "残高を読み込めませんでした。",
+    "emptyPeople": "現在、未払いはありません。",
+    "owesYou": "あなたに{{amount}}",
+    "youOweThem": "あなたが{{amount}}",
+    "footer": "レシートを開いて支払い済みにできます。"
+  },
+  "settle": {
+    "settled": "精算済み",
+    "notFound": "レシートが見つかりません。",
+    "allPaid": "全員が支払いました",
+    "people": "負担額",
+    "footerCreator": "返金を受け取ったら「支払い済み」をオンにします。",
+    "footerParticipant": "自分の分を支払ったら「支払い済み」をオンにします。",
+    "paidTheBill": "会計を支払った人",
+    "paid": "支払い済み",
+    "notPaid": "未払い",
+    "paidA11y": "{{name}}さんが支払い済み"
+  },
+  "notifications": {
+    "title": "通知",
+    "unreadA11y_other": "未読{{count}}件",
+    "today": "今日",
+    "earlier": "以前",
+    "markRead": "既読にする",
+    "markAllRead": "すべて既読",
+    "delete": "削除",
+    "unread": "未読",
+    "empty": "新しい通知はありません。",
+    "someone": "誰か",
+    "types": {
+      "FRIEND_REQUEST": "{{name}}さんから友達リクエストが届きました",
+      "FRIEND_ACCEPTED": "{{name}}さんが友達リクエストを承認しました",
+      "FRIEND_ADDED": "{{name}}さんがあなたを友達に追加しました",
+      "GROUP_ADDED": "{{name}}さんがあなたを{{group}}に追加しました",
+      "GROUP_JOIN_REQUEST": "{{name}}さんが{{group}}への参加を希望しています",
+      "GROUP_JOIN_APPROVED": "{{group}}に参加しました",
+      "GROUP_ROLE_ADMIN": "{{group}}の管理者になりました",
+      "GROUP_ROLE_MEMBER": "{{group}}の管理者ではなくなりました",
+      "GROUP_REMOVED": "{{group}}から削除されました",
+      "RECEIPT_INCLUDED": "{{name}}さんが「{{receipt}}」にあなたを追加しました。負担額：{{amount}}",
+      "RECEIPT_PAID": "{{name}}さんが「{{receipt}}」の{{amount}}を支払いました",
+      "RECEIPT_UNPAID": "{{name}}さんが「{{receipt}}」の自分の分を未払いにしました",
+      "RECEIPT_PAID_YOURS": "{{name}}さんが「{{receipt}}」のあなたの分を支払い済みにしました",
+      "RECEIPT_UNPAID_YOURS": "{{name}}さんが「{{receipt}}」のあなたの分を未払いにしました",
+      "UNKNOWN": "新しい通知"
     }
   }
 }

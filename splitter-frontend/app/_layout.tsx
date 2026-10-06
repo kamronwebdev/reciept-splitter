@@ -31,7 +31,11 @@ function ThemedStack() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="tabs" options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+        {/* the receipt flow and the QR scanner cover the tab bar (full-screen modals) */}
+        <Stack.Screen name="receipt" options={{ headerShown: false, presentation: 'fullScreenModal', gestureEnabled: false }} />
+        <Stack.Screen name="scan-invite" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
+        <Stack.Screen name="my-qr" options={{ presentation: 'modal', title: '' }} />
         <Stack.Screen name="login" options={{ title: '' }} />
         <Stack.Screen name="register" options={{ title: '' }} />
         <Stack.Screen name="forgot-password" options={{ title: '' }} />

@@ -31,6 +31,8 @@ type Actions = {
   refreshIfStale: (maxAgeMs?: number, limit?: number, all?: boolean) => Promise<void>;
   getSession: (sessionId: string | number) => SessionHistoryEntry | undefined;
   clearError: () => void;
+  /** local update after marking a share paid / unpaid */
+  setPayments: (sessionId: number, payments: Record<string, string | null>, settled: boolean) => void;
   reset: () => void;
 };
 
@@ -79,11 +81,18 @@ const normalizeEntry = (raw: SessionHistoryEntryRaw): SessionHistoryEntry => {
     participants,
     isCreator: raw.isCreator,
     payload: p!,
+    payments: raw.payments ?? {},
+    settled: raw.settled ?? false,
+    creatorUniqueId: raw.creatorUniqueId ?? null,
   };
 };
 
 export const useSessionsHistoryStore = create<State & Actions>((set, get) => ({
   ...initialState,
+
+  setPayments(sessionId, payments, settled) {
+    set((s) => ({ sessions: s.sessions.map((e) => (e.sessionId === sessionId ? { ...e, payments, settled } : e)) }));
+  },
 
   async fetchHistory(requestedLimit, all = false) {
     const { loading } = get();

@@ -14,5 +14,5 @@ export default function FriendCodeLink() {
     setPendingFriendCode(normalized);
     return <Redirect href="/" />;
   }
-  return <Redirect href={{ pathname: '/tabs/scan-invite', params: { code: normalized } }} />;
+  return <Redirect href={{ pathname: '/scan-invite', params: { code: normalized } }} />;
 }

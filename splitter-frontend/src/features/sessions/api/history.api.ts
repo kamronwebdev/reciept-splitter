@@ -58,6 +58,10 @@ export interface SessionHistoryEntryRaw {
   participantUniqueIds: string[];
   isCreator: boolean;
   payload: SessionHistoryPayload;
+  /** settle up: uniqueId -> paidAt (null = unpaid); the creator is never listed */
+  payments?: Record<string, string | null>;
+  settled?: boolean;
+  creatorUniqueId?: string | null;
 }
 
 /** Облегчённый вид участника для UI */
@@ -84,6 +88,9 @@ export interface SessionHistoryEntry {
 
   isCreator: boolean;
   payload: SessionHistoryPayload;
+  payments: Record<string, string | null>;
+  settled: boolean;
+  creatorUniqueId: string | null;
 }
 
 /** Сырой ответ всего списка */

@@ -102,7 +102,7 @@ export function ListRow({
         )}
       </YStack>
       {!!value && (
-        <Text variant="body" color="$textMuted" numberOfLines={1} maxWidth="50%">
+        <Text variant="body" color="$textMuted" numberOfLines={1} flexShrink={0} maxWidth="60%">
           {value}
         </Text>
       )}
@@ -128,6 +128,19 @@ export function ListRow({
       accessibilityState={{ disabled: !!disabled }}
     >
       {({ pressed }) => content(pressed)}
+    </Pressable>
+  );
+}
+
+/** Small text action on the right of a section header ("See all"). */
+export function HeaderLink({ title, onPress }: { title: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} hitSlop={12} accessibilityRole="button" accessibilityLabel={title}>
+      {({ pressed }) => (
+        <Text variant="subheadline" color="$primaryText" opacity={pressed ? 0.6 : 1}>
+          {title}
+        </Text>
+      )}
     </Pressable>
   );
 }
