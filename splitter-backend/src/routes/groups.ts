@@ -494,7 +494,7 @@ router.post(
 
       const group = await prisma.group.findUnique({
         where: { id: groupId },
-        select: { ownerId: true },
+        select: { ownerId: true, name: true },
       });
       if (!group) return res.status(404).json({ error: "Group not found" });
       // Invalidate token if ownership changed
@@ -505,7 +505,7 @@ router.post(
 
       const userId = req.user.id;
       if (userId === ownerId) {
-        return res.json({ joined: false, member: "owner" });
+        return res.json({ joined: false, member: "owner", group: { id: groupId, name: group.name } });
       }
 
       // Ensure friendship (ACCEPTED)
@@ -563,6 +563,7 @@ router.post(
         joined: memberStatus !== "owner",
         friendship: friendshipStatus,
         member: memberStatus,
+        group: { id: groupId, name: group.name },
       });
     } catch (err) {
       console.error("POST /groups/join error:", err);
