@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { XStack, YStack } from 'tamagui';
-import { Camera, Check, Copy, Pencil, QrCode } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import Input from '@/shared/ui/Input';
@@ -12,6 +11,7 @@ import Section from '@/shared/ui/Section';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { updateUsername } from '@/features/auth/api';
 import { authErrorMessage } from '@/features/auth/model/auth-errors';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const USERNAME_MIN = 2;
 const USERNAME_MAX = 30;
@@ -114,7 +114,7 @@ export default function ProfileHeader({ busy, onAvatarPress, onShareQr }: Props)
             borderWidth={2}
             borderColor="$surface"
           >
-            <Camera size={16} color="$onPrimary" />
+            <AppIcon name="camera" size={16} color="$onPrimary" />
           </YStack>
         </Pressable>
         {busy && (
@@ -161,7 +161,7 @@ export default function ProfileHeader({ busy, onAvatarPress, onShareQr }: Props)
                 accessibilityLabel={t('profile.username.edit', 'Edit username')}
                 style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
               >
-                <Pencil size={18} color="$textMuted" />
+                <AppIcon name="pencil" size={18} color="$textMuted" />
               </Pressable>
             </XStack>
             {!!error && (
@@ -188,7 +188,7 @@ export default function ProfileHeader({ busy, onAvatarPress, onShareQr }: Props)
             accessibilityLabel={t('profile.header.copyId', 'Copy ID')}
             style={{ minWidth: 44, height: 44, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4, paddingHorizontal: 6 }}
           >
-            {copied ? <Check size={18} color="$success" /> : <Copy size={18} color="$textMuted" />}
+            {copied ? <AppIcon name="check" size={18} color="$success" /> : <AppIcon name="copy" size={18} color="$textMuted" />}
             {copied && (
               <Text fontSize={13} fontWeight="600" color="$success" accessibilityLiveRegion="polite">
                 {t('profile.header.copied', 'Copied')}

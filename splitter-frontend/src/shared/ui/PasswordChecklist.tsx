@@ -1,9 +1,9 @@
 import React from 'react';
 import { YStack, XStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
-import { Check, Circle } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { PASSWORD_RULES, passwordChecks } from '@/features/auth/model/password';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const DEFAULTS = {
   length: '8+ characters',
@@ -30,7 +30,7 @@ export default function PasswordChecklist({ password }: { password: string }) {
             accessible
             accessibilityLabel={`${text}: ${ok ? t('auth.ruleMet', 'met') : t('auth.ruleNotMet', 'not met')}`}
           >
-            {ok ? <Check size={16} color="$primaryText" /> : <Circle size={16} color="$textSubtle" />}
+            {ok ? <AppIcon name="check" size={16} color="$primaryText" /> : <AppIcon name="circle" size={16} color="$textSubtle" />}
             <Text fontSize="$3" color={ok ? '$primaryText' : '$textMuted'} fontWeight={ok ? '600' : '400'}>
               {text}
             </Text>

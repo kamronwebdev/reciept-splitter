@@ -1,10 +1,10 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { Check, Lock } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export type Candidate = { uniqueId: string; username: string; avatarUrl?: string | null; isMe?: boolean };
 
@@ -38,7 +38,7 @@ export default function PersonRow({ person, selected, onToggle }: Props) {
           </Text>
         </YStack>
         <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={selected ? '$primary' : 'transparent'} borderWidth={selected ? 0 : 2} borderColor="$borderColor">
-          {selected && (person.isMe ? <Lock size={14} color="$onPrimary" /> : <Check size={18} color="$onPrimary" />)}
+          {selected && (person.isMe ? <AppIcon name="lock" size={14} color="$onPrimary" /> : <AppIcon name="check" size={18} color="$onPrimary" />)}
         </YStack>
       </XStack>
     </Pressable>

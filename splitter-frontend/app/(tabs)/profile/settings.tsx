@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import Constants from 'expo-constants';
-import { Mail } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import Section from '@/shared/ui/Section';
 import Screen from '@/shared/ui/Screen';
@@ -10,6 +9,7 @@ import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
 import { LanguageSegmentedControl } from '@/shared/ui/LanguageSegmentedControl';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import AppearanceSection from '@/features/settings/ui/AppearanceSection';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const SUPPORT_EMAIL = process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'support@example.com';
 
@@ -47,7 +47,7 @@ export default function SettingsScreen() {
           key="support"
           left={
             <IconTile color="$primaryText">
-              <Mail size={17} color="#FFFFFF" />
+              <AppIcon name="mail" size={17} color="#FFFFFF" />
             </IconTile>
           }
           title={t('settings.about.support', 'Support & feedback')}

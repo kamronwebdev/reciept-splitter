@@ -1,7 +1,6 @@
 // app/(tabs)/friends/search.tsx — add a friend by their ID (or go to the QR options).
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { QrCode, ScanLine, UserSearch } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
@@ -16,6 +15,7 @@ import { errorMessage } from '@/shared/lib/utils/error-message';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type UserLite = { uniqueId?: string; username?: string; displayName?: string; avatarUrl?: string | null };
 
@@ -94,7 +94,7 @@ export default function FriendsSearchScreen() {
             key="scan"
             left={
               <IconTile>
-                <ScanLine size={17} color="$onPrimary" />
+                <AppIcon name="scan" size={17} color="$onPrimary" />
               </IconTile>
             }
             title={t('friends.qr.scanQr')}
@@ -105,7 +105,7 @@ export default function FriendsSearchScreen() {
             key="myqr"
             left={
               <IconTile>
-                <QrCode size={17} color="$onPrimary" />
+                <AppIcon name="qr" size={17} color="$onPrimary" />
               </IconTile>
             }
             title={t('friends.qr.myQr')}
@@ -114,7 +114,7 @@ export default function FriendsSearchScreen() {
           />
         </ListSection>
       ) : results.length === 0 ? (
-        <EmptyState icon={<UserSearch size={28} color="$primaryText" />} message={t('friends.search.noResults', 'No results found')} />
+        <EmptyState icon={<AppIcon name="userSearch" size={28} color="$primaryText" />} message={t('friends.search.noResults', 'No results found')} />
       ) : (
         <ListSection>
           {results.map((u, i) => {

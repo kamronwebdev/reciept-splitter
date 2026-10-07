@@ -2,7 +2,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
-import { Receipt } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
@@ -15,6 +14,7 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
 import ReceiptRow from '@/features/sessions/ui/ReceiptRow';
 import { useReceiptLauncher } from '@/features/receipt/model/launcher';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const HISTORY_LIMIT = 50;
 
@@ -57,7 +57,7 @@ export default function HistoryScreen() {
         <ListSkeleton rows={5} avatar={false} />
       ) : sessions.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<Receipt size={28} color="$primaryText" />} title={t('home.empty.title')} message={t('home.empty.message')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
+          <EmptyState icon={<AppIcon name="receipt" size={28} color="$primaryText" />} title={t('home.empty.title')} message={t('home.empty.message')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
         </YStack>
       ) : (
         <>

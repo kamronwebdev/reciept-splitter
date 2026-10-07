@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Platform, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, Image as ImageIcon, Zap, ZapOff } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { CAMERA } from '@/shared/theme/palette';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   /** false while a result is shown: the camera stays on but ignores codes */
@@ -45,7 +45,7 @@ export default function QrCameraStage({ scanning, onScanned, onPickPhoto, onBack
 
       <View style={[styles.top, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel={t('common.back', 'Back')} style={styles.roundBtn}>
-          <ChevronLeft size={24} color={CAMERA.onCamera} />
+          <AppIcon name="chevronLeft" size={24} color={CAMERA.onCamera} />
         </Pressable>
         <View style={styles.titlePill}>
           <Text fontSize={17} fontWeight="800" color={CAMERA.onCamera} accessibilityRole="header" numberOfLines={1}>
@@ -60,7 +60,7 @@ export default function QrCameraStage({ scanning, onScanned, onPickPhoto, onBack
             accessibilityLabel={t('friends.qr.scan.light')}
             style={[styles.roundBtn, torch && { backgroundColor: CAMERA.onCamera }]}
           >
-            {torch ? <Zap size={22} color={CAMERA.black} /> : <ZapOff size={22} color={CAMERA.onCamera} />}
+            {torch ? <AppIcon name="flash" size={22} color={CAMERA.black} /> : <AppIcon name="flashOff" size={22} color={CAMERA.onCamera} />}
           </Pressable>
         ) : (
           <View style={{ width: 48 }} />
@@ -81,7 +81,7 @@ export default function QrCameraStage({ scanning, onScanned, onPickPhoto, onBack
       {scanning && (
         <View style={[styles.bottom, { paddingBottom: insets.bottom + 24 }]}>
           <Pressable onPress={onPickPhoto} accessibilityRole="button" style={styles.photoBtn}>
-            <ImageIcon size={22} color={CAMERA.onCamera} />
+            <AppIcon name="photo" size={22} color={CAMERA.onCamera} />
             <Text fontSize={16} fontWeight="700" color={CAMERA.onCamera}>
               {t('friends.qr.scan.fromPhotos')}
             </Text>

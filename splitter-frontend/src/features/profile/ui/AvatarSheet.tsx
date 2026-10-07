@@ -1,11 +1,11 @@
 import React from 'react';
 import { Linking, Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { Camera, Image as ImageIcon, Trash2, X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import BottomSheet from '@/shared/ui/BottomSheet';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export type BlockedState = { source: 'camera' | 'library'; canAskAgain: boolean } | null;
 
@@ -72,15 +72,15 @@ export default function AvatarSheet({ visible, onClose, hasPhoto, blocked, onTak
           </YStack>
         ) : (
           <>
-            <Row icon={<Camera size={22} color="$text" />} label={t('profile.avatar.takePhoto', 'Take photo')} onPress={onTakePhoto} />
-            <Row icon={<ImageIcon size={22} color="$text" />} label={t('profile.avatar.chooseLibrary', 'Choose from library')} onPress={onChooseLibrary} />
+            <Row icon={<AppIcon name="camera" size={22} color="$text" />} label={t('profile.avatar.takePhoto', 'Take photo')} onPress={onTakePhoto} />
+            <Row icon={<AppIcon name="photo" size={22} color="$text" />} label={t('profile.avatar.chooseLibrary', 'Choose from library')} onPress={onChooseLibrary} />
             {hasPhoto && (
-              <Row icon={<Trash2 size={22} color="$danger" />} label={t('profile.avatar.remove', 'Remove photo')} onPress={onRemove} danger />
+              <Row icon={<AppIcon name="trash" size={22} color="$danger" />} label={t('profile.avatar.remove', 'Remove photo')} onPress={onRemove} danger />
             )}
           </>
         )}
 
-        <Row icon={<X size={22} color="$textMuted" />} label={t('profile.avatar.cancel', 'Cancel')} onPress={onClose} />
+        <Row icon={<AppIcon name="close" size={22} color="$textMuted" />} label={t('profile.avatar.cancel', 'Cancel')} onPress={onClose} />
       </YStack>
     </BottomSheet>
   );

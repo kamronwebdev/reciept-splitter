@@ -6,7 +6,6 @@ import { useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { Copy, Download, RefreshCw, Share2 } from '@tamagui/lucide-icons';
 import { Spinner, XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 
@@ -19,6 +18,7 @@ import { FriendsApi, type MyFriendCode } from '@/features/friends/api/friends.ap
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { friendQrErrorCode } from '@/features/friends/model/qr-errors';
 import PersonalQrCard from '@/features/friends/ui/PersonalQrCard';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const isNative = Platform.OS !== 'web';
 
@@ -214,9 +214,9 @@ export default function MyQrScreen() {
           {!!notice && <Banner kind={notice.kind} message={notice.message} />}
 
           <XStack gap="$2" jc="center">
-            <ActionTile icon={<Share2 size={22} color="$onPrimary" />} label={t('friends.qr.my.share')} onPress={share} primary />
-            {isNative && <ActionTile icon={<Download size={22} color="$text" />} label={t('friends.qr.my.save')} onPress={save} busy={saving} />}
-            <ActionTile icon={<Copy size={22} color="$text" />} label={t('friends.qr.my.copy')} onPress={copy} />
+            <ActionTile icon={<AppIcon name="share" size={22} color="$onPrimary" />} label={t('friends.qr.my.share')} onPress={share} primary />
+            {isNative && <ActionTile icon={<AppIcon name="download" size={22} color="$text" />} label={t('friends.qr.my.save')} onPress={save} busy={saving} />}
+            <ActionTile icon={<AppIcon name="copy" size={22} color="$text" />} label={t('friends.qr.my.copy')} onPress={copy} />
           </XStack>
 
           <Text fontSize={13} color="$textMuted" ta="center">
@@ -231,7 +231,7 @@ export default function MyQrScreen() {
             style={{ alignSelf: 'center', minHeight: 44, paddingHorizontal: 12, justifyContent: 'center' }}
           >
             <XStack ai="center" gap="$2">
-              {resetting ? <Spinner size="small" /> : <RefreshCw size={16} color="$danger" />}
+              {resetting ? <Spinner size="small" /> : <AppIcon name="refresh" size={16} color="$danger" />}
               <Text fontSize={15} fontWeight="600" color="$danger">
                 {t('friends.qr.my.reset')}
               </Text>

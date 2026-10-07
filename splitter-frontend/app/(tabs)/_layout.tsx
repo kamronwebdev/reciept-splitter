@@ -6,7 +6,6 @@ import { Redirect, Tabs, usePathname, useRouter } from 'expo-router';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { House, ScanLine, UserRound, Users, UsersRound } from '@tamagui/lucide-icons';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
@@ -21,11 +20,11 @@ import { useReceiptLauncher } from '@/features/receipt/model/launcher';
 import { rememberTab } from '@/shared/lib/navigation/last-tab';
 
 const TAB_ICONS = {
-  home: { sf: 'house', sfSelected: 'house.fill', fallback: House },
-  groups: { sf: 'person.3', sfSelected: 'person.3.fill', fallback: UsersRound },
-  scan: { sf: 'viewfinder', sfSelected: 'viewfinder', fallback: ScanLine },
-  friends: { sf: 'person.2', sfSelected: 'person.2.fill', fallback: Users },
-  profile: { sf: 'person.crop.circle', sfSelected: 'person.crop.circle.fill', fallback: UserRound },
+  home: { sf: 'house', sfSelected: 'house.fill', icon: 'home', iconSelected: 'homeFill' },
+  groups: { sf: 'person.3', sfSelected: 'person.3.fill', icon: 'groups', iconSelected: 'groupsFill' },
+  scan: { sf: 'viewfinder', sfSelected: 'viewfinder', icon: 'scan', iconSelected: 'scan' },
+  friends: { sf: 'person.2', sfSelected: 'person.2.fill', icon: 'friends', iconSelected: 'friendsFill' },
+  profile: { sf: 'person.crop.circle', sfSelected: 'person.crop.circle.fill', icon: 'profile', iconSelected: 'profileFill' },
 } as const;
 type TabName = keyof typeof TAB_ICONS;
 const TAB_ORDER: TabName[] = ['home', 'groups', 'scan', 'friends', 'profile'];
@@ -158,7 +157,7 @@ function JsTabs({ labels, badges }: TabsProps) {
             title: labels[name],
             tabBarAccessibilityLabel: labels[name],
             tabBarIcon: ({ color, size, focused }) => (
-              <AppIcon sf={focused ? TAB_ICONS[name].sfSelected : TAB_ICONS[name].sf} fallback={TAB_ICONS[name].fallback} color={color as string} size={Math.min(size, 25)} />
+              <AppIcon name={focused ? TAB_ICONS[name].iconSelected : TAB_ICONS[name].icon} color={color as string} size={Math.min(size, 25)} />
             ),
             ...(badgeText(badges[name]) ? { tabBarBadge: badgeText(badges[name]) } : {}),
           }}

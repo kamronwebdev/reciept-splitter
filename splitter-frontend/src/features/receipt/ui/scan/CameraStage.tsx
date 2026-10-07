@@ -4,11 +4,11 @@ import { CameraView } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, Image as ImageIcon, Zap, ZapOff } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { CAMERA } from '@/shared/theme/palette';
 import type { LocalImage } from '../../lib/image';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   onCaptured: (img: LocalImage) => void;
@@ -101,7 +101,7 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
           {/* top bar */}
           <View style={[styles.top, { paddingTop: insets.top + 8 }]}>
             <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel={t('common.back', 'Back')} style={styles.roundBtn}>
-              <ChevronLeft size={24} color={CAMERA.onCamera} />
+              <AppIcon name="chevronLeft" size={24} color={CAMERA.onCamera} />
             </Pressable>
             {isNative && (
               <Pressable
@@ -111,7 +111,7 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
                 accessibilityLabel={torch ? t('receipt.scan.lightOn', 'Light on') : t('receipt.scan.lightOff', 'Light off')}
                 style={[styles.pillBtn, torch && { backgroundColor: CAMERA.onCamera }]}
               >
-                {torch ? <Zap size={20} color={CAMERA.black} /> : <ZapOff size={20} color={CAMERA.onCamera} />}
+                {torch ? <AppIcon name="flash" size={20} color={CAMERA.black} /> : <AppIcon name="flashOff" size={20} color={CAMERA.onCamera} />}
                 <Text fontSize={14} fontWeight="700" color={torch ? CAMERA.black : CAMERA.onCamera}>
                   {torch ? t('receipt.scan.on', 'On') : t('receipt.scan.off', 'Off')}
                 </Text>
@@ -143,7 +143,7 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
             {isNative && <View style={styles.zoomRow}>{[zoomPill('1×', 0), zoomPill('2×', ZOOM_2X)]}</View>}
             <View style={styles.controls}>
               <Pressable onPress={onGallery} accessibilityRole="button" accessibilityLabel={t('receipt.scan.gallery', 'Choose from gallery')} style={styles.roundBtn}>
-                <ImageIcon size={24} color={CAMERA.onCamera} />
+                <AppIcon name="photo" size={24} color={CAMERA.onCamera} />
               </Pressable>
               <Pressable
                 onPress={shoot}

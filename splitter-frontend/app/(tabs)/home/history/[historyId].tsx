@@ -3,7 +3,6 @@ import React, { useCallback, useMemo } from 'react';
 import { Switch } from 'react-native';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { CheckCircle2, Receipt } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 
 import { Text } from '@/shared/ui/typography';
@@ -21,6 +20,7 @@ import type { SessionHistoryEntry } from '@/features/sessions/api/history.api';
 import { useSetPaid } from '@/features/balances/model/queries';
 import { formatMoney } from '@/features/receipt/lib/money';
 import { errorMessage } from '@/shared/lib/utils/error-message';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const DETAIL_LIMIT = 50;
 
@@ -67,7 +67,7 @@ export default function ReceiptDetailScreen() {
   if (!bill) {
     return (
       <Screen refreshing={false} onRefresh={() => void forceRefresh(DETAIL_LIMIT)}>
-        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<Receipt size={28} color="$primaryText" />} message={t('settle.notFound')} />}
+        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="receipt" size={28} color="$primaryText" />} message={t('settle.notFound')} />}
       </Screen>
     );
   }
@@ -106,7 +106,7 @@ export default function ReceiptDetailScreen() {
           </Text>
           {bill.settled && (
             <XStack ai="center" gap="$1" px="$2.5" py="$1" borderRadius={999} backgroundColor="$primarySoft" accessibilityLabel={t('settle.settled')}>
-              <CheckCircle2 size={14} color="$primaryText" />
+              <AppIcon name="checkCircle" size={14} color="$primaryText" />
               <Text variant="footnote" fontWeight="600" color="$primaryText">
                 {t('settle.settled')}
               </Text>

@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
-import { Check, Plus } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 
@@ -19,6 +18,7 @@ import { errorMessage } from '@/shared/lib/utils/error-message';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export default function GroupCreateScreen() {
   const router = useRouter();
@@ -122,7 +122,7 @@ export default function GroupCreateScreen() {
                     right={
                       <Pressable onPress={() => void toggle(f.uniqueId)} accessibilityElementsHidden importantForAccessibility="no">
                         <YStack width={28} height={28} borderRadius={14} ai="center" jc="center" backgroundColor={inGroup ? '$primary' : '$surfaceAlt'}>
-                          {inGroup ? <Check size={16} color="$onPrimary" /> : <Plus size={16} color="$textMuted" />}
+                          {inGroup ? <AppIcon name="check" size={16} color="$onPrimary" /> : <AppIcon name="plus" size={16} color="$textMuted" />}
                         </YStack>
                       </Pressable>
                     }

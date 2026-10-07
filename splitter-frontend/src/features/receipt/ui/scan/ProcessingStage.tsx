@@ -2,11 +2,11 @@ import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YStack } from 'tamagui';
-import { Check } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   /** 'preparing' (resizing), 'uploading' (sending the photo), 'reading' (server is reading the items) */
@@ -34,7 +34,7 @@ export default function ProcessingStage({ phase, uploadFraction, onCancel }: Pro
           return (
             <YStack key={step} flexDirection="row" ai="center" gap="$3" opacity={active || done ? 1 : 0.4}>
               <YStack w={24} h={24} br={12} ai="center" jc="center" backgroundColor={done ? '$primary' : '$surfaceAlt'}>
-                {done ? <Check size={14} color="$onPrimary" /> : active ? <ActivityIndicator size="small" color={colors.primary} /> : null}
+                {done ? <AppIcon name="check" size={14} color="$onPrimary" /> : active ? <ActivityIndicator size="small" color={colors.primary} /> : null}
               </YStack>
               <Text fontSize={17} fontWeight={active ? '700' : '500'} color="$text">
                 {t(`receipt.scan.phase.${step}`, step)}

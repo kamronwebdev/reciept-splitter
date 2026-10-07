@@ -1,12 +1,12 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { ChevronRight } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { formatMoney } from '@/features/receipt/lib/money';
 import type { Balances, Money } from '../api/balances.api';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export function MoneyLines({ list, color, big }: { list: Money[]; color: string; big?: boolean }) {
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ export default function BalanceCard({ data, loading, onPress }: { data: Balances
         <YStack backgroundColor="$surface" borderRadius={16} p="$4" gap="$3" opacity={pressed ? 0.85 : 1}>
           <XStack ai="center" jc="space-between">
             <Text variant="headline">{t('balances.title')}</Text>
-            <ChevronRight size={18} color="$inactive" />
+            <AppIcon name="chevronRight" size={18} color="$inactive" />
           </XStack>
           {loading && !data ? (
             <XStack gap="$4">

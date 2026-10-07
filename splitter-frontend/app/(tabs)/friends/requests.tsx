@@ -1,7 +1,6 @@
 // app/(tabs)/friends/requests.tsx — incoming (accept / decline) and outgoing friend requests.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { XStack } from 'tamagui';
-import { Check, Inbox, X as IconX } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ActivityIndicator } from 'react-native';
 
@@ -19,6 +18,7 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { FriendsApi } from '@/features/friends/api/friends.api';
 import { handleOf } from '@/features/friends/lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Person = { id?: number; uniqueId?: string; username?: string; displayName?: string; avatarUrl?: string | null };
 
@@ -31,9 +31,9 @@ function RoundAction({ onPress, label, kind, busy }: { onPress: () => void; labe
           {busy ? (
             <ActivityIndicator size="small" color={colors.textMuted} />
           ) : kind === 'accept' ? (
-            <Check size={18} color="$onPrimary" />
+            <AppIcon name="check" size={18} color="$onPrimary" />
           ) : (
-            <IconX size={18} color="$textMuted" />
+            <AppIcon name="close" size={18} color="$textMuted" />
           )}
         </XStack>
       )}
@@ -97,7 +97,7 @@ export default function FriendRequestsScreen() {
         <ListSkeleton rows={3} />
       ) : list.length === 0 ? (
         <EmptyState
-          icon={<Inbox size={28} color="$primaryText" />}
+          icon={<AppIcon name="inbox" size={28} color="$primaryText" />}
           message={tab === 'incoming' ? t('friends.requests.emptyIncoming', 'No incoming requests') : t('friends.requests.emptyOutgoing', 'No outgoing requests')}
         />
       ) : (

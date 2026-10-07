@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, Platform } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { ChevronRight } from '@tamagui/lucide-icons';
 import { Text } from '@/shared/ui/typography';
 import { haptic } from '@/shared/lib/haptics';
+import AppIcon from '@/shared/ui/AppIcon';
 
 /**
  * iOS "inset grouped" lists: a section is a rounded card on the grouped background, with an optional
@@ -107,7 +107,7 @@ export function ListRow({
         </Text>
       )}
       {right}
-      {chevron && <ChevronRight size={18} color="$inactive" />}
+      {chevron && <AppIcon name="chevronRight" size={18} color="$inactive" />}
     </XStack>
   );
   if (!onPress && !onLongPress) return content(false);

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, TextInput, type TextInputProps } from 'react-native';
 import { XStack } from 'tamagui';
-import { Search, XCircle } from '@tamagui/lucide-icons';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { useTextStyle } from '@/shared/ui/typography';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = Omit<TextInputProps, 'style'> & { value: string; onChangeText: (v: string) => void; clearLabel?: string };
 
@@ -13,7 +13,7 @@ export default function SearchField({ value, onChangeText, clearLabel = 'Clear',
   const text = useTextStyle(400, 17);
   return (
     <XStack ai="center" gap="$2" px="$2.5" minHeight={40} borderRadius={10} backgroundColor="$surfaceAlt">
-      <Search size={18} color="$textMuted" />
+      <AppIcon name="search" size={18} color="$textMuted" />
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -28,7 +28,7 @@ export default function SearchField({ value, onChangeText, clearLabel = 'Clear',
       />
       {!!value && (
         <Pressable onPress={() => onChangeText('')} hitSlop={10} accessibilityRole="button" accessibilityLabel={clearLabel}>
-          <XCircle size={18} color="$textSubtle" />
+          <AppIcon name="clear" size={18} color="$textSubtle" />
         </Pressable>
       )}
     </XStack>

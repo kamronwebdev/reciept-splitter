@@ -3,9 +3,9 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 import { XStack } from 'tamagui';
-import { AlertCircle, CheckCircle2, Info } from '@tamagui/lucide-icons';
 import { Text } from '@/shared/ui/typography';
 import { haptic } from '@/shared/lib/haptics';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type ToastKind = 'success' | 'error' | 'info';
 type ToastState = { message: string | null; kind: ToastKind; id: number; show: (kind: ToastKind, message: string) => void; hide: () => void };
@@ -31,7 +31,7 @@ export const toast = {
   info: (message: string) => useToastStore.getState().show('info', message),
 };
 
-const ICON = { success: CheckCircle2, error: AlertCircle, info: Info };
+const ICON = { success: 'checkCircle', error: 'error', info: 'info' } as const;
 const ICON_COLOR = { success: '$success', error: '$danger', info: '$primaryText' } as const;
 
 /** Rendered once at the root (AppProviders). */
@@ -44,7 +44,6 @@ export function ToastHost() {
     return () => clearTimeout(t);
   }, [message, kind, id, hide]);
   if (!message) return null;
-  const Icon = ICON[kind];
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, zIndex: 2000, alignItems: 'center' }}>
       <Pressable onPress={hide} accessibilityRole="alert" accessibilityLiveRegion="polite" style={{ maxWidth: 480, width: '100%' }}>
@@ -63,7 +62,7 @@ export function ToastHost() {
           shadowOffset={{ width: 0, height: 4 }}
           elevation={6}
         >
-          <Icon size={20} color={ICON_COLOR[kind]} />
+          <AppIcon name={ICON[kind]} size={20} color={ICON_COLOR[kind]} />
           <Text variant="subheadline" f={1} fontWeight="600">
             {message}
           </Text>

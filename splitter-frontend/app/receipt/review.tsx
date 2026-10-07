@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { Plus } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -17,6 +16,7 @@ import ItemRow from '@/features/receipt/ui/review/ItemRow';
 import ItemEditorSheet from '@/features/receipt/ui/review/ItemEditorSheet';
 import CurrencySheet from '@/features/receipt/ui/review/CurrencySheet';
 import ReceiptThumb from '@/features/receipt/ui/review/ReceiptThumb';
+import AppIcon from '@/shared/ui/AppIcon';
 
 function TotalRow({ label, value, strong, tone }: { label: string; value: string; strong?: boolean; tone?: 'warn' | 'ok' }) {
   return (
@@ -129,7 +129,7 @@ export default function ReviewItemsScreen() {
           </YStack>
         )}
         <XStack ai="center" gap="$2">
-          <Plus size={16} color="$primaryText" />
+          <AppIcon name="plus" size={16} color="$primaryText" />
           <TextLink title={t('receipt.review.addExtra', 'Add fee, tax or discount')} onPress={() => openEditor(undefined, 'fee')} align="left" />
         </XStack>
       </YStack>

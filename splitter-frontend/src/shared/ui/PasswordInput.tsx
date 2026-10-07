@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { XStack } from 'tamagui';
-import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/shared/ui/Input';
 
 import { useAppTheme } from '@/shared/theme/useAppTheme';
+import AppIcon from '@/shared/ui/AppIcon';
 type Props = {
   label?: string;
   placeholder?: string;
@@ -58,7 +58,7 @@ export default function PasswordInput({
       accessibilityRole="button"
       accessibilityLabel={show ? t('auth.hidePassword', 'Hide password') : t('auth.showPassword', 'Show password')}
     >
-      {show ? <EyeOff size={18} color="$textMuted" /> : <Eye size={18} color="$textMuted" />}
+      {show ? <AppIcon name="eyeOff" size={18} color="$textMuted" /> : <AppIcon name="eye" size={18} color="$textMuted" />}
     </Pressable>
   );
 

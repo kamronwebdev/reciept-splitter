@@ -1,11 +1,11 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { Check } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import BottomSheet from '@/shared/ui/BottomSheet';
 import { Text } from '@/shared/ui/typography';
 import { CURRENCIES } from '../../lib/money';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = { visible: boolean; current: string; onClose: () => void; onPick: (code: string) => void };
 
@@ -38,7 +38,7 @@ export default function CurrencySheet({ visible, current, onClose, onPick }: Pro
                   {c.name}
                 </Text>
               </YStack>
-              {c.code === current && <Check size={20} color="$primaryText" />}
+              {c.code === current && <AppIcon name="check" size={20} color="$primaryText" />}
             </XStack>
           </Pressable>
         ))}

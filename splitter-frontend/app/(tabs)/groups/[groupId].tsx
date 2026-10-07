@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { QrCode, UsersRound } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 
 import { Text } from '@/shared/ui/typography';
@@ -24,6 +23,7 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export default function GroupDetailsScreen() {
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
@@ -131,7 +131,7 @@ export default function GroupDetailsScreen() {
   if (!group) {
     return (
       <Screen>
-        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<UsersRound size={28} color="$primaryText" />} message={t('errors.NOT_FOUND')} />}
+        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="groups" size={28} color="$primaryText" />} message={t('errors.NOT_FOUND')} />}
       </Screen>
     );
   }
@@ -159,7 +159,7 @@ export default function GroupDetailsScreen() {
               key="qr"
               left={
                 <IconTile>
-                  <QrCode size={17} color="$onPrimary" />
+                  <AppIcon name="qr" size={17} color="$onPrimary" />
                 </IconTile>
               }
               title={t('groups.detail.showQr')}

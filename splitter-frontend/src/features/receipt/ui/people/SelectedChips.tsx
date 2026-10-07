@@ -1,11 +1,11 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack } from 'tamagui';
-import { X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
 import type { Candidate } from './PersonRow';
+import AppIcon from '@/shared/ui/AppIcon';
 
 /** Selected people as removable chips (you cannot remove yourself). */
 export default function SelectedChips({ people, onRemove }: { people: Candidate[]; onRemove: (uniqueId: string) => void }) {
@@ -28,7 +28,7 @@ export default function SelectedChips({ people, onRemove }: { people: Candidate[
               <Text fontSize={14} fontWeight="600" color="$text" numberOfLines={1} maxWidth={110}>
                 {name}
               </Text>
-              {!p.isMe && <X size={16} color="$textMuted" />}
+              {!p.isMe && <AppIcon name="close" size={16} color="$textMuted" />}
             </XStack>
           </Pressable>
         );

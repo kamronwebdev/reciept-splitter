@@ -1,6 +1,5 @@
 import React from 'react';
 import { Spinner, YStack } from 'tamagui';
-import { AlertTriangle, CheckCircle2, Users } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -10,6 +9,7 @@ import type { FriendCard, PublicFriend } from '../../api/friends.api';
 import type { GroupJoinResult } from '@/features/groups/api/groups.api';
 import type { FriendQrErrorCode } from '../../model/qr-errors';
 import { handleOf } from '../../lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export type ScanResult =
   | { kind: 'checking' }
@@ -124,7 +124,7 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
     case 'added':
       return (
         <>
-          <CheckCircle2 size={40} color="$success" />
+          <AppIcon name="checkCircle" size={40} color="$success" />
           {result.friend && <Person friend={result.friend} />}
           <Text fontSize={20} fontWeight="800" color="$text" ta="center" accessibilityRole="alert">
             {t('friends.qr.card.addedTitle')}
@@ -150,7 +150,7 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
       return (
         <>
           <YStack w={72} h={72} br={36} ai="center" jc="center" backgroundColor="$primarySoft">
-            <Users size={32} color="$primary" />
+            <AppIcon name="friends" size={32} color="$primary" />
           </YStack>
           <Text fontSize={20} fontWeight="800" color="$text" ta="center" accessibilityRole="alert">
             {title}
@@ -215,7 +215,7 @@ function Badge({ text, ok }: { text: string; ok?: boolean }) {
 function ErrorIcon() {
   return (
     <YStack w={72} h={72} br={36} ai="center" jc="center" backgroundColor="$dangerSoft">
-      <AlertTriangle size={32} color="$danger" />
+      <AppIcon name="warning" size={32} color="$danger" />
     </YStack>
   );
 }

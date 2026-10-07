@@ -2,7 +2,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
-import { CheckCircle2 } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
@@ -15,6 +14,7 @@ import { shortDate } from '@/shared/lib/utils/time';
 import { useBalances } from '@/features/balances/model/queries';
 import BalanceCard from '@/features/balances/ui/BalanceCard';
 import { formatMoney } from '@/features/receipt/lib/money';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export default function BalancesScreen() {
   const { t, i18n } = useTranslation();
@@ -30,7 +30,7 @@ export default function BalancesScreen() {
         <ListSkeleton rows={4} />
       ) : people.length === 0 && q.data ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<CheckCircle2 size={28} color="$primaryText" />} message={t('balances.emptyPeople')} />
+          <EmptyState icon={<AppIcon name="checkCircle" size={28} color="$primaryText" />} message={t('balances.emptyPeople')} />
         </YStack>
       ) : (
         people.map((p) => {

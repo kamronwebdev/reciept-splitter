@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { Minus, Plus } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import BottomSheet from '@/shared/ui/BottomSheet';
 import Input from '@/shared/ui/Input';
@@ -12,6 +11,7 @@ import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { currencyDecimals } from '../../lib/split';
 import { formatMoney, parseAmountInput } from '../../lib/money';
 import { lineTotal, roundTo, type DraftItem, type DraftKind } from '../../lib/draft';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   visible: boolean;
@@ -33,13 +33,13 @@ function Stepper({ value, onChange, label }: { value: number; onChange: (n: numb
   return (
     <XStack ai="center" gap="$3" accessibilityRole="adjustable" accessibilityLabel={label} accessibilityValue={{ text: String(value) }}>
       <Pressable onPress={() => onChange(Math.max(1, value - 1))} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel="−" disabled={value <= 1}>
-        <Minus size={20} color="$text" />
+        <AppIcon name="minus" size={20} color="$text" />
       </Pressable>
       <Text fontSize={20} fontWeight="700" color="$text" minWidth={36} ta="center">
         {value}
       </Text>
       <Pressable onPress={() => onChange(value + 1)} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel="+">
-        <Plus size={20} color="$text" />
+        <AppIcon name="plus" size={20} color="$text" />
       </Pressable>
     </XStack>
   );

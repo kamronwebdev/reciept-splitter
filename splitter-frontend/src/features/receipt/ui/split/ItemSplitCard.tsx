@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
-import { Check, Minus, Plus } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
@@ -9,6 +8,7 @@ import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { formatMoney } from '../../lib/money';
 import { remainingUnits, type DraftItem } from '../../lib/draft';
 import type { ReceiptParticipant } from '../../api/receipt.api';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   item: DraftItem;
@@ -106,13 +106,13 @@ export default function ItemSplitCard({ item, currency, participants, meId, shar
                   </Text>
                 )}
                 <Pressable onPress={() => onCount(p.uniqueId, -1)} disabled={n === 0} style={[btn, { opacity: n === 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`− ${p.username}`}>
-                  <Minus size={18} color="$text" />
+                  <AppIcon name="minus" size={18} color="$text" />
                 </Pressable>
                 <Text fontSize={18} fontWeight="800" color="$text" minWidth={24} ta="center">
                   {n}
                 </Text>
                 <Pressable onPress={() => onCount(p.uniqueId, 1)} disabled={left <= 0} style={[btn, { opacity: left <= 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`+ ${p.username}`}>
-                  <Plus size={18} color="$text" />
+                  <AppIcon name="plus" size={18} color="$text" />
                 </Pressable>
               </XStack>
             );
@@ -139,7 +139,7 @@ export default function ItemSplitCard({ item, currency, participants, meId, shar
                   </YStack>
                   {on && (
                     <YStack position="absolute" right={-2} bottom={-2} w={18} h={18} br={9} ai="center" jc="center" backgroundColor="$primary">
-                      <Check size={12} color="$onPrimary" />
+                      <AppIcon name="check" size={12} color="$onPrimary" />
                     </YStack>
                   )}
                 </YStack>

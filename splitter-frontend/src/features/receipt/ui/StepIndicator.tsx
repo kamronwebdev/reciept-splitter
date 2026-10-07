@@ -1,9 +1,9 @@
 import React from 'react';
 import { XStack, YStack } from 'tamagui';
-import { Check } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import type { ReceiptStep } from '../model/receipt-session.store';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const STEPS: ReceiptStep[] = ['scan', 'items', 'people', 'split', 'summary'];
 
@@ -31,7 +31,7 @@ export default function StepIndicator({ current }: { current: ReceiptStep }) {
                 borderColor="$borderColor"
               >
                 {done ? (
-                  <Check size={14} color="$onPrimary" />
+                  <AppIcon name="check" size={14} color="$onPrimary" />
                 ) : (
                   <Text fontSize={12} fontWeight="700" color={active ? '$onPrimary' : '$textSubtle'}>
                     {i + 1}

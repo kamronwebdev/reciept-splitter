@@ -2,10 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { Pressable } from 'react-native';
 import { YStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
-import { X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/shared/ui/Input';
 import { normalizeEmail, suggestEmail } from '@/shared/lib/utils/email';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   value: string;
@@ -68,7 +68,7 @@ export default function EmailInput({
       accessibilityRole="button"
       accessibilityLabel={t('auth.clearEmail', 'Clear email')}
     >
-      <X size={18} color="$textSubtle" />
+      <AppIcon name="close" size={18} color="$textSubtle" />
     </Pressable>
   );
 

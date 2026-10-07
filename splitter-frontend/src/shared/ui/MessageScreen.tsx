@@ -2,10 +2,10 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YStack } from 'tamagui';
-import { AlertTriangle, CameraOff } from '@tamagui/lucide-icons';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export type MessageAction = { title: string; onPress: () => void; variant?: 'primary' | 'secondary' | 'outline'; loading?: boolean };
 
@@ -20,7 +20,7 @@ type Props = {
 export default function MessageStage({ kind, title, message, actions }: Props) {
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
-  const Icon = kind === 'permission' ? CameraOff : AlertTriangle;
+  const icon = kind === 'permission' ? 'cameraOff' : 'warning';
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
@@ -28,7 +28,7 @@ export default function MessageStage({ kind, title, message, actions }: Props) {
     >
       <YStack ai="center" gap="$3" maxWidth={420} alignSelf="center" w="100%">
         <YStack w={72} h={72} br={36} ai="center" jc="center" backgroundColor="$surfaceAlt">
-          <Icon size={32} color={kind === 'error' ? '$danger' : '$textMuted'} />
+          <AppIcon name={icon} size={28} color={kind === 'error' ? '$danger' : '$textMuted'} />
         </YStack>
         <Text fontSize={22} fontWeight="800" color="$text" ta="center" accessibilityRole="header">
           {title}

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Image, Modal, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { CAMERA } from '@/shared/theme/palette';
+import AppIcon from '@/shared/ui/AppIcon';
 
 /** Small receipt photo; tap to see it full screen (to compare with the parsed lines). */
 export default function ReceiptThumb({ uri }: { uri: string }) {
@@ -26,7 +26,7 @@ export default function ReceiptThumb({ uri }: { uri: string }) {
             accessibilityLabel={t('common.close', 'Close')}
             style={{ position: 'absolute', top: insets.top + 12, right: 16, width: 44, height: 44, borderRadius: 22, backgroundColor: CAMERA.pill, alignItems: 'center', justifyContent: 'center' }}
           >
-            <X size={22} color={CAMERA.onCamera} />
+            <AppIcon name="close" size={22} color={CAMERA.onCamera} />
           </Pressable>
         </View>
       </Modal>

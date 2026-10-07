@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { Pressable, RefreshControl, SectionList } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { Bell } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import UserAvatar from '@/shared/ui/UserAvatar';
@@ -17,6 +16,7 @@ import { isToday, timeAgo } from '@/shared/lib/utils/time';
 import { useNotificationMutations, useNotifications } from '@/features/notifications/model/queries';
 import type { AppNotification } from '@/features/notifications/api/notifications.api';
 import { notificationTarget, notificationText } from '@/features/notifications/lib/present';
+import AppIcon from '@/shared/ui/AppIcon';
 
 export default function NotificationsScreen() {
   const { t, i18n } = useTranslation();
@@ -108,7 +108,7 @@ export default function NotificationsScreen() {
                           <UserAvatar uri={item.data.actor.avatarUrl} label={item.data.actor.username} seed={item.data.actor.uniqueId} size={36} textSize={14} />
                         ) : (
                           <YStack width={36} height={36} borderRadius={18} ai="center" jc="center" backgroundColor="$primarySoft">
-                            <Bell size={18} color="$primaryText" />
+                            <AppIcon name="bell" size={18} color="$primaryText" />
                           </YStack>
                         )}
                         <YStack f={1} gap={2} ai="flex-start">
@@ -129,7 +129,7 @@ export default function NotificationsScreen() {
           }}
           ListEmptyComponent={
             <YStack backgroundColor="$surface" borderRadius={16} mt="$2">
-              <EmptyState icon={<Bell size={28} color="$primaryText" />} message={t('notifications.empty')} />
+              <EmptyState icon={<AppIcon name="bell" size={28} color="$primaryText" />} message={t('notifications.empty')} />
             </YStack>
           }
         />

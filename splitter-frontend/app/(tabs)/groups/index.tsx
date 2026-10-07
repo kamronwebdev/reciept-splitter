@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
-import { Plus, ScanLine, UsersRound } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import Screen from '@/shared/ui/Screen';
 import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
@@ -41,7 +40,7 @@ export default function GroupsListScreen() {
         options={{
           headerRight: () => (
             <Pressable onPress={() => router.push('/groups/create')} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('navigation.groups.create')} style={{ padding: 4 }}>
-              <AppIcon sf="plus" fallback={Plus} color={colors.primaryText} size={24} />
+              <AppIcon name="plus" color={colors.primaryText} size={24} />
             </Pressable>
           ),
         }}
@@ -54,7 +53,7 @@ export default function GroupsListScreen() {
         ) : groups.length === 0 ? (
           <YStack backgroundColor="$surface" borderRadius={16}>
             <EmptyState
-              icon={<UsersRound size={28} color="$primaryText" />}
+              icon={<AppIcon name="groups" size={28} color="$primaryText" />}
               title={t('groups.emptyTitle')}
               message={t('groups.emptyMessage')}
               actionLabel={t('navigation.groups.create')}
@@ -82,7 +81,7 @@ export default function GroupsListScreen() {
             key="scan"
             left={
               <IconTile>
-                <ScanLine size={17} color="$onPrimary" />
+                <AppIcon name="scan" size={17} color="$onPrimary" />
               </IconTile>
             }
             title={t('groups.actions.scanInvite', 'Scan invite')}

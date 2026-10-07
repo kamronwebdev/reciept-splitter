@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { QrCode, ScanLine, UserPlus, Users } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 
 import { Text } from '@/shared/ui/typography';
@@ -22,6 +21,7 @@ import { confirmAction } from '@/shared/lib/utils/confirm';
 import { errorMessage } from '@/shared/lib/utils/error-message';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type FriendView = { uniqueId: string; name: string; avatarUrl: string | null };
 
@@ -78,8 +78,8 @@ export default function FriendsScreen() {
     <Screen refreshing={refreshing} onRefresh={refresh} gap={20}>
       {/* the two ways to add someone in person */}
       <XStack gap="$3">
-        <BigAction icon={<ScanLine size={26} color="$onPrimary" />} label={t('friends.qr.scanQr')} primary onPress={() => router.push('/scan-invite')} />
-        <BigAction icon={<QrCode size={26} color="$text" />} label={t('friends.qr.myQr')} onPress={() => router.push('/my-qr')} />
+        <BigAction icon={<AppIcon name="scan" size={26} color="$onPrimary" />} label={t('friends.qr.scanQr')} primary onPress={() => router.push('/scan-invite')} />
+        <BigAction icon={<AppIcon name="qr" size={26} color="$text" />} label={t('friends.qr.myQr')} onPress={() => router.push('/my-qr')} />
       </XStack>
 
       <ListSection>
@@ -87,7 +87,7 @@ export default function FriendsScreen() {
           key="requests"
           left={
             <IconTile>
-              <UserPlus size={17} color="$onPrimary" />
+              <AppIcon name="userAdd" size={17} color="$onPrimary" />
             </IconTile>
           }
           title={t('friends.qr.requestsLink')}
@@ -99,7 +99,7 @@ export default function FriendsScreen() {
           key="add"
           left={
             <IconTile color="$primaryText">
-              <Users size={17} color="#FFFFFF" />
+              <AppIcon name="friends" size={17} color="#FFFFFF" />
             </IconTile>
           }
           title={t('friends.addById')}
@@ -114,7 +114,7 @@ export default function FriendsScreen() {
         <ListSkeleton rows={4} />
       ) : list.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<Users size={28} color="$primaryText" />} message={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
+          <EmptyState icon={<AppIcon name="friends" size={28} color="$primaryText" />} message={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
         </YStack>
       ) : (
         <YStack gap="$3">

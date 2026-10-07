@@ -2,12 +2,12 @@ import React from 'react';
 import { Pressable } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { XStack, YStack } from 'tamagui';
-import { ChevronRight, Trash2 } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { formatMoney } from '../../lib/money';
 import type { DraftItem } from '../../lib/draft';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   item: DraftItem;
@@ -33,7 +33,7 @@ export default function ItemRow({ item, currency, onPress, onDelete }: Props) {
       accessibilityLabel={t('receipt.review.delete', 'Delete')}
       style={{ width: 88, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.danger }}
     >
-      <Trash2 size={22} color={colors.background} />
+      <AppIcon name="trash" size={22} color={colors.background} />
     </Pressable>
   );
 
@@ -58,7 +58,7 @@ export default function ItemRow({ item, currency, onPress, onDelete }: Props) {
           <Text fontSize={16} fontWeight="700" color={item.totalPrice < 0 ? '$success' : '$text'}>
             {formatMoney(item.totalPrice, currency)}
           </Text>
-          <ChevronRight size={18} color="$textSubtle" />
+          <AppIcon name="chevronRight" size={18} color="$textSubtle" />
         </XStack>
       </Pressable>
     </Swipeable>

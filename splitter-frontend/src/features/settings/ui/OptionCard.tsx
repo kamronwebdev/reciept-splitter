@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { YStack } from 'tamagui';
-import { Check } from '@tamagui/lucide-icons';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   selected: boolean;
@@ -35,7 +35,7 @@ export default function OptionCard({ selected, onPress, label, children, flex = 
         {children}
         {selected && (
           <YStack position="absolute" top={6} right={6}>
-            <Check size={14} color="$primaryText" />
+            <AppIcon name="check" size={14} color="$primaryText" />
           </YStack>
         )}
       </YStack>

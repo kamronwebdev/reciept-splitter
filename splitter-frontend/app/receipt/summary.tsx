@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, Share, Switch } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { XStack, YStack } from 'tamagui';
-import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -20,6 +19,7 @@ import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { haptic } from '@/shared/lib/haptics';
 import { toast } from '@/shared/ui/Toast';
 import { errorMessage } from '@/shared/lib/utils/error-message';
+import AppIcon from '@/shared/ui/AppIcon';
 
 /** Step 5: the result. Who owes what (expandable), the total, Share and Done. */
 export default function SummaryScreen() {
@@ -142,7 +142,7 @@ export default function SummaryScreen() {
                   <Text fontSize={20} fontWeight="800" color="$text">
                     {formatMoney(p.amountOwed, currency)}
                   </Text>
-                  {isOpen ? <ChevronUp size={18} color="$textSubtle" /> : <ChevronDown size={18} color="$textSubtle" />}
+                  {isOpen ? <AppIcon name="chevronUp" size={18} color="$textSubtle" /> : <AppIcon name="chevronDown" size={18} color="$textSubtle" />}
                 </XStack>
               </Pressable>
               {p.uniqueId !== meId && p.amountOwed > 0 && (

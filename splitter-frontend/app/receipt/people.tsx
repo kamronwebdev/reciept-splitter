@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Pressable } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
-import { QrCode, ScanLine, Search, Users } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -15,6 +14,7 @@ import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session
 import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import PersonRow, { type Candidate } from '@/features/receipt/ui/people/PersonRow';
 import SelectedChips from '@/features/receipt/ui/people/SelectedChips';
+import AppIcon from '@/shared/ui/AppIcon';
 
 function SectionTitle({ children }: { children: string }) {
   return (
@@ -160,7 +160,7 @@ export default function PeopleScreen() {
         onChangeText={setQuery}
         placeholder={t('receipt.people.search', 'Search people and groups')}
         accessibilityLabel={t('receipt.people.search', 'Search people and groups')}
-        rightAdornment={<Search size={18} color="$textSubtle" />}
+        rightAdornment={<AppIcon name="search" size={18} color="$textSubtle" />}
         textInputProps={{ autoCapitalize: 'none', autoCorrect: false, returnKeyType: 'search' }}
       />
 
@@ -189,7 +189,7 @@ export default function PeopleScreen() {
                   >
                     <XStack ai="center" gap="$3" minHeight={60} px="$4" py="$2" backgroundColor="$surface">
                       <YStack w={44} h={44} br={22} ai="center" jc="center" backgroundColor="$primarySoft">
-                        <Users size={20} color="$primaryText" />
+                        <AppIcon name="friends" size={20} color="$primaryText" />
                       </YStack>
                       <YStack f={1} ai="flex-start">
                         <Text fontSize={16} fontWeight="600" color="$text" numberOfLines={1}>
@@ -209,7 +209,7 @@ export default function PeopleScreen() {
                         </XStack>
                       </YStack>
                       <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={allIn ? '$primary' : 'transparent'} borderWidth={allIn ? 0 : 2} borderColor="$borderColor">
-                        {allIn && <Text fontSize={16} fontWeight="800" color="$onPrimary">✓</Text>}
+                        {allIn && <AppIcon name="check" size={16} color="$onPrimary" weight="semibold" />}
                       </YStack>
                     </XStack>
                   </Pressable>
@@ -248,8 +248,8 @@ export default function PeopleScreen() {
         )}
         {friends.length > 0 && (
           <XStack gap="$2" pt="$1">
-            <QrLink icon={<QrCode size={18} color="$text" />} label={t('receipt.people.inviteQr', 'Invite by QR')} onPress={() => openQr('my')} />
-            <QrLink icon={<ScanLine size={18} color="$text" />} label={t('friends.qr.scanQr')} onPress={() => openQr('scan')} />
+            <QrLink icon={<AppIcon name="qr" size={18} color="$text" />} label={t('receipt.people.inviteQr', 'Invite by QR')} onPress={() => openQr('my')} />
+            <QrLink icon={<AppIcon name="scan" size={18} color="$text" />} label={t('friends.qr.scanQr')} onPress={() => openQr('scan')} />
           </XStack>
         )}
       </YStack>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { XStack, YStack } from 'tamagui';
-import { Moon, Smartphone, Sun } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import Section from '@/shared/ui/Section';
@@ -8,8 +7,9 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { fontFace } from '@/shared/theme/fonts';
 import { FONT_FAMILIES, TEXT_SCALES, TEXT_SCALE_VALUE, THEME_MODES, type AppFontFamily, type ThemeMode } from '@/shared/theme/types';
 import OptionCard from './OptionCard';
+import AppIcon from '@/shared/ui/AppIcon';
 
-const THEME_ICON = { system: Smartphone, light: Sun, dark: Moon } as const;
+const THEME_ICON = { system: 'phone', light: 'sun', dark: 'moon' } as const;
 
 function SubTitle({ children }: { children: string }) {
   return (
@@ -37,11 +37,10 @@ export default function AppearanceSection() {
         <SubTitle>{t('settings.appearance.theme.title', 'Theme')}</SubTitle>
         <XStack gap="$2" accessibilityRole="radiogroup">
           {THEME_MODES.map((mode: ThemeMode) => {
-            const Icon = THEME_ICON[mode];
             const label = t(`settings.appearance.theme.${mode}`, mode);
             return (
               <OptionCard key={mode} selected={themeMode === mode} onPress={() => setThemeMode(mode)} label={label}>
-                <Icon size={20} color={themeMode === mode ? '$primaryText' : '$textMuted'} />
+                <AppIcon name={THEME_ICON[mode]} size={20} color={themeMode === mode ? '$primaryText' : '$textMuted'} />
                 <Text fontSize={13} fontWeight="600" color="$text">
                   {label}
                 </Text>

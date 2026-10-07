@@ -10,7 +10,7 @@ import { LANGUAGE_OPTIONS, type LanguageCode } from '@/shared/config/languages';
 import { Button } from '@/shared/ui/Button';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { ScreenContainer } from '@/shared/ui/ScreenContainer';
-import { ScanLine } from '@tamagui/lucide-icons';
+import AppIcon from '@/shared/ui/AppIcon';
 
 const languages = LANGUAGE_OPTIONS.map((option) => ({
   code: option.code,
@@ -93,7 +93,7 @@ export default function Welcome() {
               shadowRadius={12}
               elevation={8}
             >
-              <ScanLine size={48} color="$onPrimary" />
+              <AppIcon name="scan" size={48} color="$onPrimary" />
             </Circle>
             
             <YStack alignItems="center" space="$3">
@@ -109,9 +109,9 @@ export default function Welcome() {
           {/* Feature Highlights - горизонтальные индикаторы */}
           <XStack space="$6" alignItems="center">
             {[
-              { icon: '📷', text: t('features.scan', 'Scan') },
-              { icon: '➕', text: t('features.split', 'Split') },
-              { icon: '💰', text: t('features.calculate', 'Calculate') },
+              { icon: 'scan' as const, text: t('features.scan', 'Scan') },
+              { icon: 'friends' as const, text: t('features.split', 'Split') },
+              { icon: 'wallet' as const, text: t('features.calculate', 'Calculate') },
             ].map((feature, index) => (
               <YStack key={index} alignItems="center" space="$2" maxWidth={80}>
                 <YStack 
@@ -122,7 +122,7 @@ export default function Welcome() {
                   alignItems="center" 
                   justifyContent="center"
                 >
-                  <Text fontSize="$6">{feature.icon}</Text>
+                  <AppIcon name={feature.icon} size={24} color="$primaryText" />
                 </YStack>
                 <Text fontSize="$3" color="$gray10" textAlign="center" fontWeight="500">
                   {feature.text}

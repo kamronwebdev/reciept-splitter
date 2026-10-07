@@ -5,7 +5,6 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { XStack, YStack } from 'tamagui';
-import { Bell, Plus, Receipt, ScanLine, UserPlus, Wallet } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
 
 import { Text } from '@/shared/ui/typography';
@@ -100,7 +99,7 @@ export default function HomeScreen() {
           accessibilityLabel={unread ? `${t('notifications.title')}, ${t('notifications.unreadA11y', { count: unread })}` : t('notifications.title')}
           style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
         >
-          <AppIcon sf="bell" fallback={Bell} color={colors.text} size={24} />
+          <AppIcon name="bell" color={colors.text} size={24} />
           {unread > 0 && (
             <YStack position="absolute" top={2} right={0}>
               <CountBadge count={unread} />
@@ -112,7 +111,7 @@ export default function HomeScreen() {
       <BalanceCard data={balances.data} loading={balances.isLoading} onPress={() => router.push('/home/balances')} />
 
       <YStack gap="$2">
-        <Button title={t('home.scanReceipt')} size="large" icon={<ScanLine size={22} color="$onPrimary" />} onPress={openScanner} />
+        <Button title={t('home.scanReceipt')} size="large" icon={<AppIcon name="scan" size={22} color="$onPrimary" />} onPress={openScanner} />
         <Button title={t('home.enterManually')} variant="plain" onPress={() => void enterManually()} loading={manualBusy} />
       </YStack>
 
@@ -123,7 +122,7 @@ export default function HomeScreen() {
               key="requests"
               left={
                 <IconTile>
-                  <UserPlus size={17} color="$onPrimary" />
+                  <AppIcon name="userAdd" size={17} color="$onPrimary" />
                 </IconTile>
               }
               title={t('home.friendRequests', { count: incoming })}
@@ -156,7 +155,7 @@ export default function HomeScreen() {
       ) : recent.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
           <EmptyState
-            icon={<Receipt size={28} color="$primaryText" />}
+            icon={<AppIcon name="receipt" size={28} color="$primaryText" />}
             title={t('home.empty.title')}
             message={t('home.empty.message')}
             actionLabel={t('home.scanReceipt')}
@@ -180,7 +179,7 @@ export default function HomeScreen() {
           <Pressable onPress={() => router.navigate('/groups/create')} accessibilityRole="button" accessibilityLabel={t('home.newGroup')}>
             <YStack ai="center" gap="$1.5" width={72}>
               <YStack width={56} height={56} borderRadius={28} ai="center" jc="center" backgroundColor="$primarySoft">
-                <Plus size={24} color="$primaryText" />
+                <AppIcon name="plus" size={24} color="$primaryText" />
               </YStack>
               <Text variant="caption" color="$textMuted" numberOfLines={1} ta="center">
                 {t('home.newGroup')}
@@ -202,7 +201,7 @@ export default function HomeScreen() {
 
       {balances.isError && !balances.data && (
         <XStack gap="$2" ai="center" jc="center">
-          <Wallet size={16} color="$textMuted" />
+          <AppIcon name="wallet" size={16} color="$textMuted" />
           <Text variant="footnote" color="$textMuted">
             {t('balances.loadError')}
           </Text>

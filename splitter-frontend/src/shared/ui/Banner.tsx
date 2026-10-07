@@ -1,8 +1,8 @@
 import React from 'react';
 import { YStack, XStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
-import { AlertCircle, CheckCircle2, Info } from '@tamagui/lucide-icons';
 import { Button } from '@/shared/ui/Button';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   kind: 'error' | 'success' | 'info';
@@ -21,7 +21,7 @@ const COLORS = {
 
 export default function Banner({ kind, message, actionLabel, onAction, actionLoading }: Props) {
   const c = COLORS[kind];
-  const Icon = kind === 'error' ? AlertCircle : kind === 'success' ? CheckCircle2 : Info;
+  const icon = kind === 'error' ? 'error' : kind === 'success' ? 'checkCircle' : 'info';
   return (
     <YStack
       backgroundColor={c.bg}
@@ -34,7 +34,7 @@ export default function Banner({ kind, message, actionLabel, onAction, actionLoa
       accessibilityLiveRegion="polite"
     >
       <XStack space="$2" ai="flex-start">
-        <Icon size={20} color={c.icon} />
+        <AppIcon name={icon} size={20} color={c.icon} />
         <Text flex={1} fontSize="$3" color={c.fg}>
           {message}
         </Text>

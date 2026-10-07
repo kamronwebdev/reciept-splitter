@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Crop, RotateCw } from '@tamagui/lucide-icons';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
@@ -9,6 +8,7 @@ import { Button } from '@/shared/ui/Button';
 import { CAMERA } from '@/shared/theme/palette';
 import { cropImage, getImageSize, rotateImage, type LocalImage } from '../../lib/image';
 import CropOverlay, { type CropRect } from './CropOverlay';
+import AppIcon from '@/shared/ui/AppIcon';
 
 type Props = {
   image: LocalImage;
@@ -107,13 +107,13 @@ export default function PreviewStage({ image, onChange, onRetake, onUse }: Props
           <>
             <XStack jc="center" gap="$3">
               <Pressable onPress={rotate} disabled={busy} accessibilityRole="button" accessibilityLabel={t('receipt.scan.rotate', 'Rotate')} style={toolBtn}>
-                <RotateCw size={20} color={CAMERA.onCamera} />
+                <AppIcon name="rotate" size={20} color={CAMERA.onCamera} />
                 <Text fontSize={14} fontWeight="700" color={CAMERA.onCamera}>
                   {t('receipt.scan.rotate', 'Rotate')}
                 </Text>
               </Pressable>
               <Pressable onPress={startCrop} disabled={busy || !fit.w} accessibilityRole="button" accessibilityLabel={t('receipt.scan.crop', 'Crop')} style={toolBtn}>
-                <Crop size={20} color={CAMERA.onCamera} />
+                <AppIcon name="crop" size={20} color={CAMERA.onCamera} />
                 <Text fontSize={14} fontWeight="700" color={CAMERA.onCamera}>
                   {t('receipt.scan.crop', 'Crop')}
                 </Text>
