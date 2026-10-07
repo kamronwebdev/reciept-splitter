@@ -17,6 +17,8 @@ type Props = {
  * the description as a footnote under it. For plain rows use ListSection / ListRow.
  */
 export default function Section({ title, description, children, danger, right }: Props) {
+  // a section that is only a header (e.g. a collapsed danger zone) must not show an empty card
+  const hasContent = React.Children.toArray(children).length > 0;
   return (
     <YStack gap="$1.5">
       {(!!title || right) && (
@@ -29,9 +31,11 @@ export default function Section({ title, description, children, danger, right }:
           {right}
         </XStack>
       )}
-      <YStack backgroundColor="$surface" borderRadius={12} p="$4" gap="$3">
-        {children}
-      </YStack>
+      {hasContent && (
+        <YStack backgroundColor="$surface" borderRadius={12} p="$4" gap="$3">
+          {children}
+        </YStack>
+      )}
       {!!description && (
         <Text variant="footnote" color="$textMuted" px="$4">
           {description}
