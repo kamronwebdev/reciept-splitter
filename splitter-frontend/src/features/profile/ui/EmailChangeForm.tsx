@@ -96,7 +96,7 @@ export default function EmailChangeForm() {
         />
       }
     >
-      <Text fontSize={15} color="$text">
+      <Text variant="body" numberOfLines={1} ellipsizeMode="middle">
         {user?.email}
       </Text>
       {open && (

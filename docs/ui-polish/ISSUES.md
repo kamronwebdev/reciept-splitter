@@ -38,3 +38,60 @@ group name, 12 friends, a 12 345 678 so'm item with a very long name, many notif
   Japanese/Uzbek.
 - **People step**: the selected-group check mark is a "✓" text glyph.
 - **Settings / Profile**: colored icon tiles; long email wraps under the name.
+
+> Note on `before/`: the Japanese column (`ja-dark-375`) of the logged-in screens shows the Welcome screen because
+> that run hit the backend's login rate limit (a test artifact, not an app bug). The `after/` set has all five.
+
+## Fixed (after)
+
+### Shared components and tokens
+- **Spacing**: Tamagui space tokens remapped to the 4/8/12/16/24/32 grid (`tamagui.config.ts`); the v3 preset was
+  2/7/13/18/24/32, so every `$2/$3/$4` gap and padding in the app was off-grid. `src/shared/theme/spacing.ts` holds
+  `SPACE`, `SCREEN_MARGIN` (16), `SECTION_GAP` (24), `CONTROL_HEIGHT` (50/44/34, input 50), `RADIUS`.
+  `Screen`, `ScreenFormContainer` and `ScreenContainer` use them (form screens: 20 → 16pt margins).
+- **Text sizes**: `$N` size tokens are always resolved to pixels with the app fonts (issue 1).
+- **Button**: fixed heights 50/44/34, one corner radius, centered icon + label, label never cut (optional 2-line
+  secondary).
+- **Input**: 50pt field, 16pt padding, label 8pt above, helper/error 8pt below, eye/clear centered in a 44pt slot.
+- **ListRow / ListSection**: everything on one vertical axis; titles/subtitles one line with ellipsis
+  (`minWidth: 0`, the text column is the only part that shrinks); trailing content never shrinks; separators start
+  at the text.
+- **Money**: tabular digits, right-aligned, never wraps/truncates; used in Home, balance card, balances, history,
+  receipt detail and review items.
+- **HeaderButton**: one header action (text or icon), 44pt target, same edge inset on every platform (Cancel,
+  Read all, New group +, Settings).
+- **Icons**: one `<AppIcon name>` registry (SF Symbols on iOS, Lucide elsewhere), outline, secondary gray by default,
+  brand green only for primary meaning, red only for destructive. Sizes: 16–20 rows/inputs, 22 header, 28 empty
+  states. No colored tiles behind row icons, no filled circles behind empty-state icons, no emoji icons.
+- **Section**: no empty card when a section is only a header.
+- **CheckToggle**: compact 44pt on/off (announced as a switch) for dense rows.
+- **Dates**: `shortDate` / `dateTime` print Uzbek dates as "7-okt" / "7-okt 2026, 19:39".
+
+### Screens
+- **Welcome**: scrollable, no overlap at 375×667; outline feature icons; full-width actions above the safe area;
+  compact language pill; Title 1 app name (Japanese fits on one line).
+- **Login / Register / Forgot**: proper title sizes; 16pt margins; 50pt fields and buttons.
+- **Home**: balance card as two lines (label shrinks, amount fixed) — no overflow with Large text; one-line rows;
+  "You owe …" amount right-aligned and never cut.
+- **Balances / History**: one-line names next to fixed amounts; Uzbek dates.
+- **Receipt detail**: name / status + items / amount / check toggle on one axis; amount never cut.
+- **Notifications**: "Read all" fits in Uzbek ("O'qildi"); text left-aligned.
+- **Friends / Requests / Search / Groups / Group detail / New group**: one-line names; initials skip numbers ("TB").
+- **Review items**: names left-aligned, max 2 lines; price line one line; tabular amounts.
+- **People step**: check mark is an icon, not a "✓" glyph.
+- **Profile**: email on one line (middle ellipsis); empty danger-zone card removed.
+- **Accessibility**: every icon-only button has a label and a 44pt target; steppers say "Decrease / Increase, <name>".
+
+## Not fixed / limits
+- **iOS-only behaviour was not seen**: native tab bar, SF Symbols rendering, large titles collapsing, keyboard and
+  home-indicator insets on a real iPhone. All screenshots are react-native-web in Chromium at iPhone sizes.
+- **Receipt detail at 375pt with Large text and 7-digit amounts**: the name gets very short ("No…"). The amount and
+  toggle are kept whole by design; a stacked layout would change the screen too much for a polish pass.
+- **Horizontal chip rows** (selected people on the People step, the totals bar on Split) scroll sideways by
+  design, so the last chip is cut at the edge.
+- **Native header titles on web** are smaller than iOS large titles (large titles are iOS-only).
+
+## Re-running
+`tools/seed.mjs` creates the long-value test data, `tools/shoot.mjs <outDir>` takes the screenshots
+(web build served on :8096, API on :3992), `tools/montage.sh <dir> <out>` builds the side-by-side images.
+The paths inside are from the sandbox (Playwright from `/opt/node-tools`); adjust them for your machine.
