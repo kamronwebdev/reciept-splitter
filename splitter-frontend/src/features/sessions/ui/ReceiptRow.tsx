@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text } from '@/shared/ui/typography';
 import { ListRow } from '@/shared/ui/List';
 import { shortDate } from '@/shared/lib/utils/time';
 import { formatMoney } from '@/features/receipt/lib/money';
+import Money from '@/shared/ui/Money';
 import type { SessionHistoryEntry } from '../api/history.api';
 
 /** A finalized receipt in a list: name, date · people · your share · Settled, total on the right. */
@@ -24,14 +24,9 @@ export default function ReceiptRow({ entry, meId, onPress }: { entry: SessionHis
     <ListRow
       title={entry.sessionName || t('receipt.summary.untitled', 'Bill')}
       subtitle={subtitle}
-      right={
-        <Text variant="subheadline" fontWeight="600" numberOfLines={1} flexShrink={0}>
-          {formatMoney(entry.grandTotal, currency)}
-        </Text>
-      }
+      right={<Money amount={entry.grandTotal} currency={currency} variant="subheadline" fontWeight="600" />}
       chevron
       onPress={onPress}
-      numberOfLines={1}
     />
   );
 }

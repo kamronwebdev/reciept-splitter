@@ -131,7 +131,7 @@ export default function GroupDetailsScreen() {
   if (!group) {
     return (
       <Screen>
-        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="groups" size={28} color="$primaryText" />} message={t('errors.NOT_FOUND')} />}
+        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="groups" size={28} color="$textMuted" />} message={t('errors.NOT_FOUND')} />}
       </Screen>
     );
   }
@@ -159,7 +159,7 @@ export default function GroupDetailsScreen() {
               key="qr"
               left={
                 <IconTile>
-                  <AppIcon name="qr" size={17} color="$onPrimary" />
+                  <AppIcon name="qr" size={20} color="$primaryText" />
                 </IconTile>
               }
               title={t('groups.detail.showQr')}

@@ -4,6 +4,7 @@ import { XStack } from 'tamagui';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { Text } from '@/shared/ui/typography';
 import { haptic } from '@/shared/lib/haptics';
+import { CONTROL_HEIGHT, RADIUS } from '@/shared/theme/spacing';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'destructive' | 'danger' | 'plain';
 
@@ -16,17 +17,19 @@ interface CustomButtonProps {
   /** shows a spinner and blocks presses */
   loading?: boolean;
   icon?: React.ReactNode;
+  /** secondary buttons only: allow a long label to wrap to 2 lines instead of shrinking */
+  multiline?: boolean;
   accessibilityLabel?: string;
   onPress?: () => void;
 }
 
-const HEIGHT = { small: 36, medium: 44, large: 50 } as const;
+const HEIGHT = { small: CONTROL_HEIGHT.small, medium: CONTROL_HEIGHT.medium, large: CONTROL_HEIGHT.large } as const;
 
 /**
  * The app's buttons (iOS style): filled primary, tinted secondary, outline, destructive and plain text.
  * Primary actions give a light haptic tap.
  */
-export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary', size = 'medium', disabled = false, loading = false, icon, accessibilityLabel, onPress }) => {
+export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary', size = 'medium', disabled = false, loading = false, icon, multiline = false, accessibilityLabel, onPress }) => {
   const { colors } = useAppTheme();
   const isDisabled = disabled || loading;
   const v = variant === 'danger' ? 'destructive' : variant;
@@ -68,10 +71,11 @@ export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary'
     >
       {({ pressed }) => (
         <XStack
-          minHeight={Math.max(44, HEIGHT[size])}
-          height={size === 'small' ? undefined : HEIGHT[size]}
+          // fixed height per size; a multiline label may grow the button instead of being cut
+          minHeight={HEIGHT[size]}
+          {...(multiline ? { py: '$2' } : { height: HEIGHT[size] })}
           px={size === 'small' ? '$3' : '$4'}
-          borderRadius={size === 'large' ? 14 : 12}
+          borderRadius={RADIUS.control}
           ai="center"
           jc="center"
           gap="$2"
@@ -81,7 +85,7 @@ export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary'
           opacity={pressed ? 0.75 : 1}
         >
           {loading ? <ActivityIndicator color={spinner} /> : icon}
-          <Text variant={size === 'small' ? 'subheadline' : 'headline'} color={fg as any} numberOfLines={1} fontWeight="600">
+          <Text variant={size === 'small' ? 'subheadline' : 'headline'} color={fg as any} numberOfLines={multiline ? 2 : 1} ta="center" flexShrink={1} fontWeight="600">
             {title}
           </Text>
         </XStack>

@@ -46,6 +46,18 @@ export function applyTypography<P extends Record<string, any>>(
     delete out.fow;
   }
 
+  // Size tokens ("$4") are resolved per font family by Tamagui; our faces are plain RN fonts, so a token
+  // would stay unresolved (tiny text). Always turn tokens into pixels, even at the default size.
+  const rawSize = out.fontSize ?? out.fos;
+  if (scale === 1 && typeof rawSize === 'string' && rawSize.startsWith('$')) {
+    const px = sizeToPx(rawSize);
+    if (px) {
+      out.fontSize = px;
+      delete out.fos;
+      if (out.lineHeight === undefined && out.lh === undefined) out.lineHeight = Math.round(px * 1.3);
+    }
+  }
+
   if (scale !== 1) {
     const base = sizeToPx(out.fontSize ?? out.fos ?? (opts.scaleSizeProp ? out.size : undefined)) ?? BODY_SIZES.true ?? 14;
     const scaled = Math.round(base * scale * 10) / 10;

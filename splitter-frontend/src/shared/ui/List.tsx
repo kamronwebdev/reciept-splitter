@@ -18,6 +18,16 @@ type SectionProps = {
   headerRight?: React.ReactNode;
 };
 
+/** Hairlines start where the row text starts (16 + leading element + 12), like iOS. */
+function separatorInset(row: unknown): number {
+  const props = (row as any)?.props ?? {};
+  if (typeof props.inset === 'number') return props.inset;
+  const left = props.left;
+  if (!left) return 16;
+  const size = typeof left?.props?.size === 'number' ? left.props.size : 28;
+  return 16 + size + 12;
+}
+
 export function ListSection({ header, footer, children, headerRight }: SectionProps) {
   const rows = React.Children.toArray(children).filter(Boolean);
   return (
@@ -35,7 +45,7 @@ export function ListSection({ header, footer, children, headerRight }: SectionPr
       <YStack backgroundColor="$surface" borderRadius={12} overflow="hidden">
         {rows.map((row, i) => (
           <YStack key={(row as any)?.key ?? i}>
-            {i > 0 && <YStack height={Platform.OS === 'web' ? 1 : 0.5} backgroundColor="$separator" ml={(row as any)?.props?.inset ?? ((row as any)?.props?.left ? 60 : 16)} />}
+            {i > 0 && <YStack height={Platform.OS === 'web' ? 1 : 0.5} backgroundColor="$separator" ml={separatorInset(row)} />}
             {row}
           </YStack>
         ))}
@@ -69,7 +79,9 @@ type RowProps = {
   /** separator inset from the left edge (set by the row, read by ListSection) */
   inset?: number;
   accessibilityLabel?: string;
+  /** title lines (1 in lists: long names truncate) */
   numberOfLines?: number;
+  subtitleLines?: number;
 };
 
 export function ListRow({
@@ -85,29 +97,31 @@ export function ListRow({
   tint,
   disabled,
   accessibilityLabel,
-  numberOfLines = 2,
+  numberOfLines = 1,
+  subtitleLines = 1,
 }: RowProps) {
   const color = destructive || tint === 'danger' ? '$danger' : tint === 'primary' ? '$primaryText' : '$text';
+  // one axis: everything vertically centered; the text column is the only part that shrinks
   const content = (pressed: boolean) => (
     <XStack minHeight={44} px="$4" py={subtitle ? '$2' : '$2.5'} ai="center" gap="$3" backgroundColor={pressed ? '$surfaceAlt' : 'transparent'} opacity={disabled ? 0.5 : 1}>
       {left}
-      <YStack f={1} gap={2} ai="flex-start">
+      <YStack f={1} minWidth={0} flexShrink={1} gap={2} jc="center">
         <Text variant="body" color={color} numberOfLines={numberOfLines} ta="left">
           {title}
         </Text>
         {!!subtitle && (
-          <Text variant="subheadline" color="$textMuted" numberOfLines={2} ta="left">
+          <Text variant="subheadline" color="$textMuted" numberOfLines={subtitleLines} ta="left">
             {subtitle}
           </Text>
         )}
       </YStack>
       {!!value && (
-        <Text variant="body" color="$textMuted" numberOfLines={1} flexShrink={0} maxWidth="60%">
+        <Text variant="body" color="$textMuted" numberOfLines={1} flexShrink={0} maxWidth="60%" ta="right">
           {value}
         </Text>
       )}
-      {right}
-      {chevron && <AppIcon name="chevronRight" size={18} color="$inactive" />}
+      {right ? <XStack flexShrink={0} ai="center" gap="$2">{right}</XStack> : null}
+      {chevron && <AppIcon name="chevronRight" size={16} color="$inactive" />}
     </XStack>
   );
   if (!onPress && !onLongPress) return content(false);
@@ -145,10 +159,10 @@ export function HeaderLink({ title, onPress }: { title: string; onPress: () => v
   );
 }
 
-/** Colored square icon tile used on the left of settings rows. */
-export function IconTile({ children, color = '$primary' }: { children: React.ReactNode; color?: string }) {
+/** Fixed 28pt slot for a leading row icon (outline, no colored tile), so row texts line up. */
+export function IconTile({ children }: { children: React.ReactNode; color?: string }) {
   return (
-    <YStack width={30} height={30} borderRadius={7} ai="center" jc="center" backgroundColor={color as any}>
+    <YStack width={28} height={28} ai="center" jc="center">
       {children}
     </YStack>
   );

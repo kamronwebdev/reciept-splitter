@@ -4,26 +4,28 @@ import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { formatMoney } from '@/features/receipt/lib/money';
-import type { Balances, Money } from '../api/balances.api';
 import AppIcon from '@/shared/ui/AppIcon';
+import Money from '@/shared/ui/Money';
+import type { Balances, Money as MoneyT } from '../api/balances.api';
 
-export function MoneyLines({ list, color, big }: { list: Money[]; color: string; big?: boolean }) {
+/** "You are owed  9 465 020 so'm" — label shrinks, amounts never wrap (one line per currency). */
+function BalanceLine({ label, list, color }: { label: string; list: MoneyT[]; color: string }) {
   const { t } = useTranslation();
-  if (!list.length)
-    return (
-      <Text variant={big ? 'title3' : 'subheadline'} color="$textMuted">
-        {t('balances.none')}
-      </Text>
-    );
   return (
-    <YStack gap={2}>
-      {list.map((m) => (
-        <Text key={m.currency} variant={big ? (list.length > 1 ? 'headline' : 'title3') : 'subheadline'} fontWeight="600" color={color as any} numberOfLines={1}>
-          {formatMoney(m.amount, m.currency)}
-        </Text>
-      ))}
-    </YStack>
+    <XStack ai="center" gap="$3" minHeight={28}>
+      <Text variant="subheadline" color="$textMuted" f={1} minWidth={0} numberOfLines={1}>
+        {label}
+      </Text>
+      <YStack ai="flex-end" flexShrink={0}>
+        {list.length ? (
+          list.map((m) => <Money key={m.currency} amount={m.amount} currency={m.currency} variant="headline" color={color as any} />)
+        ) : (
+          <Text variant="headline" color="$textMuted">
+            {t('balances.none')}
+          </Text>
+        )}
+      </YStack>
+    </XStack>
   );
 }
 
@@ -34,42 +36,25 @@ export default function BalanceCard({ data, loading, onPress }: { data: Balances
   return (
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={t('balances.title')}>
       {({ pressed }) => (
-        <YStack backgroundColor="$surface" borderRadius={16} p="$4" gap="$3" opacity={pressed ? 0.85 : 1}>
-          <XStack ai="center" jc="space-between">
+        <YStack backgroundColor="$surface" borderRadius={12} px="$4" py="$3" gap="$2" opacity={pressed ? 0.85 : 1}>
+          <XStack ai="center" jc="space-between" minHeight={28}>
             <Text variant="headline">{t('balances.title')}</Text>
-            <AppIcon name="chevronRight" size={18} color="$inactive" />
+            <AppIcon name="chevronRight" size={16} color="$inactive" />
           </XStack>
           {loading && !data ? (
-            <XStack gap="$4">
-              <YStack f={1} gap="$2">
-                <Skeleton width="60%" height={12} />
-                <Skeleton width="80%" height={22} />
-              </YStack>
-              <YStack f={1} gap="$2">
-                <Skeleton width="60%" height={12} />
-                <Skeleton width="80%" height={22} />
-              </YStack>
-            </XStack>
+            <YStack gap="$2">
+              <Skeleton width="100%" height={20} />
+              <Skeleton width="100%" height={20} />
+            </YStack>
           ) : settled ? (
             <Text variant="subheadline" color="$textMuted">
               {t('balances.allSettled')}
             </Text>
           ) : (
-            <XStack gap="$4">
-              <YStack f={1} gap="$1" ai="flex-start">
-                <Text variant="footnote" color="$textMuted">
-                  {t('balances.owedToMe')}
-                </Text>
-                <MoneyLines list={data?.owedToMe ?? []} color="$success" big />
-              </YStack>
-              <YStack width={0.5} backgroundColor="$separator" />
-              <YStack f={1} gap="$1" ai="flex-start">
-                <Text variant="footnote" color="$textMuted">
-                  {t('balances.iOwe')}
-                </Text>
-                <MoneyLines list={data?.iOwe ?? []} color="$danger" big />
-              </YStack>
-            </XStack>
+            <YStack gap="$1">
+              <BalanceLine label={t('balances.owedToMe')} list={data?.owedToMe ?? []} color="$success" />
+              <BalanceLine label={t('balances.iOwe')} list={data?.iOwe ?? []} color="$danger" />
+            </YStack>
           )}
         </YStack>
       )}

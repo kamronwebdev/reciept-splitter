@@ -19,6 +19,8 @@ import { useSessionsHistoryStore } from '@/features/sessions/model/history.store
 import type { SessionHistoryEntry } from '@/features/sessions/api/history.api';
 import { useSetPaid } from '@/features/balances/model/queries';
 import { formatMoney } from '@/features/receipt/lib/money';
+import Money from '@/shared/ui/Money';
+import { dateTime } from '@/shared/lib/utils/time';
 import { errorMessage } from '@/shared/lib/utils/error-message';
 import AppIcon from '@/shared/ui/AppIcon';
 
@@ -67,7 +69,7 @@ export default function ReceiptDetailScreen() {
   if (!bill) {
     return (
       <Screen refreshing={false} onRefresh={() => void forceRefresh(DETAIL_LIMIT)}>
-        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="receipt" size={28} color="$primaryText" />} message={t('settle.notFound')} />}
+        {loading ? <ListSkeleton rows={4} /> : <EmptyState icon={<AppIcon name="receipt" size={28} color="$textMuted" />} message={t('settle.notFound')} />}
       </Screen>
     );
   }
@@ -76,7 +78,7 @@ export default function ReceiptDetailScreen() {
   const people = peopleOf(bill);
   const creatorId = bill.creatorUniqueId;
   const payments = bill.payments ?? {};
-  const date = new Date(bill.finalizedAt || bill.createdAt || Date.now()).toLocaleString(i18n.language, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const date = dateTime(bill.finalizedAt || bill.createdAt, i18n.language);
 
   const toggle = (uniqueId: string, paid: boolean) => {
     haptic.select();
@@ -101,9 +103,7 @@ export default function ReceiptDetailScreen() {
           {date} · {t('home.people', { count: people.length })}
         </Text>
         <XStack ai="center" gap="$2" pt="$2">
-          <Text variant="title2" color="$primaryText">
-            {formatMoney(bill.grandTotal ?? 0, currency)}
-          </Text>
+          <Money amount={bill.grandTotal ?? 0} currency={currency} variant="title2" color="$primaryText" ta="left" />
           {bill.settled && (
             <XStack ai="center" gap="$1" px="$2.5" py="$1" borderRadius={999} backgroundColor="$primarySoft" accessibilityLabel={t('settle.settled')}>
               <AppIcon name="checkCircle" size={14} color="$primaryText" />
@@ -125,11 +125,14 @@ export default function ReceiptDetailScreen() {
             <ListRow
               key={p.uniqueId}
               left={<UserAvatar uri={p.avatarUrl} label={p.username} seed={p.uniqueId} size={36} textSize={14} />}
-              title={`${name} · ${formatMoney(p.amount, currency)}`}
-              subtitle={isCreatorRow ? t('settle.paidTheBill') : p.items.join(', ') || null}
+              title={name}
+              // status first (always visible), then what they had
+              subtitle={[isCreatorRow ? t('settle.paidTheBill') : paid ? t('settle.paid') : t('settle.notPaid'), p.items.join(', ')].filter(Boolean).join(' · ')}
+              accessibilityLabel={`${name}, ${formatMoney(p.amount, currency)}`}
               right={
-                isCreatorRow ? null : canToggle ? (
-                  <YStack ai="center" gap={2}>
+                <>
+                  <Money amount={p.amount} currency={currency} variant="body" fontWeight="600" />
+                  {canToggle && (
                     <Switch
                       value={paid}
                       onValueChange={(v) => toggle(p.uniqueId, v)}
@@ -137,15 +140,8 @@ export default function ReceiptDetailScreen() {
                       trackColor={{ true: colors.primary, false: colors.surfaceAlt }}
                       accessibilityLabel={t('settle.paidA11y', { name })}
                     />
-                    <Text variant="caption" color="$textMuted">
-                      {t('settle.paid')}
-                    </Text>
-                  </YStack>
-                ) : (
-                  <Text variant="footnote" fontWeight="600" color={paid ? '$success' : '$textMuted'}>
-                    {paid ? t('settle.paid') : t('settle.notPaid')}
-                  </Text>
-                )
+                  )}
+                </>
               }
             />
           );

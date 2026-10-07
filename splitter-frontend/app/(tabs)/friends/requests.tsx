@@ -84,7 +84,7 @@ export default function FriendRequestsScreen() {
   const list = tab === 'incoming' ? incoming : outgoing;
 
   return (
-    <Screen refreshing={refreshing} onRefresh={refresh} gap={16}>
+    <Screen refreshing={refreshing} onRefresh={refresh}>
       <SegmentedControl
         value={tab}
         onChange={setTab}
@@ -97,7 +97,7 @@ export default function FriendRequestsScreen() {
         <ListSkeleton rows={3} />
       ) : list.length === 0 ? (
         <EmptyState
-          icon={<AppIcon name="inbox" size={28} color="$primaryText" />}
+          icon={<AppIcon name="inbox" size={28} color="$textMuted" />}
           message={tab === 'incoming' ? t('friends.requests.emptyIncoming', 'No incoming requests') : t('friends.requests.emptyOutgoing', 'No outgoing requests')}
         />
       ) : (

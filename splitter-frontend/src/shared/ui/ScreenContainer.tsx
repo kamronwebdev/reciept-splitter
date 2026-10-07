@@ -14,7 +14,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
       flex={1}
       backgroundColor="$background"
       paddingHorizontal="$4"
-      paddingTop="$6"
+      paddingTop="$5"
       paddingBottom="$4"
     >
       {children}

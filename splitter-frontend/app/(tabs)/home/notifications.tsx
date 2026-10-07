@@ -129,7 +129,7 @@ export default function NotificationsScreen() {
           }}
           ListEmptyComponent={
             <YStack backgroundColor="$surface" borderRadius={16} mt="$2">
-              <EmptyState icon={<AppIcon name="bell" size={28} color="$primaryText" />} message={t('notifications.empty')} />
+              <EmptyState icon={<AppIcon name="bell" size={28} color="$textMuted" />} message={t('notifications.empty')} />
             </YStack>
           }
         />

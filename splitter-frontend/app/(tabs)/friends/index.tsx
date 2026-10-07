@@ -75,7 +75,7 @@ export default function FriendsScreen() {
     });
 
   return (
-    <Screen refreshing={refreshing} onRefresh={refresh} gap={20}>
+    <Screen refreshing={refreshing} onRefresh={refresh}>
       {/* the two ways to add someone in person */}
       <XStack gap="$3">
         <BigAction icon={<AppIcon name="scan" size={26} color="$onPrimary" />} label={t('friends.qr.scanQr')} primary onPress={() => router.push('/scan-invite')} />
@@ -87,7 +87,7 @@ export default function FriendsScreen() {
           key="requests"
           left={
             <IconTile>
-              <AppIcon name="userAdd" size={17} color="$onPrimary" />
+              <AppIcon name="userAdd" size={20} color="$primaryText" />
             </IconTile>
           }
           title={t('friends.qr.requestsLink')}
@@ -98,8 +98,8 @@ export default function FriendsScreen() {
         <ListRow
           key="add"
           left={
-            <IconTile color="$primaryText">
-              <AppIcon name="friends" size={17} color="#FFFFFF" />
+            <IconTile>
+              <AppIcon name="friends" size={20} color="$primaryText" />
             </IconTile>
           }
           title={t('friends.addById')}
@@ -114,7 +114,7 @@ export default function FriendsScreen() {
         <ListSkeleton rows={4} />
       ) : list.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<AppIcon name="friends" size={28} color="$primaryText" />} message={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
+          <EmptyState icon={<AppIcon name="friends" size={28} color="$textMuted" />} message={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
         </YStack>
       ) : (
         <YStack gap="$3">

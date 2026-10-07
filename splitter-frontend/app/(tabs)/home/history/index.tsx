@@ -51,13 +51,13 @@ export default function HistoryScreen() {
   );
 
   return (
-    <Screen refreshing={refreshing} onRefresh={refresh} gap={16}>
+    <Screen refreshing={refreshing} onRefresh={refresh}>
       {!!error && !sessions.length && <Banner kind="error" message={t('errors.NETWORK')} actionLabel={t('common.retry')} onAction={refresh} />}
       {!initialized && loading ? (
         <ListSkeleton rows={5} avatar={false} />
       ) : sessions.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<AppIcon name="receipt" size={28} color="$primaryText" />} title={t('home.empty.title')} message={t('home.empty.message')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
+          <EmptyState icon={<AppIcon name="receipt" size={28} color="$textMuted" />} title={t('home.empty.title')} message={t('home.empty.message')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
         </YStack>
       ) : (
         <>

@@ -14,6 +14,7 @@ import { shortDate } from '@/shared/lib/utils/time';
 import { useBalances } from '@/features/balances/model/queries';
 import BalanceCard from '@/features/balances/ui/BalanceCard';
 import { formatMoney } from '@/features/receipt/lib/money';
+import Money from '@/shared/ui/Money';
 import AppIcon from '@/shared/ui/AppIcon';
 
 export default function BalancesScreen() {
@@ -30,7 +31,7 @@ export default function BalancesScreen() {
         <ListSkeleton rows={4} />
       ) : people.length === 0 && q.data ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<AppIcon name="checkCircle" size={28} color="$primaryText" />} message={t('balances.emptyPeople')} />
+          <EmptyState icon={<AppIcon name="checkCircle" size={28} color="$textMuted" />} message={t('balances.emptyPeople')} />
         </YStack>
       ) : (
         people.map((p) => {
@@ -50,11 +51,7 @@ export default function BalancesScreen() {
                   key={`${r.sessionId}-${r.direction}`}
                   title={r.sessionName || t('receipt.summary.untitled', 'Bill')}
                   subtitle={shortDate(r.finalizedAt, i18n.language)}
-                  right={
-                    <Text variant="body" color={r.direction === 'owedToMe' ? '$success' : '$danger'}>
-                      {formatMoney(r.amount, r.currency)}
-                    </Text>
-                  }
+                  right={<Money amount={r.amount} currency={r.currency} color={r.direction === 'owedToMe' ? '$success' : '$danger'} />}
                   chevron
                   onPress={() => router.push({ pathname: '/home/history/[historyId]', params: { historyId: String(r.sessionId) } })}
                 />

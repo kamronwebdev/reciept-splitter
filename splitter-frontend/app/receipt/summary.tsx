@@ -10,6 +10,7 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
 import { currencyDecimals, toMinor } from '@/features/receipt/lib/split';
 import { formatMoney } from '@/features/receipt/lib/money';
+import { shortDate } from '@/shared/lib/utils/time';
 import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
 import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import { useCloseReceiptFlow } from '@/features/receipt/model/close-flow';
@@ -63,7 +64,7 @@ export default function SummaryScreen() {
   const grand = finalized.totals.grandTotal;
   const sumMinor = people.reduce((s, p) => s + toMinor(p.amountOwed, dec), 0);
   const addsUp = sumMinor === toMinor(grand, dec);
-  const date = new Date(finalized.finalizedAt).toLocaleDateString(i18n.language, { year: 'numeric', month: 'short', day: 'numeric' });
+  const date = shortDate(finalized.finalizedAt, i18n.language);
   const title = finalized.sessionName || t('receipt.summary.untitled', 'Bill');
 
   const shareText = [

@@ -25,8 +25,8 @@ import { useBalances } from '@/features/balances/model/queries';
 import BalanceCard from '@/features/balances/ui/BalanceCard';
 import { useUnreadCount, notificationKeys } from '@/features/notifications/model/queries';
 import { useReceiptLauncher } from '@/features/receipt/model/launcher';
-import { formatMoney } from '@/features/receipt/lib/money';
 import ReceiptRow from '@/features/sessions/ui/ReceiptRow';
+import Money from '@/shared/ui/Money';
 
 const RECENT = 5;
 
@@ -122,7 +122,7 @@ export default function HomeScreen() {
               key="requests"
               left={
                 <IconTile>
-                  <AppIcon name="userAdd" size={17} color="$onPrimary" />
+                  <AppIcon name="userAdd" size={20} color="$primaryText" />
                 </IconTile>
               }
               title={t('home.friendRequests', { count: incoming })}
@@ -136,7 +136,13 @@ export default function HomeScreen() {
               key={`owe-${p.uniqueId}`}
               left={<UserAvatar uri={p.avatarUrl} label={p.username} seed={p.uniqueId} size={30} textSize={12} />}
               title={t('home.youOwe', { name: p.username })}
-              value={p.iOwe.map((m) => formatMoney(m.amount, m.currency)).join(' + ')}
+              right={
+                <YStack ai="flex-end">
+                  {p.iOwe.map((m) => (
+                    <Money key={m.currency} amount={m.amount} currency={m.currency} color="$danger" />
+                  ))}
+                </YStack>
+              }
               chevron
               onPress={() => router.push('/home/balances')}
             />
@@ -155,7 +161,7 @@ export default function HomeScreen() {
       ) : recent.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
           <EmptyState
-            icon={<AppIcon name="receipt" size={28} color="$primaryText" />}
+            icon={<AppIcon name="receipt" size={28} color="$textMuted" />}
             title={t('home.empty.title')}
             message={t('home.empty.message')}
             actionLabel={t('home.scanReceipt')}

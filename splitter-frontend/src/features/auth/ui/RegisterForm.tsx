@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { YStack, XStack } from 'tamagui';
+import { YStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui/Button';

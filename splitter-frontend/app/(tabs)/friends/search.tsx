@@ -75,7 +75,7 @@ export default function FriendsSearchScreen() {
   };
 
   return (
-    <Screen gap={16}>
+    <Screen>
       <SearchField
         value={query}
         onChangeText={setQuery}
@@ -94,7 +94,7 @@ export default function FriendsSearchScreen() {
             key="scan"
             left={
               <IconTile>
-                <AppIcon name="scan" size={17} color="$onPrimary" />
+                <AppIcon name="scan" size={20} color="$primaryText" />
               </IconTile>
             }
             title={t('friends.qr.scanQr')}
@@ -105,7 +105,7 @@ export default function FriendsSearchScreen() {
             key="myqr"
             left={
               <IconTile>
-                <AppIcon name="qr" size={17} color="$onPrimary" />
+                <AppIcon name="qr" size={20} color="$primaryText" />
               </IconTile>
             }
             title={t('friends.qr.myQr')}
@@ -114,7 +114,7 @@ export default function FriendsSearchScreen() {
           />
         </ListSection>
       ) : results.length === 0 ? (
-        <EmptyState icon={<AppIcon name="userSearch" size={28} color="$primaryText" />} message={t('friends.search.noResults', 'No results found')} />
+        <EmptyState icon={<AppIcon name="userSearch" size={28} color="$textMuted" />} message={t('friends.search.noResults', 'No results found')} />
       ) : (
         <ListSection>
           {results.map((u, i) => {

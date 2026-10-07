@@ -15,7 +15,8 @@ type Props = {
 export default function EmptyState({ icon, title, message, actionLabel, onAction }: Props) {
   return (
     <YStack ai="center" gap="$2.5" py="$6" px="$4">
-      <YStack width={64} height={64} borderRadius={32} ai="center" jc="center" backgroundColor="$primarySoft">
+      {/* plain outline icon (28pt, secondary gray): no decorative filled circle */}
+      <YStack height={36} ai="center" jc="center">
         {icon}
       </YStack>
       {!!title && (

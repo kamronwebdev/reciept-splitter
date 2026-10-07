@@ -53,7 +53,7 @@ export default function GroupsListScreen() {
         ) : groups.length === 0 ? (
           <YStack backgroundColor="$surface" borderRadius={16}>
             <EmptyState
-              icon={<AppIcon name="groups" size={28} color="$primaryText" />}
+              icon={<AppIcon name="groups" size={28} color="$textMuted" />}
               title={t('groups.emptyTitle')}
               message={t('groups.emptyMessage')}
               actionLabel={t('navigation.groups.create')}
@@ -81,7 +81,7 @@ export default function GroupsListScreen() {
             key="scan"
             left={
               <IconTile>
-                <AppIcon name="scan" size={17} color="$onPrimary" />
+                <AppIcon name="scan" size={20} color="$primaryText" />
               </IconTile>
             }
             title={t('groups.actions.scanInvite', 'Scan invite')}

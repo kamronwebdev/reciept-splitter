@@ -16,14 +16,39 @@ export function timeAgo(iso: string | undefined | null, t: TFunction, locale: st
   return shortDate(iso, locale);
 }
 
+/** Uzbek month abbreviations: Intl data for "uz" is missing in many engines (prints "M10 7"). */
+const UZ_MONTHS = ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'];
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+function parse(iso: string | undefined | null): Date | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** "Oct 7", "7-okt", "10月7日" (+ the year when it is not this year). */
 export function shortDate(iso: string | undefined | null, locale: string): string {
-  if (!iso) return '';
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return '';
+  const date = parse(iso);
+  if (!date) return '';
+  const otherYear = date.getFullYear() !== new Date().getFullYear();
+  if (locale.startsWith('uz')) return `${date.getDate()}-${UZ_MONTHS[date.getMonth()]}${otherYear ? ` ${date.getFullYear()}` : ''}`;
   try {
-    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', ...(date.getFullYear() !== new Date().getFullYear() ? { year: 'numeric' } : {}) });
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', ...(otherYear ? { year: 'numeric' } : {}) });
   } catch {
     return date.toISOString().slice(0, 10);
+  }
+}
+
+/** Date with year and time: "Oct 7, 2026, 19:39" / "7-okt 2026, 19:39". */
+export function dateTime(iso: string | undefined | null, locale: string): string {
+  const date = parse(iso);
+  if (!date) return '';
+  const time = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  if (locale.startsWith('uz')) return `${date.getDate()}-${UZ_MONTHS[date.getMonth()]} ${date.getFullYear()}, ${time}`;
+  try {
+    return `${date.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })}, ${time}`;
+  } catch {
+    return `${date.toISOString().slice(0, 10)} ${time}`;
   }
 }
 

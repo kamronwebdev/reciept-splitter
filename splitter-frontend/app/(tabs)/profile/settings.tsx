@@ -46,8 +46,8 @@ export default function SettingsScreen() {
         <ListRow
           key="support"
           left={
-            <IconTile color="$primaryText">
-              <AppIcon name="mail" size={17} color="#FFFFFF" />
+            <IconTile>
+              <AppIcon name="mail" size={20} color="$primaryText" />
             </IconTile>
           }
           title={t('settings.about.support', 'Support & feedback')}

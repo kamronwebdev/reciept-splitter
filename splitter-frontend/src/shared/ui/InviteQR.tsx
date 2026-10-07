@@ -4,6 +4,7 @@ import { YStack, Card } from 'tamagui';
 import { Paragraph, Text } from '@/shared/ui/typography';
 import QRCode from 'react-native-qrcode-svg';
 import { useTranslation } from 'react-i18next';
+import { dateTime } from '@/shared/lib/utils/time';
 
 type Props = {
   url: string;
@@ -13,7 +14,7 @@ type Props = {
 };
 
 export function InviteQR({ url, title, expiresAt, caption }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <YStack ai="center" gap="$3">
       {!!title && (
@@ -40,7 +41,7 @@ export function InviteQR({ url, title, expiresAt, caption }: Props) {
         </Paragraph>
         {!!expiresAt && (
           <Text color="$gray10" fontSize={12}>
-            {t('friends.qr.expiresAt', { time: new Date(expiresAt).toLocaleString() })}
+            {t('friends.qr.expiresAt', { time: dateTime(expiresAt, i18n.language) })}
           </Text>
         )}
       </YStack>
