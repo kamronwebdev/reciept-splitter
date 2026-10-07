@@ -81,7 +81,7 @@ export default function Welcome() {
             <AppIcon name="scan" size={44} color="$onPrimary" />
           </YStack>
           <YStack ai="center" gap="$2">
-            <Text variant="largeTitle" ta="center">
+            <Text variant="title1" ta="center">
               {t('app.name', 'Receipt Splitter')}
             </Text>
             <Text variant="body" color="$textMuted" ta="center" maxWidth={300}>

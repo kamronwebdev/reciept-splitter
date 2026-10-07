@@ -1,9 +1,8 @@
 // app/receipt/_layout.tsx — the receipt flow (Scan → Items → People → Split → Summary) as one full-screen
 // modal stack above the tabs: standard back between steps, "Cancel" asks before throwing the receipt away.
-import { Pressable } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Text } from '@/shared/ui/typography';
+import HeaderButton from '@/shared/ui/HeaderButton';
 import { confirmAction } from '@/shared/lib/utils/confirm';
 import { useStackOptions } from '@/shared/lib/navigation/stack-options';
 import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session.store';
@@ -27,13 +26,7 @@ function CancelButton() {
       },
     });
   };
-  return (
-    <Pressable onPress={onPress} hitSlop={10} accessibilityRole="button" style={{ minHeight: 44, justifyContent: 'center', paddingHorizontal: 4 }}>
-      <Text variant="body" color="$primaryText">
-        {t('common.cancel')}
-      </Text>
-    </Pressable>
-  );
+  return <HeaderButton title={t('common.cancel')} onPress={onPress} />;
 }
 
 export default function ReceiptFlowLayout() {

@@ -1,23 +1,21 @@
 // app/(tabs)/groups/index.tsx — my groups (grouped list), New group (+), join by scanning an invite.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import Screen from '@/shared/ui/Screen';
+import HeaderButton from '@/shared/ui/HeaderButton';
 import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
 import { ListSkeleton } from '@/shared/ui/Skeleton';
 import EmptyState from '@/shared/ui/EmptyState';
 import Banner from '@/shared/ui/Banner';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import AppIcon from '@/shared/ui/AppIcon';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
 
 export default function GroupsListScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { colors } = useAppTheme();
   const { groups, counts, loading, error, fetchGroups } = useGroupsStore();
   const [refreshing, setRefreshing] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
@@ -38,11 +36,7 @@ export default function GroupsListScreen() {
     <>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <Pressable onPress={() => router.push('/groups/create')} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('navigation.groups.create')} style={{ padding: 4 }}>
-              <AppIcon name="plus" color={colors.primaryText} size={24} />
-            </Pressable>
-          ),
+          headerRight: () => <HeaderButton icon="plus" accessibilityLabel={t('navigation.groups.create')} onPress={() => router.push('/groups/create')} />,
         }}
       />
       <Screen refreshing={refreshing} onRefresh={refresh}>

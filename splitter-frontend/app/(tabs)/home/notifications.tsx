@@ -6,6 +6,7 @@ import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import UserAvatar from '@/shared/ui/UserAvatar';
+import HeaderButton from '@/shared/ui/HeaderButton';
 import SwipeRow from '@/shared/ui/SwipeRow';
 import EmptyState from '@/shared/ui/EmptyState';
 import { ListSkeleton } from '@/shared/ui/Skeleton';
@@ -52,13 +53,7 @@ export default function NotificationsScreen() {
       <Stack.Screen
         options={{
           headerRight: hasUnread
-            ? () => (
-                <Pressable onPress={() => markRead.mutate('all')} hitSlop={10} accessibilityRole="button" style={{ minHeight: 44, justifyContent: 'center' }}>
-                  <Text variant="body" color="$primaryText" numberOfLines={1}>
-                    {t('notifications.markAllRead')}
-                  </Text>
-                </Pressable>
-              )
+            ? () => <HeaderButton title={t('notifications.markAllRead')} onPress={() => markRead.mutate('all')} />
             : () => null,
         }}
       />

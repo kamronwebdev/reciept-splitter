@@ -1,19 +1,12 @@
-import { Pressable } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import HeaderButton from '@/shared/ui/HeaderButton';
 import { LARGE_TITLE, useStackOptions } from '@/shared/lib/navigation/stack-options';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
-import AppIcon from '@/shared/ui/AppIcon';
 
 function SettingsButton() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { colors } = useAppTheme();
-  return (
-    <Pressable onPress={() => router.push('/profile/settings')} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('settings.title')} style={{ padding: 4 }}>
-      <AppIcon name="settings" color={colors.primaryText} size={22} />
-    </Pressable>
-  );
+  return <HeaderButton icon="settings" accessibilityLabel={t('settings.title')} onPress={() => router.push('/profile/settings')} />;
 }
 
 export default function ProfileStack() {

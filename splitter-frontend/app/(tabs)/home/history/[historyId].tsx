@@ -1,6 +1,5 @@
 // app/(tabs)/home/history/[historyId].tsx — one finalized receipt: total, everyone's share, "Paid" toggles.
 import React, { useCallback, useMemo } from 'react';
-import { Switch } from 'react-native';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +11,6 @@ import { ListSkeleton } from '@/shared/ui/Skeleton';
 import EmptyState from '@/shared/ui/EmptyState';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { toast } from '@/shared/ui/Toast';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { haptic } from '@/shared/lib/haptics';
 import { useSessionsHistoryStore } from '@/features/sessions/model/history.store';
@@ -20,6 +18,7 @@ import type { SessionHistoryEntry } from '@/features/sessions/api/history.api';
 import { useSetPaid } from '@/features/balances/model/queries';
 import { formatMoney } from '@/features/receipt/lib/money';
 import Money from '@/shared/ui/Money';
+import CheckToggle from '@/shared/ui/CheckToggle';
 import { dateTime } from '@/shared/lib/utils/time';
 import { errorMessage } from '@/shared/lib/utils/error-message';
 import AppIcon from '@/shared/ui/AppIcon';
@@ -49,7 +48,6 @@ function peopleOf(bill: SessionHistoryEntry): Person[] {
 export default function ReceiptDetailScreen() {
   const { historyId } = useLocalSearchParams<{ historyId: string }>();
   const { t, i18n } = useTranslation();
-  const { colors } = useAppTheme();
   const meId = useAppStore((s) => s.user?.uniqueId);
   const sessions = useSessionsHistoryStore((s) => s.sessions);
   const loading = useSessionsHistoryStore((s) => s.loading);
@@ -133,13 +131,7 @@ export default function ReceiptDetailScreen() {
                 <>
                   <Money amount={p.amount} currency={currency} variant="body" fontWeight="600" />
                   {canToggle && (
-                    <Switch
-                      value={paid}
-                      onValueChange={(v) => toggle(p.uniqueId, v)}
-                      disabled={setPaid.isPending}
-                      trackColor={{ true: colors.primary, false: colors.surfaceAlt }}
-                      accessibilityLabel={t('settle.paidA11y', { name })}
-                    />
+                    <CheckToggle value={paid} onChange={(v) => toggle(p.uniqueId, v)} disabled={setPaid.isPending} accessibilityLabel={t('settle.paidA11y', { name })} />
                   )}
                 </>
               }

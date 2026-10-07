@@ -13,7 +13,7 @@ function BalanceLine({ label, list, color }: { label: string; list: MoneyT[]; co
   const { t } = useTranslation();
   return (
     <XStack ai="center" gap="$3" minHeight={28}>
-      <Text variant="subheadline" color="$textMuted" f={1} minWidth={0} numberOfLines={1}>
+      <Text variant="subheadline" color="$textMuted" f={1} minWidth={0} numberOfLines={1} ta="left">
         {label}
       </Text>
       <YStack ai="flex-end" flexShrink={0}>
