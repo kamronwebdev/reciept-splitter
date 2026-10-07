@@ -121,7 +121,9 @@
     "retry": "Try again",
     "close": "Close",
     "done": "Done",
-    "clear": "Clear"
+    "clear": "Clear",
+    "decrease": "Decrease",
+    "increase": "Increase"
   },
   "friends": {
     "title": "Friends",

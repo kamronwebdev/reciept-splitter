@@ -29,16 +29,17 @@ const KINDS: DraftKind[] = ['item', 'fee', 'tax', 'discount'];
 
 function Stepper({ value, onChange, label }: { value: number; onChange: (n: number) => void; label: string }) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const btn = { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' } as const;
   return (
     <XStack ai="center" gap="$3" accessibilityRole="adjustable" accessibilityLabel={label} accessibilityValue={{ text: String(value) }}>
-      <Pressable onPress={() => onChange(Math.max(1, value - 1))} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel="−" disabled={value <= 1}>
+      <Pressable onPress={() => onChange(Math.max(1, value - 1))} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel={`${t('common.decrease')}, ${label}`} accessibilityRole="button" disabled={value <= 1}>
         <AppIcon name="minus" size={20} color="$text" />
       </Pressable>
       <Text fontSize={20} fontWeight="700" color="$text" minWidth={36} ta="center">
         {value}
       </Text>
-      <Pressable onPress={() => onChange(value + 1)} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel="+">
+      <Pressable onPress={() => onChange(value + 1)} style={[btn, { backgroundColor: colors.surfaceAlt }]} accessibilityLabel={`${t('common.increase')}, ${label}`} accessibilityRole="button">
         <AppIcon name="plus" size={20} color="$text" />
       </Pressable>
     </XStack>

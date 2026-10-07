@@ -32,7 +32,10 @@ export function rebaseAvatarUrl(uri: string | null | undefined, apiBase: string)
 
 /** 1-2 letter initials: "Kamron Webdev" -> "KW", "ann" -> "A" */
 export function initialsOf(name: string | null | undefined): string {
-  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  const all = (name || '').trim().split(/\s+/).filter(Boolean);
+  // words that start with a letter ("Bitiruvchilari 2026" -> "TB", not "T2"); fall back to everything
+  const words = all.filter((w) => /^\p{L}/u.test(w));
+  const parts = words.length ? words : all;
   if (parts.length === 0) return '?';
   const first = Array.from(parts[0]!)[0] ?? '?';
   const second = parts.length > 1 ? Array.from(parts[parts.length - 1]!)[0] : '';

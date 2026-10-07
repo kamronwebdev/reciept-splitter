@@ -8,6 +8,7 @@ import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { formatMoney } from '../../lib/money';
 import type { DraftItem } from '../../lib/draft';
 import AppIcon from '@/shared/ui/AppIcon';
+import Money from '@/shared/ui/Money';
 
 type Props = {
   item: DraftItem;
@@ -46,19 +47,18 @@ export default function ItemRow({ item, currency, onPress, onDelete }: Props) {
         accessibilityHint={t('receipt.review.tapToEdit', 'Tap to edit')}
         style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
       >
-        <XStack ai="center" gap="$3" minHeight={64} px="$4" py="$2.5" backgroundColor="$surface">
-          <YStack f={1} gap="$1" ai="flex-start">
-            <Text fontSize={16} fontWeight="600" color="$text" numberOfLines={2}>
+        <XStack ai="center" gap="$3" minHeight={60} px="$4" py="$2.5" backgroundColor="$surface">
+          {/* name may wrap to 2 lines; the amount never wraps or shrinks */}
+          <YStack f={1} minWidth={0} gap={2} ai="flex-start" jc="center">
+            <Text variant="body" fontWeight="600" numberOfLines={2} ta="left">
               {item.name}
             </Text>
-            <Text fontSize={13} color={isAdjustment ? '$primaryText' : '$textMuted'}>
+            <Text variant="footnote" color={isAdjustment ? '$primaryText' : '$textMuted'} numberOfLines={1} ta="left" style={{ fontVariant: ['tabular-nums'] }}>
               {detail}
             </Text>
           </YStack>
-          <Text fontSize={16} fontWeight="700" color={item.totalPrice < 0 ? '$success' : '$text'}>
-            {formatMoney(item.totalPrice, currency)}
-          </Text>
-          <AppIcon name="chevronRight" size={18} color="$textSubtle" />
+          <Money amount={item.totalPrice} currency={currency} variant="body" fontWeight="600" color={item.totalPrice < 0 ? '$success' : '$text'} />
+          <AppIcon name="chevronRight" size={16} color="$inactive" />
         </XStack>
       </Pressable>
     </Swipeable>

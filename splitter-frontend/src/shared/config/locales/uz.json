@@ -121,7 +121,9 @@
     "retry": "Qayta urinish",
     "close": "Yopish",
     "done": "Tayyor",
-    "clear": "Tozalash"
+    "clear": "Tozalash",
+    "decrease": "Kamaytirish",
+    "increase": "Ko'paytirish"
   },
   "home": {
     "header": {
@@ -664,7 +666,7 @@
     "today": "Bugun",
     "earlier": "Avvalroq",
     "markRead": "O'qilgan deb belgilash",
-    "markAllRead": "Hammasini o'qish",
+    "markAllRead": "O'qildi",
     "delete": "O'chirish",
     "unread": "O'qilmagan",
     "empty": "Yangi bildirishnomalar yo'q.",

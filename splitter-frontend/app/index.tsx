@@ -1,8 +1,10 @@
 // app/index.tsx - улучшенная Welcome страница
 import React from 'react';
 import { Redirect, Link } from 'expo-router';
-import { ActivityIndicator } from 'react-native';
-import { YStack, XStack, Circle } from 'tamagui';
+import { ActivityIndicator, Pressable, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SCREEN_MARGIN, SPACE } from '@/shared/theme/spacing';
+import { YStack, XStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/shared/lib/stores/app-store';
@@ -19,6 +21,7 @@ const languages = LANGUAGE_OPTIONS.map((option) => ({
 
 export default function Welcome() {
   const { colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const token = useAppStore((state) => state.token);
   const isInitialized = useAppStore((state) => state.isInitialized);
   const sessionExpired = useAppStore((state) => state.sessionExpired);
@@ -49,128 +52,76 @@ export default function Welcome() {
   };
 
   return (
-    <ScreenContainer>
-      <YStack flex={1}>
-        
-        {/* Language Selector - компактный в правом верхнем углу */}
-        <XStack justifyContent="flex-end" marginTop="$3" marginBottom="$6">
-          <XStack space="$1" backgroundColor="$gray3" borderRadius="$8" padding="$1">
-            {languages.map((lang) => (
-              <YStack
-                key={lang.code}
-                backgroundColor={currentLanguage === lang.code ? "$primary" : "transparent"}
-                borderRadius="$6"
-                paddingHorizontal="$3"
-                paddingVertical="$2"
-                pressStyle={{ opacity: 0.7 }}
-                onPress={() => changeLanguage(lang.code)}
-              >
-                <Text 
-                  fontSize="$2" 
-                  fontWeight="600"
-                  color={currentLanguage === lang.code ? "$onPrimary" : "$gray11"}
-                >
-                  {lang.name}
-                </Text>
-              </YStack>
-            ))}
-          </XStack>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: SCREEN_MARGIN, paddingTop: insets.top + SPACE.m, paddingBottom: insets.bottom + SPACE.xl, gap: SPACE.xl }}
+    >
+      {/* language: compact segmented pill, top right */}
+      <XStack jc="flex-end">
+        <XStack backgroundColor="$surfaceAlt" borderRadius={999} p={2} accessibilityRole="radiogroup">
+          {languages.map((lang) => {
+            const selected = currentLanguage === lang.code;
+            return (
+              <Pressable key={lang.code} onPress={() => changeLanguage(lang.code)} accessibilityRole="radio" accessibilityState={{ selected }} accessibilityLabel={lang.name} hitSlop={4}>
+                <YStack minWidth={44} height={32} px="$3" borderRadius={999} ai="center" jc="center" backgroundColor={selected ? '$surface' : 'transparent'}>
+                  <Text variant="footnote" fontWeight="600" color={selected ? '$text' : '$textMuted'}>
+                    {lang.name}
+                  </Text>
+                </YStack>
+              </Pressable>
+            );
+          })}
         </XStack>
+      </XStack>
 
-        {/* Hero Section - более центрированный */}
-        <YStack flex={1} justifyContent="center" alignItems="center" space="$8">
-          
-          {/* App Icon - круглый с иконкой */}
-          <YStack alignItems="center" space="$5">
-            <Circle 
-              size={120}
-              backgroundColor="$primary"
-              alignItems="center" 
-              justifyContent="center"
-              shadowColor="$shadowColor"
-              shadowOffset={{ width: 0, height: 4 }}
-              shadowOpacity={0.15}
-              shadowRadius={12}
-              elevation={8}
-            >
-              <AppIcon name="scan" size={48} color="$onPrimary" />
-            </Circle>
-            
-            <YStack alignItems="center" space="$3">
-              <Text fontSize="$9" fontWeight="900" color="$gray12" textAlign="center">
-                {t('app.name', 'Receipt Splitter')}
-              </Text>
-              <Text fontSize="$5" color="$gray10" textAlign="center" maxWidth={280}>
-                {t('app.subtitle', 'Split bills easily with friends')}
+      {/* hero */}
+      <YStack f={1} jc="center" ai="center" gap="$6">
+        <YStack ai="center" gap="$4">
+          <YStack width={88} height={88} borderRadius={22} backgroundColor="$primary" ai="center" jc="center">
+            <AppIcon name="scan" size={44} color="$onPrimary" />
+          </YStack>
+          <YStack ai="center" gap="$2">
+            <Text variant="largeTitle" ta="center">
+              {t('app.name', 'Receipt Splitter')}
+            </Text>
+            <Text variant="body" color="$textMuted" ta="center" maxWidth={300}>
+              {t('app.subtitle', 'Split bills easily with friends')}
+            </Text>
+          </YStack>
+        </YStack>
+
+        {/* what it does: three outline icons with short labels (no tiles) */}
+        <XStack gap="$4" jc="center" w="100%">
+          {[
+            { icon: 'scan' as const, text: t('features.scan', 'Scan') },
+            { icon: 'friends' as const, text: t('features.split', 'Split') },
+            { icon: 'wallet' as const, text: t('features.calculate', 'Calculate') },
+          ].map((feature) => (
+            <YStack key={feature.icon} f={1} maxWidth={110} ai="center" gap="$2">
+              <AppIcon name={feature.icon} size={24} color="$primaryText" />
+              <Text variant="footnote" color="$textMuted" ta="center" numberOfLines={2}>
+                {feature.text}
               </Text>
             </YStack>
-          </YStack>
-
-          {/* Feature Highlights - горизонтальные индикаторы */}
-          <XStack space="$6" alignItems="center">
-            {[
-              { icon: 'scan' as const, text: t('features.scan', 'Scan') },
-              { icon: 'friends' as const, text: t('features.split', 'Split') },
-              { icon: 'wallet' as const, text: t('features.calculate', 'Calculate') },
-            ].map((feature, index) => (
-              <YStack key={index} alignItems="center" space="$2" maxWidth={80}>
-                <YStack 
-                  width={50} 
-                  height={50} 
-                  backgroundColor="$gray2" 
-                  borderRadius="$6"
-                  alignItems="center" 
-                  justifyContent="center"
-                >
-                  <AppIcon name={feature.icon} size={24} color="$primaryText" />
-                </YStack>
-                <Text fontSize="$3" color="$gray10" textAlign="center" fontWeight="500">
-                  {feature.text}
-                </Text>
-              </YStack>
-            ))}
-          </XStack>
-        </YStack>
-
-        {/* Call to Action - внизу, четкий фокус */}
-        <YStack space="$5" marginBottom="$8">
-          
-          {/* Primary CTA */}
-          <YStack alignItems="center" space="$4">
-            <Text fontSize="$6" fontWeight="700" textAlign="center" color="$gray12">
-              {t('welcome.message', 'Welcome! Let\'s get started')}
-            </Text>
-            
-            <Link href="/register" asChild>
-              <Button 
-                title={t('auth.createAccount', 'Create Account')} 
-                variant="primary"
-                size="large"
-              />
-            </Link>
-          </YStack>
-
-          {/* Secondary Action - менее навязчиво */}
-          <YStack alignItems="center" space="$3">
-            <XStack alignItems="center" space="$1">
-              <YStack width={60} height={1} backgroundColor="$gray6" />
-              <Text fontSize="$3" color="$gray9" paddingHorizontal="$3">
-                {t('welcome.existingUser', 'Already have an account?')}
-              </Text>
-              <YStack width={60} height={1} backgroundColor="$gray6" />
-            </XStack>
-            
-            <Link href="/login" asChild>
-              <Button 
-                title={t('auth.signIn', 'Sign In')} 
-                variant="outline"
-                size="medium"
-              />
-            </Link>
-          </YStack>
-        </YStack>
+          ))}
+        </XStack>
       </YStack>
-    </ScreenContainer>
+
+      {/* actions: one primary, one secondary, both full width */}
+      <YStack gap="$3">
+        <Text variant="headline" ta="center">
+          {t('welcome.message', "Welcome! Let's get started")}
+        </Text>
+        <Link href="/register" asChild>
+          <Button title={t('auth.createAccount', 'Create Account')} variant="primary" size="large" />
+        </Link>
+        <Text variant="footnote" color="$textMuted" ta="center" pt="$2">
+          {t('welcome.existingUser', 'Already have an account?')}
+        </Text>
+        <Link href="/login" asChild>
+          <Button title={t('auth.signIn', 'Sign In')} variant="outline" size="large" />
+        </Link>
+      </YStack>
+    </ScrollView>
   );
 }
-

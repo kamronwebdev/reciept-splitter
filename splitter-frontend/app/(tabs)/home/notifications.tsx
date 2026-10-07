@@ -54,7 +54,7 @@ export default function NotificationsScreen() {
           headerRight: hasUnread
             ? () => (
                 <Pressable onPress={() => markRead.mutate('all')} hitSlop={10} accessibilityRole="button" style={{ minHeight: 44, justifyContent: 'center' }}>
-                  <Text variant="body" color="$primaryText">
+                  <Text variant="body" color="$primaryText" numberOfLines={1}>
                     {t('notifications.markAllRead')}
                   </Text>
                 </Pressable>

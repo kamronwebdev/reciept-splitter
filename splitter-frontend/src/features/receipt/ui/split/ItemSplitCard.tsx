@@ -105,13 +105,13 @@ export default function ItemSplitCard({ item, currency, participants, meId, shar
                     {formatMoney(shares[p.uniqueId]!, currency)}
                   </Text>
                 )}
-                <Pressable onPress={() => onCount(p.uniqueId, -1)} disabled={n === 0} style={[btn, { opacity: n === 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`− ${p.username}`}>
+                <Pressable onPress={() => onCount(p.uniqueId, -1)} disabled={n === 0} style={[btn, { opacity: n === 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`${t('common.decrease')}, ${p.username}`}>
                   <AppIcon name="minus" size={18} color="$text" />
                 </Pressable>
                 <Text fontSize={18} fontWeight="800" color="$text" minWidth={24} ta="center">
                   {n}
                 </Text>
-                <Pressable onPress={() => onCount(p.uniqueId, 1)} disabled={left <= 0} style={[btn, { opacity: left <= 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`+ ${p.username}`}>
+                <Pressable onPress={() => onCount(p.uniqueId, 1)} disabled={left <= 0} style={[btn, { opacity: left <= 0 ? 0.4 : 1 }]} accessibilityRole="button" accessibilityLabel={`${t('common.increase')}, ${p.username}`}>
                   <AppIcon name="plus" size={18} color="$text" />
                 </Pressable>
               </XStack>

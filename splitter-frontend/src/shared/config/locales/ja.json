@@ -121,7 +121,9 @@
     "retry": "再試行",
     "close": "閉じる",
     "done": "完了",
-    "clear": "クリア"
+    "clear": "クリア",
+    "decrease": "減らす",
+    "increase": "増やす"
   },
   "friends": {
     "title": "友だち",

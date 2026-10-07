@@ -169,7 +169,7 @@ export default function ProfileHeader({ busy, onAvatarPress, onShareQr }: Props)
                 {error}
               </Text>
             )}
-            <Text fontSize={14} color="$textMuted">
+            <Text variant="subheadline" color="$textMuted" numberOfLines={1} ellipsizeMode="middle" maxWidth="100%">
               {user?.email}
             </Text>
           </YStack>
