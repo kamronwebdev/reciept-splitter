@@ -20,9 +20,10 @@ const TONE: Record<StatusTone, { bg: string; fg: string }> = {
 export default function StatusChip({ icon, label, tone = 'neutral' }: { icon: IconName; label: string; tone?: StatusTone }) {
   const t = TONE[tone];
   return (
-    <XStack ai="center" gap={4} px="$2" py={2} borderRadius={999} backgroundColor={t.bg as any} alignSelf="flex-start" flexShrink={0} accessible accessibilityLabel={label}>
+    <XStack ai="center" gap={4} px="$2" py={2} borderRadius={999} backgroundColor={t.bg as any} alignSelf="flex-start" flexShrink={1} minWidth={0} maxWidth="100%" accessible accessibilityLabel={label}>
       <AppIcon name={icon} size={12} color={t.fg} weight="semibold" />
-      <Text variant="caption" fontWeight="600" color={t.fg as any} numberOfLines={1}>
+      {/* the word truncates before it can push into the amount next to it (Large text) */}
+      <Text variant="caption" fontWeight="600" color={t.fg as any} numberOfLines={1} flexShrink={1}>
         {label}
       </Text>
     </XStack>

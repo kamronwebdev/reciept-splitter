@@ -573,7 +573,7 @@
     "none": "—",
     "allSettled": "Qarz yo'q",
     "owedToMe": "Sizga qarzdor",
-    "iOwe": "Sizning qarzingiz",
+    "iOwe": "Qarzingiz",
     "loadError": "Balansni yuklab bo'lmadi.",
     "emptyPeople": "Hozircha hech kim qarzdor emas.",
     "owesYou": "sizga {{amount}} qarzdor",

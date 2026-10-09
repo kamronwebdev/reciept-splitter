@@ -123,7 +123,8 @@ export default function ReceiptDetailScreen() {
               title={name}
               // status chip first (icon + color + word, always visible), then what they had
               subtitle={
-                <XStack ai="center" gap="$2" minWidth={0}>
+                // the chip on its own line (it truncates instead of running into the amount), what they had below
+                <YStack gap={2} minWidth={0} ai="flex-start">
                   {isCreatorRow ? (
                     <StatusChip icon="wallet" tone="primary" label={t('settle.paidTheBill')} />
                   ) : paid ? (
@@ -132,11 +133,11 @@ export default function ReceiptDetailScreen() {
                     <StatusChip icon="pending" tone="warning" label={t('settle.notPaid')} />
                   )}
                   {p.items.length > 0 && (
-                    <Text variant="subheadline" color="$textMuted" numberOfLines={1} flexShrink={1}>
+                    <Text variant="subheadline" color="$textMuted" numberOfLines={1} alignSelf="stretch">
                       {p.items.join(', ')}
                     </Text>
                   )}
-                </XStack>
+                </YStack>
               }
               accessibilityLabel={[name, isCreatorRow ? t('settle.paidTheBill') : paid ? t('settle.paid') : t('settle.notPaid'), formatMoney(p.amount, currency), p.items.join(', ')].filter(Boolean).join(', ')}
               right={
