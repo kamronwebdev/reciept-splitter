@@ -111,7 +111,8 @@
     "decrease": "Kamaytirish",
     "increase": "Ko'paytirish",
     "search": "Qidirish",
-    "noResults": "Hech narsa topilmadi"
+    "noResults": "Hech narsa topilmadi",
+    "save": "Saqlash"
   },
   "home": {
     "header": {
@@ -568,8 +569,7 @@
         "tryAgain": "Qayta urinish",
         "scanAgain": "Qayta skanerlash"
       },
-      "validLimited": "Cheklangan vaqt amal qiladi",
-      "expiresAt": "Amal qilish muddati: {{time}}"
+      "expiresAt": "{{time}} gacha"
     },
     "filter": "Do'stlaringizni qidiring",
     "noMatches": "Qidiruvga mos do'st topilmadi",
@@ -583,7 +583,7 @@
     "removeTitle": "{{name}} o'chirilsinmi?",
     "removeMessage": "Keyinroq yana do'st bo'lishingiz mumkin.",
     "removed": "{{name}} o'chirildi",
-    "swipeHint": "Do'stni o'chirish uchun uni chapga suring.",
+    "swipeHint": "O'chirish uchun chapga suring yoki bosib turing",
     "search": {
       "button": "Qidirish",
       "inviteSent": "{{target}}ga so'rov yuborildi",
@@ -680,18 +680,15 @@
   },
   "groups": {
     "actions": {
-      "scanInvite": "QR kod orqali qo'shilish"
+      "scanInvite": "Guruhga qo'shilish"
     },
     "common": {
       "untitled": "Guruh"
     },
     "emptyTitle": "Hali guruhlar yo'q",
-    "emptyMessage": "Tez-tez birga hisob bo'ladigan odamlar uchun guruh yarating.",
-    "scanFooter": "Guruhga qo'shilish uchun uning taklif QR kodini skanerlang.",
     "list": {
       "members_one": "{{count}} a'zo",
-      "members_other": "{{count}} a'zo",
-      "members_zero": "Hali a'zolar yo'q"
+      "members_other": "{{count}} a'zo"
     },
     "roles": {
       "owner": "Egasi",
@@ -699,19 +696,17 @@
     },
     "create": {
       "action": "Yaratish",
-      "emptyState": "Guruhga nom bering, so'ng a'zolarni qo'shing.",
       "inGroup": "guruhda",
       "notInGroup": "guruhda emas",
       "manageMembers": "A'zolar",
       "namePlaceholder": "Guruh nomi",
-      "noFriends": "Hali qo'shiladigan do'stlar yo'q",
+      "noFriends": "Hali do'stlar yo'q",
       "notice": {
         "success": "Guruh yaratildi"
       }
     },
     "detail": {
-      "add": "Qo'shish",
-      "addFromFriends": "Do'stlardan qo'shish",
+      "addFromFriends": "Do'stlarni qo'shish",
       "added": "{{name}} qo'shildi",
       "delete": "Guruhni o'chirish",
       "deleteTitle": "Guruh o'chirilsinmi?",
@@ -721,21 +716,21 @@
       "leaveMessage": "Taklif orqali yana qo'shilishingiz mumkin.",
       "members": "A'zolar",
       "nameTitle": "Guruh nomi",
-      "noFriendsToAdd": "Barcha do'stlaringiz allaqachon bu guruhda.",
+      "noFriendsToAdd": "Qo'shadigan odam yo'q",
       "remove": "Chiqarish",
       "removeTitle": "{{name}} chiqarilsinmi?",
       "removeMessage": "U endi bu guruhni ko'rmaydi.",
       "removed": "{{name}} chiqarildi",
       "renamed": "Guruh nomi o'zgartirildi",
-      "saveName": "Nomni saqlash",
       "showQr": "QR kod bilan taklif qilish",
-      "swipeHint": "A'zoni chiqarish uchun uni chapga suring."
+      "swipeHint": "O'chirish uchun chapga suring yoki bosib turing",
+      "addA11y": "{{name}}ni qo'shish"
     },
     "invite": {
-      "description": "Guruhga qo'shilish uchun skanerlang",
+      "description": "Qo'shilish uchun skanerlang",
       "error": "Taklif yaratib bo'lmadi.",
       "invalid": "Guruh topilmadi.",
-      "new": "Yangi QR kod"
+      "new": "Yangi kod"
     }
   }
 }

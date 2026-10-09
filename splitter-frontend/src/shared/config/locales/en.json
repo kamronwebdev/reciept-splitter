@@ -111,7 +111,8 @@
     "decrease": "Decrease",
     "increase": "Increase",
     "search": "Search",
-    "noResults": "No results"
+    "noResults": "No results",
+    "save": "Save"
   },
   "friends": {
     "title": "Friends",
@@ -209,8 +210,7 @@
         "tryAgain": "Try again",
         "scanAgain": "Scan again"
       },
-      "validLimited": "Valid for a limited time",
-      "expiresAt": "Expires: {{time}}"
+      "expiresAt": "Expires {{time}}"
     },
     "filter": "Search your friends",
     "noMatches": "No friends match your search",
@@ -224,7 +224,7 @@
     "removeTitle": "Remove {{name}}?",
     "removeMessage": "You can add each other again later.",
     "removed": "{{name}} was removed",
-    "swipeHint": "Swipe left on a friend to remove them.",
+    "swipeHint": "Swipe left or touch and hold to remove",
     "search": {
       "button": "Search",
       "inviteSent": "Request sent to {{target}}",
@@ -680,18 +680,15 @@
   },
   "groups": {
     "actions": {
-      "scanInvite": "Join with a QR code"
+      "scanInvite": "Join group"
     },
     "common": {
       "untitled": "Group"
     },
     "emptyTitle": "No groups yet",
-    "emptyMessage": "Create a group for people you often split bills with.",
-    "scanFooter": "Scan a group's invite QR to join it.",
     "list": {
       "members_one": "{{count}} member",
-      "members_other": "{{count}} members",
-      "members_zero": "No members yet"
+      "members_other": "{{count}} members"
     },
     "roles": {
       "owner": "Owner",
@@ -699,19 +696,17 @@
     },
     "create": {
       "action": "Create",
-      "emptyState": "Give the group a name, then add members.",
       "inGroup": "in the group",
       "notInGroup": "not in the group",
       "manageMembers": "Members",
       "namePlaceholder": "Group name",
-      "noFriends": "No friends to add yet",
+      "noFriends": "No friends yet",
       "notice": {
         "success": "Group created"
       }
     },
     "detail": {
-      "add": "Add",
-      "addFromFriends": "Add from friends",
+      "addFromFriends": "Add friends",
       "added": "{{name}} added",
       "delete": "Delete group",
       "deleteTitle": "Delete this group?",
@@ -721,21 +716,21 @@
       "leaveMessage": "You can join again with an invite.",
       "members": "Members",
       "nameTitle": "Group name",
-      "noFriendsToAdd": "All your friends are already in this group.",
+      "noFriendsToAdd": "No one to add",
       "remove": "Remove",
       "removeTitle": "Remove {{name}}?",
       "removeMessage": "They will no longer see this group.",
       "removed": "{{name}} was removed",
       "renamed": "Group renamed",
-      "saveName": "Save name",
       "showQr": "Invite with a QR code",
-      "swipeHint": "Swipe left on a member to remove them."
+      "swipeHint": "Swipe left or touch and hold to remove",
+      "addA11y": "Add {{name}}"
     },
     "invite": {
-      "description": "Scan to join this group",
+      "description": "Scan to join",
       "error": "Couldn't create the invite.",
       "invalid": "Group not found.",
-      "new": "New QR code"
+      "new": "New code"
     }
   }
 }

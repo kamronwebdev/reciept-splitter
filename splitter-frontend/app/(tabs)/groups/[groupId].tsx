@@ -1,7 +1,7 @@
 // app/(tabs)/groups/[groupId].tsx — one group: header, members, add from friends (owner), QR, delete / leave.
 import React, { useEffect, useMemo, useState } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { XStack, YStack } from 'tamagui';
+import { YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 
 import { Text } from '@/shared/ui/typography';
@@ -10,7 +10,7 @@ import Section from '@/shared/ui/Section';
 import Input from '@/shared/ui/Input';
 import SearchField from '@/shared/ui/SearchField';
 import { Button } from '@/shared/ui/Button';
-import { IconTile, ListRow, ListSection } from '@/shared/ui/List';
+import { ListRow, ListSection } from '@/shared/ui/List';
 import { ListSkeleton } from '@/shared/ui/Skeleton';
 import EmptyState from '@/shared/ui/EmptyState';
 import UserAvatar from '@/shared/ui/UserAvatar';
@@ -24,6 +24,9 @@ import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import HeaderButton from '@/shared/ui/HeaderButton';
+import StatusChip, { IconCount } from '@/shared/ui/StatusChip';
+import { Appear, PressableScale } from '@/shared/ui/motion';
 
 export default function GroupDetailsScreen() {
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
@@ -140,36 +143,28 @@ export default function GroupDetailsScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title }} />
+      <Stack.Screen
+        options={{
+          title,
+          // invite by QR: an icon in the header instead of a row with a sentence
+          headerRight: isOwner
+            ? () => <HeaderButton icon="qr" accessibilityLabel={t('groups.detail.showQr')} onPress={() => router.push({ pathname: '/groups/invite', params: { groupId: String(gid) } })} />
+            : () => null,
+        }}
+      />
       <Screen>
         {/* header */}
-        <YStack ai="center" gap="$2" pt="$2">
-          <UserAvatar label={title} seed={`group-${gid}`} size={80} textSize={30} />
-          <Text variant="title2" ta="center" accessibilityRole="header">
-            {title}
-          </Text>
-          <Text variant="subheadline" color="$textMuted">
-            {t('groups.list.members', { count: members.length })}
-          </Text>
-        </YStack>
+        <Appear>
+          <YStack ai="center" gap="$2" pt="$2">
+            <UserAvatar label={title} seed={`group-${gid}`} size={80} textSize={30} />
+            <Text variant="title2" ta="center" accessibilityRole="header">
+              {title}
+            </Text>
+            <IconCount icon="friends" count={members.length} label={t('groups.list.members', { count: members.length })} />
+          </YStack>
+        </Appear>
 
-        {isOwner && (
-          <ListSection>
-            <ListRow
-              key="qr"
-              left={
-                <IconTile>
-                  <AppIcon name="qr" size={20} color="$primaryText" />
-                </IconTile>
-              }
-              title={t('groups.detail.showQr')}
-              chevron
-              onPress={() => router.push({ pathname: '/groups/invite', params: { groupId: String(gid) } })}
-            />
-          </ListSection>
-        )}
-
-        <ListSection header={t('groups.detail.members')} footer={isOwner ? t('groups.detail.swipeHint') : undefined}>
+        <ListSection header={t('groups.detail.members')} animateChanges>
           {members.map((m) => {
             const uid = m.uniqueId;
             const label = m.displayName || m.username || uid;
@@ -181,15 +176,8 @@ export default function GroupDetailsScreen() {
                   left={<UserAvatar uri={m.avatarUrl ?? m.user?.avatarUrl} label={label} seed={uid} size={40} textSize={15} />}
                   title={uid === me?.uniqueId ? `${label} (${t('receipt.people.you', 'You')})` : label}
                   subtitle={handleOf(uid)}
-                  right={
-                    owner ? (
-                      <XStack px="$2" py={2} borderRadius={6} backgroundColor="$primarySoft">
-                        <Text variant="caption" fontWeight="700" color="$primaryText">
-                          {t('groups.roles.owner')}
-                        </Text>
-                      </XStack>
-                    ) : null
-                  }
+                  right={owner ? <StatusChip icon="owner" tone="primary" label={t('groups.roles.owner')} /> : null}
+                  {...(canRemove ? { accessibilityHint: t('groups.detail.swipeHint') } : {})}
                   {...(canRemove
                     ? {
                         onLongPress: () =>
@@ -218,20 +206,35 @@ export default function GroupDetailsScreen() {
             <Text variant="footnote" color="$textMuted" textTransform="uppercase" px="$4" accessibilityRole="header">
               {t('groups.detail.addFromFriends')}
             </Text>
-            <SearchField value={filter} onChangeText={setFilter} placeholder={t('friends.filter')} clearLabel={t('common.clear')} />
+            <SearchField value={filter} onChangeText={setFilter} placeholder={t('common.search')} clearLabel={t('common.clear')} />
             {candidates.length === 0 ? (
               <Text variant="subheadline" color="$textMuted" ta="center">
                 {t('groups.detail.noFriendsToAdd')}
               </Text>
             ) : (
-              <ListSection>
+              <ListSection animateChanges>
                 {candidates.map((f) => (
                   <ListRow
                     key={f.uniqueId}
                     left={<UserAvatar uri={f.avatarUrl} label={f.name} seed={f.uniqueId} size={36} textSize={14} />}
                     title={f.name}
                     subtitle={handleOf(f.uniqueId)}
-                    right={<Button title={t('groups.detail.add')} size="small" variant="secondary" loading={busyUid === f.uniqueId} onPress={() => void run(f.uniqueId, () => addMember(gid, f.uniqueId), t('groups.detail.added', { name: f.name }))} />}
+                    right={
+                      // "+" icon button (44pt target); the name is in its label
+                      <PressableScale
+                        scaleTo={0.9}
+                        haptic="tap"
+                        disabled={busyUid === f.uniqueId}
+                        onPress={() => void run(f.uniqueId, () => addMember(gid, f.uniqueId), t('groups.detail.added', { name: f.name }))}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('groups.detail.addA11y', { name: f.name })}
+                        style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center', opacity: busyUid === f.uniqueId ? 0.4 : 1 }}
+                      >
+                        <YStack width={30} height={30} borderRadius={15} ai="center" jc="center" backgroundColor="$primarySoft">
+                          <AppIcon name="plus" size={18} color="$primaryText" weight="semibold" />
+                        </YStack>
+                      </PressableScale>
+                    }
                   />
                 ))}
               </ListSection>
@@ -242,7 +245,7 @@ export default function GroupDetailsScreen() {
         {isOwner && (
           <Section title={t('groups.detail.nameTitle')}>
             <Input value={name} onChangeText={setName} placeholder={t('groups.create.namePlaceholder', 'Group name')} accessibilityLabel={t('groups.detail.nameTitle')} />
-            <Button title={t('groups.detail.saveName')} variant="secondary" onPress={saveName} loading={saving} disabled={!name.trim() || name.trim() === group.group?.name} />
+            <Button title={t('common.save')} variant="secondary" onPress={saveName} loading={saving} disabled={!name.trim() || name.trim() === group.group?.name} />
           </Section>
         )}
 

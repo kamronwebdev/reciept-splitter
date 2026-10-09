@@ -12,6 +12,7 @@ import Banner from '@/shared/ui/Banner';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import AppIcon from '@/shared/ui/AppIcon';
 import { useGroupsStore } from '@/features/groups/model/groups.store';
+import { IconCount } from '@/shared/ui/StatusChip';
 
 export default function GroupsListScreen() {
   const router = useRouter();
@@ -49,20 +50,20 @@ export default function GroupsListScreen() {
             <EmptyState
               icon={<AppIcon name="groups" size={28} color="$textMuted" />}
               title={t('groups.emptyTitle')}
-              message={t('groups.emptyMessage')}
               actionLabel={t('navigation.groups.create')}
               onAction={() => router.push('/groups/create')}
             />
           </YStack>
         ) : (
-          <ListSection>
+          <ListSection animateChanges>
             {groups.map((g) => (
               <ListRow
                 key={g.id}
                 left={<UserAvatar label={g.name} seed={`group-${g.id}`} size={44} textSize={17} />}
                 inset={72}
                 title={g.name ?? t('groups.common.untitled', 'Group')}
-                subtitle={countOf(g) ? t('groups.list.members', { count: countOf(g) }) : t('groups.list.members_zero', 'No members yet')}
+                subtitle={<IconCount icon="friends" count={countOf(g)} label={t('groups.list.members', { count: countOf(g) })} />}
+                accessibilityLabel={`${g.name ?? t('groups.common.untitled', 'Group')}, ${t('groups.list.members', { count: countOf(g) })}`}
                 chevron
                 onPress={() => router.push({ pathname: '/groups/[groupId]', params: { groupId: String(g.id) } })}
               />
@@ -70,7 +71,7 @@ export default function GroupsListScreen() {
           </ListSection>
         )}
 
-        <ListSection footer={t('groups.scanFooter')}>
+        <ListSection>
           <ListRow
             key="scan"
             left={

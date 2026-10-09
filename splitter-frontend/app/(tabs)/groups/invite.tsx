@@ -9,6 +9,8 @@ import Banner from '@/shared/ui/Banner';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { InviteQR } from '@/shared/ui/InviteQR';
 import { GroupsApi } from '@/features/groups/api/groups.api';
+import AppIcon from '@/shared/ui/AppIcon';
+import { Appear } from '@/shared/ui/motion';
 
 type InviteDTO = { url: string; expiresAt: string };
 
@@ -48,10 +50,12 @@ export default function GroupInviteScreen() {
           <Skeleton width={260} height={260} radius={16} />
         </YStack>
       ) : (
+        <Appear>
         <YStack gap="$4">
           <InviteQR url={data.url} title={t('groups.invite.description', 'Invite to this group')} expiresAt={data.expiresAt} />
-          <Button title={t('groups.invite.new', 'New QR')} variant="secondary" onPress={refresh} loading={loading} />
+          <Button title={t('groups.invite.new', 'New code')} variant="secondary" icon={<AppIcon name="refresh" size={18} color="$primaryText" />} onPress={refresh} loading={loading} />
         </YStack>
+        </Appear>
       )}
     </Screen>
   );

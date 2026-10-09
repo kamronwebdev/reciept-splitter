@@ -19,6 +19,7 @@ import { useGroupsStore } from '@/features/groups/model/groups.store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import { Pop } from '@/shared/ui/motion';
 
 export default function GroupCreateScreen() {
   const router = useRouter();
@@ -85,7 +86,7 @@ export default function GroupCreateScreen() {
 
   return (
     <Screen>
-      <Section title={t('groups.detail.nameTitle')} {...(!groupId ? { description: t('groups.create.emptyState', 'Create a group to add members.') } : {})}>
+      <Section title={t('groups.detail.nameTitle')}>
         <Input
           value={name}
           onChangeText={setName}
@@ -101,7 +102,7 @@ export default function GroupCreateScreen() {
           <Text variant="footnote" color="$textMuted" textTransform="uppercase" px="$4" accessibilityRole="header">
             {t('groups.create.manageMembers', 'Add or remove members')}
           </Text>
-          <SearchField value={filter} onChangeText={setFilter} placeholder={t('friends.filter')} clearLabel={t('common.clear')} />
+          <SearchField value={filter} onChangeText={setFilter} placeholder={t('common.search')} clearLabel={t('common.clear')} />
           {rows.length === 0 ? (
             <Text variant="subheadline" color="$textMuted" ta="center">
               {t('groups.create.noFriends', 'No friends to display')}
@@ -121,9 +122,11 @@ export default function GroupCreateScreen() {
                     accessibilityLabel={`${f.name}, ${inGroup ? t('groups.create.inGroup') : t('groups.create.notInGroup')}`}
                     right={
                       <Pressable onPress={() => void toggle(f.uniqueId)} accessibilityElementsHidden importantForAccessibility="no">
-                        <YStack width={28} height={28} borderRadius={14} ai="center" jc="center" backgroundColor={inGroup ? '$primary' : '$surfaceAlt'}>
-                          {inGroup ? <AppIcon name="check" size={16} color="$onPrimary" /> : <AppIcon name="plus" size={16} color="$textMuted" />}
-                        </YStack>
+                        <Pop trigger={inGroup}>
+                          <YStack width={28} height={28} borderRadius={14} ai="center" jc="center" backgroundColor={inGroup ? '$primary' : '$surfaceAlt'}>
+                            {inGroup ? <AppIcon name="check" size={16} color="$onPrimary" /> : <AppIcon name="plus" size={16} color="$textMuted" />}
+                          </YStack>
+                        </Pop>
                       </Pressable>
                     }
                   />

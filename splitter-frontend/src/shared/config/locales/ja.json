@@ -111,7 +111,8 @@
     "decrease": "減らす",
     "increase": "増やす",
     "search": "検索",
-    "noResults": "見つかりません"
+    "noResults": "見つかりません",
+    "save": "保存"
   },
   "friends": {
     "title": "友だち",
@@ -209,8 +210,7 @@
         "tryAgain": "再試行",
         "scanAgain": "もう一度スキャン"
       },
-      "validLimited": "期間限定で有効",
-      "expiresAt": "有効期限：{{time}}"
+      "expiresAt": "{{time}}まで有効"
     },
     "filter": "友達を検索",
     "noMatches": "一致する友達がいません",
@@ -223,7 +223,7 @@
     "removeTitle": "{{name}}さんを削除しますか？",
     "removeMessage": "あとでまた友達になれます。",
     "removed": "{{name}}さんを削除しました",
-    "swipeHint": "友達を左にスワイプすると削除できます。",
+    "swipeHint": "左にスワイプまたは長押しで削除",
     "search": {
       "button": "検索",
       "inviteSent": "{{target}}さんにリクエストを送りました",
@@ -673,17 +673,14 @@
   },
   "groups": {
     "actions": {
-      "scanInvite": "QRコードで参加"
+      "scanInvite": "グループに参加"
     },
     "common": {
       "untitled": "グループ"
     },
     "emptyTitle": "まだグループがありません",
-    "emptyMessage": "よく割り勘する人たちのグループを作りましょう。",
-    "scanFooter": "グループの招待QRを読み取ると参加できます。",
     "list": {
-      "members_other": "メンバー{{count}}人",
-      "members_zero": "まだメンバーがいません"
+      "members_other": "メンバー{{count}}人"
     },
     "roles": {
       "owner": "オーナー",
@@ -691,19 +688,17 @@
     },
     "create": {
       "action": "作成",
-      "emptyState": "グループ名を付けてから、メンバーを追加します。",
       "inGroup": "参加中",
       "notInGroup": "未参加",
       "manageMembers": "メンバー",
       "namePlaceholder": "グループ名",
-      "noFriends": "追加できる友達がまだいません",
+      "noFriends": "まだ友達がいません",
       "notice": {
         "success": "グループを作成しました"
       }
     },
     "detail": {
-      "add": "追加",
-      "addFromFriends": "友達から追加",
+      "addFromFriends": "友達を追加",
       "added": "{{name}}さんを追加しました",
       "delete": "グループを削除",
       "deleteTitle": "このグループを削除しますか？",
@@ -713,21 +708,21 @@
       "leaveMessage": "招待からもう一度参加できます。",
       "members": "メンバー",
       "nameTitle": "グループ名",
-      "noFriendsToAdd": "友達は全員このグループに参加しています。",
+      "noFriendsToAdd": "追加できる人はいません",
       "remove": "削除",
       "removeTitle": "{{name}}さんを削除しますか？",
       "removeMessage": "このグループが見えなくなります。",
       "removed": "{{name}}さんを削除しました",
       "renamed": "グループ名を変更しました",
-      "saveName": "名前を保存",
       "showQr": "QRコードで招待",
-      "swipeHint": "メンバーを左にスワイプすると削除できます。"
+      "swipeHint": "左にスワイプまたは長押しで削除",
+      "addA11y": "{{name}}さんを追加"
     },
     "invite": {
-      "description": "読み取るとこのグループに参加できます",
+      "description": "読み取って参加",
       "error": "招待を作成できませんでした。",
       "invalid": "グループが見つかりません。",
-      "new": "新しいQRコード"
+      "new": "新しいコード"
     }
   }
 }
