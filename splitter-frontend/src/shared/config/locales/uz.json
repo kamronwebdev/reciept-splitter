@@ -156,7 +156,7 @@
     "header": {
       "copyId": "ID ni nusxalash",
       "copied": "Nusxalandi",
-      "shareQr": "Mening QR kodim",
+      "shareQr": "Mening QR",
       "idLabel": "ID"
     },
     "avatar": {
@@ -176,7 +176,6 @@
       "pickFailed": "Rasmni o'qib bo'lmadi. Boshqa rasm tanlang."
     },
     "stats": {
-      "title": "Faoliyatingiz",
       "sessions": "Hisoblar",
       "friends": "Do'stlar",
       "groups": "Guruhlar"
@@ -191,17 +190,14 @@
     },
     "email": {
       "title": "Email",
-      "change": "Emailni o'zgartirish",
       "newEmail": "Yangi email",
       "currentPassword": "Joriy parol",
-      "passwordHelp": "Tasdiqlash uchun joriy parolni kiriting.",
       "submit": "Emailni yangilash",
       "updated": "Email yangilandi",
       "same": "Bu allaqachon sizning emailingiz"
     },
     "password": {
       "title": "Parol",
-      "change": "Parolni o'zgartirish",
       "current": "Joriy parol",
       "new": "Yangi parol",
       "submit": "Parolni yangilash",
@@ -211,12 +207,13 @@
     "danger": {
       "title": "Xavfli hudud",
       "delete": "Hisobni o'chirish",
-      "warning": "Bu hisobingizni, yaratgan hisoblaringizni, guruhlaringizni va do'stlik aloqalaringizni butunlay o'chiradi. Boshqalar yaratgan hisoblar qoladi, lekin sizning ulushingiz olib tashlanadi. Buni ortga qaytarib bo'lmaydi.",
+      "warning": "Hisobingiz, yaratgan hisoblaringiz, guruhlaringiz va do'stlaringiz o'chiriladi. Buni qaytarib bo'lmaydi.",
       "passwordLabel": "Tasdiqlash uchun parolni kiriting",
       "confirm": "Hisobimni o'chirish"
     },
     "logout": "Chiqish",
-    "refreshFailed": "Profilni yangilab bo'lmadi. Qayta urinish uchun pastga torting."
+    "refreshFailed": "Profilni yangilab bo'lmadi. Qayta urinish uchun pastga torting.",
+    "change": "O'zgartirish"
   },
   "navigation": {
     "mainMenu": "Bosh menyu",
@@ -248,8 +245,7 @@
         "title": "Mavzu",
         "system": "Tizim",
         "light": "Yorug'",
-        "dark": "Qorong'i",
-        "hint": "Tizim rejimi telefoningizga ergashadi va o'zi yangilanadi."
+        "dark": "Qorong'i"
       },
       "font": {
         "title": "Shrift",
@@ -272,17 +268,11 @@
     },
     "language": {
       "title": "Til",
-      "description": "Ilovada ishlatiladigan tilni tanlang.",
       "options": {
         "en": "Inglizcha",
         "ja": "Yaponcha",
         "uz": "O'zbekcha"
       }
-    },
-    "account": {
-      "title": "Hisob",
-      "profile": "Profil va xavfsizlik",
-      "profileHint": "Rasm, nom, email, parol"
     },
     "about": {
       "title": "Ilova haqida",

@@ -37,7 +37,7 @@ export default function SettingsScreen() {
     <Screen>
       <AppearanceSection />
 
-      <Section title={t('settings.language.title', 'Language')} description={t('settings.language.description', 'Choose the language used across the app.')}>
+      <Section title={t('settings.language.title', 'Language')}>
         <LanguageSegmentedControl value={language} onChange={setLanguage} getLabel={(code, fallback) => t(`settings.language.options.${code}`, fallback)} />
       </Section>
 

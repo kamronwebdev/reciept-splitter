@@ -273,7 +273,7 @@
     "header": {
       "copyId": "Copy ID",
       "copied": "Copied",
-      "shareQr": "My QR code",
+      "shareQr": "My QR",
       "idLabel": "ID"
     },
     "avatar": {
@@ -293,7 +293,6 @@
       "pickFailed": "Could not read the photo. Please try another one."
     },
     "stats": {
-      "title": "Your activity",
       "sessions": "Bills",
       "friends": "Friends",
       "groups": "Groups"
@@ -308,17 +307,14 @@
     },
     "email": {
       "title": "Email",
-      "change": "Change email",
       "newEmail": "New email",
       "currentPassword": "Current password",
-      "passwordHelp": "Enter your current password to confirm.",
       "submit": "Update email",
       "updated": "Email updated",
       "same": "This is already your email"
     },
     "password": {
       "title": "Password",
-      "change": "Change password",
       "current": "Current password",
       "new": "New password",
       "submit": "Update password",
@@ -328,12 +324,13 @@
     "danger": {
       "title": "Danger zone",
       "delete": "Delete account",
-      "warning": "This permanently deletes your account, the bills you created, your groups and your friend connections. Bills created by other people stay, but your share is removed. This cannot be undone.",
+      "warning": "Deletes your account, the bills you created, your groups and friends. This can't be undone.",
       "passwordLabel": "Type your password to confirm",
       "confirm": "Delete my account"
     },
     "logout": "Log out",
-    "refreshFailed": "Could not refresh your profile. Pull down to try again."
+    "refreshFailed": "Could not refresh your profile. Pull down to try again.",
+    "change": "Change"
   },
   "navigation": {
     "mainMenu": "Main menu",
@@ -365,8 +362,7 @@
         "title": "Theme",
         "system": "System",
         "light": "Light",
-        "dark": "Dark",
-        "hint": "System follows your phone and updates automatically."
+        "dark": "Dark"
       },
       "font": {
         "title": "Font",
@@ -389,17 +385,11 @@
     },
     "language": {
       "title": "Language",
-      "description": "Choose the language used across the app.",
       "options": {
         "en": "English",
         "ja": "Japanese",
         "uz": "Uzbek"
       }
-    },
-    "account": {
-      "title": "Account",
-      "profile": "Profile & security",
-      "profileHint": "Photo, username, email, password"
     },
     "about": {
       "title": "About",

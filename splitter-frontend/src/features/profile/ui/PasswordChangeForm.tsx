@@ -78,7 +78,7 @@ export default function PasswordChangeForm() {
       title={t('profile.password.title', 'Password')}
       right={
         <TextLink
-          title={open ? t('profile.username.cancel', 'Cancel') : t('profile.password.change', 'Change password')}
+          title={open ? t('profile.username.cancel', 'Cancel') : t('profile.change', 'Change')}
           onPress={() => {
             if (open) reset();
             setOpen(!open);

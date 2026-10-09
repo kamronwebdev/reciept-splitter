@@ -198,7 +198,8 @@ export default function ProfileHeader({ busy, onAvatarPress, onShareQr }: Props)
         </XStack>
 
         <Button
-          title={t('profile.header.shareQr', 'My QR code')}
+          title={t('profile.header.shareQr', 'My QR')}
+          icon={<AppIcon name="qr" size={18} color="$primaryText" />}
           variant="outline"
           size="medium"
           onPress={onShareQr}

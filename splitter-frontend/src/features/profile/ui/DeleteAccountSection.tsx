@@ -74,10 +74,7 @@ export default function DeleteAccountSection() {
       {open && (
         <YStack gap="$3">
           <Text fontSize={14} color="$textMuted">
-            {t(
-              'profile.danger.warning',
-              'This permanently deletes your account, the bills you created, your groups and your friend connections. Bills created by other people stay, but your share is removed. This cannot be undone.'
-            )}
+            {t('profile.danger.warning')}
           </Text>
           <PasswordInput
             label={t('profile.danger.passwordLabel', 'Type your password to confirm')}

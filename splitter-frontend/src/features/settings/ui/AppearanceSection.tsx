@@ -48,9 +48,6 @@ export default function AppearanceSection() {
             );
           })}
         </XStack>
-        <Text fontSize={12} color="$textSubtle">
-          {t('settings.appearance.theme.hint', 'System follows your phone and updates automatically.')}
-        </Text>
       </YStack>
 
       {/* FONT */}

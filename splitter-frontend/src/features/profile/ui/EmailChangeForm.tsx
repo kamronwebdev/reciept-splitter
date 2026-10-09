@@ -87,7 +87,7 @@ export default function EmailChangeForm() {
       title={t('profile.email.title', 'Email')}
       right={
         <TextLink
-          title={open ? t('profile.username.cancel', 'Cancel') : t('profile.email.change', 'Change email')}
+          title={open ? t('profile.username.cancel', 'Cancel') : t('profile.change', 'Change')}
           onPress={() => {
             if (open) reset();
             setOpen(!open);
@@ -125,7 +125,6 @@ export default function EmailChangeForm() {
             returnKeyType="go"
             onSubmitEditing={submit}
             error={passwordError}
-            hint={t('profile.email.passwordHelp', 'Enter your current password to confirm.')}
           />
           {networkError && (
             <Banner kind="error" message={networkError} actionLabel={t('common.retry', 'Retry')} onAction={submit} actionLoading={loading} />
