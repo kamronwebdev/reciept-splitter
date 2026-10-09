@@ -6,6 +6,9 @@ import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
 import { formatMoney } from '../../lib/money';
 import type { ReceiptParticipant } from '../../api/receipt.api';
+import Money from '@/shared/ui/Money';
+import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip from '@/shared/ui/StatusChip';
 
 type Props = {
   participants: ReceiptParticipant[];
@@ -14,10 +17,15 @@ type Props = {
   unassigned: number;
   currency: string;
   meId?: string | undefined;
+  /** items that still need people */
+  left?: number;
 };
 
-/** Sticky running totals per person (with real avatars) and the unassigned amount in warning color. */
-export default function TotalsBar({ participants, totals, unassigned, currency, meId }: Props) {
+/**
+ * Sticky running totals per person (with real avatars; amounts count to their new value), and the
+ * unassigned amount with a warning icon + an "N left" chip, or a check when everything is assigned.
+ */
+export default function TotalsBar({ participants, totals, unassigned, currency, meId, left = 0 }: Props) {
   const { t } = useTranslation();
   return (
     <YStack gap="$2">
@@ -29,19 +37,21 @@ export default function TotalsBar({ participants, totals, unassigned, currency, 
               <Text fontSize={11} color="$textMuted" numberOfLines={1} maxWidth={90}>
                 {p.uniqueId === meId ? t('receipt.people.you', 'You') : p.username.split(/\s+/)[0]}
               </Text>
-              <Text fontSize={14} fontWeight="800" color="$text">
-                {formatMoney(totals[p.uniqueId] ?? 0, currency)}
-              </Text>
+              <Money amount={totals[p.uniqueId] ?? 0} currency={currency} fontSize={14} fontWeight="800" color="$text" ta="left" animated />
             </YStack>
           </XStack>
         ))}
       </ScrollView>
-      <XStack jc="space-between" ai="center">
-        <Text fontSize={13} fontWeight="700" color={unassigned > 0 ? '$warning' : '$success'} accessibilityLiveRegion="polite">
-          {unassigned > 0
-            ? t('receipt.split.unassigned', { amount: formatMoney(unassigned, currency), defaultValue: 'Unassigned: {{amount}}' })
-            : t('receipt.split.allAssigned', 'Everything is assigned')}
-        </Text>
+      <XStack jc="space-between" ai="center" gap="$2" accessibilityLiveRegion="polite">
+        <XStack ai="center" gap="$1.5" f={1} minWidth={0}>
+          <AppIcon name={unassigned > 0 ? 'warning' : 'checkCircle'} size={16} color={unassigned > 0 ? '$warning' : '$success'} />
+          <Text fontSize={13} fontWeight="700" color={unassigned > 0 ? '$warning' : '$success'} numberOfLines={1} flexShrink={1}>
+            {unassigned > 0
+              ? t('receipt.split.unassigned', { amount: formatMoney(unassigned, currency), defaultValue: 'Unassigned: {{amount}}' })
+              : t('receipt.split.allAssigned', 'All assigned')}
+          </Text>
+        </XStack>
+        {left > 0 && <StatusChip icon="pending" tone="warning" label={t('receipt.split.left', { count: left })} />}
       </XStack>
     </YStack>
   );

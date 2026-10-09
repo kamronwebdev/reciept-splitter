@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
 import AppIcon from '@/shared/ui/AppIcon';
+import { Pop } from '@/shared/ui/motion';
 
 export type Candidate = { uniqueId: string; username: string; avatarUrl?: string | null; isMe?: boolean };
 
@@ -37,9 +38,11 @@ export default function PersonRow({ person, selected, onToggle }: Props) {
             {person.isMe ? `${person.username} · ${handleOf(person.uniqueId)}` : handleOf(person.uniqueId)}
           </Text>
         </YStack>
-        <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={selected ? '$primary' : 'transparent'} borderWidth={selected ? 0 : 2} borderColor="$borderColor">
-          {selected && (person.isMe ? <AppIcon name="lock" size={14} color="$onPrimary" /> : <AppIcon name="check" size={18} color="$onPrimary" />)}
-        </YStack>
+        <Pop trigger={selected}>
+          <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={selected ? '$primary' : 'transparent'} borderWidth={selected ? 0 : 2} borderColor="$borderColor">
+            {selected && (person.isMe ? <AppIcon name="lock" size={14} color="$onPrimary" /> : <AppIcon name="check" size={18} color="$onPrimary" />)}
+          </YStack>
+        </Pop>
       </XStack>
     </Pressable>
   );

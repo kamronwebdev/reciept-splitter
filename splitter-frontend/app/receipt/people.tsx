@@ -15,6 +15,8 @@ import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import PersonRow, { type Candidate } from '@/features/receipt/ui/people/PersonRow';
 import SelectedChips from '@/features/receipt/ui/people/SelectedChips';
 import AppIcon from '@/shared/ui/AppIcon';
+import { IconCount } from '@/shared/ui/StatusChip';
+import { Appear, Pop, PressableScale } from '@/shared/ui/motion';
 
 function SectionTitle({ children }: { children: string }) {
   return (
@@ -140,11 +142,13 @@ export default function PeopleScreen() {
         <>
           {!canNext && (
             <Text fontSize={13} color="$textMuted" ta="center">
-              {t('receipt.people.needTwo', 'Select at least 2 people to split the bill.')}
+              {t('receipt.people.needTwo', 'Pick 2+ people')}
             </Text>
           )}
           <Button
-            title={t('receipt.people.next', { count, defaultValue: 'Next: split items ({{count}} people)' })}
+            title={t('receipt.people.next', { count, defaultValue: 'Next · {{count}}' })}
+            accessibilityLabel={t('receipt.people.nextA11y', { count })}
+            icon={<AppIcon name="friends" size={20} color={canNext ? '$onPrimary' : '$textSubtle'} />}
             variant="primary"
             size="large"
             onPress={next}
@@ -158,8 +162,8 @@ export default function PeopleScreen() {
       <Input
         value={query}
         onChangeText={setQuery}
-        placeholder={t('receipt.people.search', 'Search people and groups')}
-        accessibilityLabel={t('receipt.people.search', 'Search people and groups')}
+        placeholder={t('common.search')}
+        accessibilityLabel={t('receipt.people.searchA11y', 'Search people and groups')}
         rightAdornment={<AppIcon name="search" size={18} color="$textSubtle" />}
         textInputProps={{ autoCapitalize: 'none', autoCorrect: false, returnKeyType: 'search' }}
       />
@@ -184,7 +188,7 @@ export default function PeopleScreen() {
                     onPress={() => toggleGroup(memberIds)}
                     accessibilityRole="checkbox"
                     accessibilityState={{ checked: allIn }}
-                    accessibilityLabel={`${g.name}, ${memberIds.length}`}
+                    accessibilityLabel={`${g.name}, ${t('groups.list.members', { count: memberIds.length })}`}
                     style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
                   >
                     <XStack ai="center" gap="$3" minHeight={60} px="$4" py="$2" backgroundColor="$surface">
@@ -203,14 +207,14 @@ export default function PeopleScreen() {
                               </YStack>
                             ))}
                           </XStack>
-                          <Text fontSize={13} color="$textMuted">
-                            {t('receipt.people.members', { count: memberIds.length, defaultValue: '{{count}} members' })}
-                          </Text>
+                          <IconCount icon="friends" count={memberIds.length} label={t('groups.list.members', { count: memberIds.length })} />
                         </XStack>
                       </YStack>
-                      <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={allIn ? '$primary' : 'transparent'} borderWidth={allIn ? 0 : 2} borderColor="$borderColor">
-                        {allIn && <AppIcon name="check" size={16} color="$onPrimary" weight="semibold" />}
-                      </YStack>
+                      <Pop trigger={allIn}>
+                        <YStack w={28} h={28} br={8} ai="center" jc="center" backgroundColor={allIn ? '$primary' : 'transparent'} borderWidth={allIn ? 0 : 2} borderColor="$borderColor">
+                          {allIn && <AppIcon name="check" size={16} color="$onPrimary" weight="semibold" />}
+                        </YStack>
+                      </Pop>
                     </XStack>
                   </Pressable>
                 </YStack>
@@ -227,22 +231,21 @@ export default function PeopleScreen() {
             <Text fontSize={16} fontWeight="700" color="$text" ta="center">
               {t('receipt.people.emptyTitle', 'No friends yet')}
             </Text>
-            <Text fontSize={14} color="$textMuted" ta="center">
-              {t('receipt.people.emptyBody', 'Add friends to split the bill with them, or let them scan your QR code.')}
-            </Text>
-            <Button title={t('receipt.people.addFriends', 'Add friends')} variant="primary" size="medium" onPress={() => router.push('/friends/search')} />
-            <Button title={t('receipt.people.inviteQr', 'Invite by QR')} variant="outline" size="medium" onPress={() => openQr('my')} />
+            <Button title={t('receipt.people.addFriends', 'Add friends')} icon={<AppIcon name="userAdd" size={18} color="$onPrimary" />} variant="primary" size="medium" onPress={() => router.push('/friends/search')} />
+            <Button title={t('receipt.people.inviteQr', 'Invite by QR')} icon={<AppIcon name="qr" size={18} color="$primaryText" />} variant="outline" size="medium" onPress={() => openQr('my')} />
           </YStack>
         ) : visibleFriends.length === 0 ? (
           <Text fontSize={14} color="$textMuted" ta="center" py="$3">
-            {t('receipt.people.noMatches', 'No one matches your search.')}
+            {t('common.noResults')}
           </Text>
         ) : (
           <YStack borderRadius={16} overflow="hidden" borderWidth={1} borderColor="$borderColor">
             {visibleFriends.map((f, idx) => (
-              <YStack key={f.uniqueId} borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
-                <PersonRow person={f} selected={selected.includes(f.uniqueId)} onToggle={() => toggle(f.uniqueId)} />
-              </YStack>
+              <Appear key={f.uniqueId} index={idx}>
+                <YStack borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
+                  <PersonRow person={f} selected={selected.includes(f.uniqueId)} onToggle={() => toggle(f.uniqueId)} />
+                </YStack>
+              </Appear>
             ))}
           </YStack>
         )}
@@ -259,7 +262,7 @@ export default function PeopleScreen() {
 
 function QrLink({ icon, label, onPress }: { icon: React.ReactNode; label: string; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1 }}>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1 }}>
       {({ pressed }) => (
         <XStack minHeight={48} ai="center" jc="center" gap="$2" px="$3" borderRadius={12} borderWidth={1} borderColor="$borderColor" backgroundColor="$surface" opacity={pressed ? 0.8 : 1}>
           {icon}
@@ -268,6 +271,6 @@ function QrLink({ icon, label, onPress }: { icon: React.ReactNode; label: string
           </Text>
         </XStack>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }

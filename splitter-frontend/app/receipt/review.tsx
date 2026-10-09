@@ -17,16 +17,23 @@ import ItemEditorSheet from '@/features/receipt/ui/review/ItemEditorSheet';
 import CurrencySheet from '@/features/receipt/ui/review/CurrencySheet';
 import ReceiptThumb from '@/features/receipt/ui/review/ReceiptThumb';
 import AppIcon from '@/shared/ui/AppIcon';
+import Animated from 'react-native-reanimated';
+import Money from '@/shared/ui/Money';
+import { Appear, listExiting, listLayout } from '@/shared/ui/motion';
 
-function TotalRow({ label, value, strong, tone }: { label: string; value: string; strong?: boolean; tone?: 'warn' | 'ok' }) {
+function TotalRow({ label, value, strong, tone }: { label: string; value: React.ReactNode; strong?: boolean; tone?: 'warn' | 'ok' }) {
   return (
     <XStack jc="space-between" ai="center" minHeight={32} gap="$3">
       <Text fontSize={strong ? 16 : 14} fontWeight={strong ? '700' : '400'} color={strong ? '$text' : '$textMuted'} f={1}>
         {label}
       </Text>
-      <Text fontSize={strong ? 18 : 15} fontWeight={strong ? '800' : '600'} color={tone === 'warn' ? '$danger' : tone === 'ok' ? '$success' : '$text'}>
-        {value}
-      </Text>
+      {typeof value === 'string' ? (
+        <Text fontSize={strong ? 18 : 15} fontWeight={strong ? '800' : '600'} color={tone === 'warn' ? '$danger' : tone === 'ok' ? '$success' : '$text'}>
+          {value}
+        </Text>
+      ) : (
+        value
+      )}
     </XStack>
   );
 }
@@ -77,7 +84,15 @@ export default function ReviewItemsScreen() {
               {t('receipt.review.needItem', 'Add at least one item to continue.')}
             </Text>
           )}
-          <Button title={t('receipt.review.next', 'Next: choose people')} variant="primary" size="large" onPress={next} disabled={purchased.length === 0} />
+          <Button
+            title={t('receipt.review.next', 'Next')}
+            accessibilityLabel={t('receipt.review.nextA11y', 'Next: choose people')}
+            icon={<AppIcon name="friends" size={20} color={purchased.length === 0 ? '$textSubtle' : '$onPrimary'} />}
+            variant="primary"
+            size="large"
+            onPress={next}
+            disabled={purchased.length === 0}
+          />
         </>
       }
     >
@@ -105,14 +120,19 @@ export default function ReviewItemsScreen() {
               {t('receipt.review.empty', 'No items yet. Add what was bought.')}
             </Text>
           ) : (
+            // added items fade in, deleted ones fade out while the rest slide into place
             purchased.map((item, idx) => (
-              <YStack key={item.id} borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
-                <ItemRow item={item} currency={currency} onPress={() => openEditor(item)} onDelete={() => removeItem(item.id)} />
-              </YStack>
+              <Animated.View key={item.id} layout={listLayout} exiting={listExiting}>
+                <Appear index={idx}>
+                  <YStack borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
+                    <ItemRow item={item} currency={currency} onPress={() => openEditor(item)} onDelete={() => removeItem(item.id)} />
+                  </YStack>
+                </Appear>
+              </Animated.View>
             ))
           )}
         </YStack>
-        <Button title={t('receipt.review.addItem', 'Add item')} variant="outline" size="medium" onPress={() => openEditor(undefined, 'item')} />
+        <Button title={t('receipt.review.addItem', 'Add item')} icon={<AppIcon name="plus" size={18} color="$primaryText" />} variant="outline" size="medium" onPress={() => openEditor(undefined, 'item')} />
       </YStack>
 
       <YStack gap="$2">
@@ -122,9 +142,13 @@ export default function ReviewItemsScreen() {
         {adjustments.length > 0 && (
           <YStack borderRadius={16} overflow="hidden" borderWidth={1} borderColor="$borderColor" backgroundColor="$surface">
             {adjustments.map((item, idx) => (
-              <YStack key={item.id} borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
-                <ItemRow item={item} currency={currency} onPress={() => openEditor(item)} onDelete={() => removeItem(item.id)} />
-              </YStack>
+              <Animated.View key={item.id} layout={listLayout} exiting={listExiting}>
+                <Appear>
+                  <YStack borderTopWidth={idx === 0 ? 0 : 1} borderColor="$borderColor">
+                    <ItemRow item={item} currency={currency} onPress={() => openEditor(item)} onDelete={() => removeItem(item.id)} />
+                  </YStack>
+                </Appear>
+              </Animated.View>
             ))}
           </YStack>
         )}
@@ -140,7 +164,7 @@ export default function ReviewItemsScreen() {
         {totals.taxTotal !== 0 && <TotalRow label={t('receipt.kinds.tax', 'Tax')} value={formatMoney(totals.taxTotal, currency)} />}
         {totals.discountTotal !== 0 && <TotalRow label={t('receipt.kinds.discount', 'Discount')} value={formatMoney(totals.discountTotal, currency)} />}
         <YStack h={1} backgroundColor="$borderColor" />
-        <TotalRow label={t('receipt.review.calculated', 'Calculated total')} value={formatMoney(totals.computedTotal, currency)} strong />
+        <TotalRow label={t('receipt.review.calculated', 'Calculated total')} value={<Money amount={totals.computedTotal} currency={currency} fontSize={18} fontWeight="800" animated />} strong />
         {receiptGrandTotal !== null && (
           <TotalRow label={t('receipt.review.receiptTotal', 'Total on the receipt')} value={formatMoney(receiptGrandTotal, currency)} tone={mismatch ? 'warn' : 'ok'} />
         )}

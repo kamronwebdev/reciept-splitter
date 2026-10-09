@@ -284,9 +284,9 @@
   },
   "receipt": {
     "titles": {
-      "items": "Mahsulotlarni tekshirish",
-      "people": "Kimlar bo'lishadi?",
-      "split": "Mahsulotlarni taqsimlash",
+      "items": "Mahsulotlar",
+      "people": "Odamlar",
+      "split": "Taqsimlash",
       "summary": "Xulosa"
     },
     "steps": {
@@ -346,11 +346,9 @@
       "SESSION_FORBIDDEN": "Bu chek boshqa akkauntga tegishli. Yangi chek boshlang."
     },
     "scan": {
-      "hint": "Butun chekni kadrga joylang, yorug'lik yaxshi bo'lsin",
+      "hint": "Butun chekni kadrga joylang",
       "lightOn": "Chiroq yoniq",
       "lightOff": "Chiroq o'chiq",
-      "on": "Yoniq",
-      "off": "O'chiq",
       "zoomTo": "{{level}} yaqinlashtirish",
       "gallery": "Galereyadan tanlash",
       "shutter": "Suratga olish",
@@ -367,12 +365,12 @@
         "reading": "Mahsulotlar o'qilmoqda…"
       },
       "tryAgain": "Qayta urinish",
-      "chooseAnother": "Boshqa rasm tanlash",
-      "chooseFromGallery": "Galereyadan tanlash",
-      "manual": "Mahsulotlarni qo'lda kiritish",
+      "chooseAnother": "Boshqa rasm",
+      "chooseFromGallery": "Galereya",
+      "manual": "Qo'lda kiritish",
       "permissionTitle": "Kameraga ruxsat kerak",
-      "permissionBody": "Kamera faqat chekni suratga olish va mahsulotlarni o'qish uchun ishlatiladi. Shuningdek, galereyadan rasm tanlashingiz yoki mahsulotlarni o'zingiz kiritishingiz mumkin.",
-      "allowCamera": "Kameraga ruxsat berish"
+      "permissionBody": "Faqat chekni o'qish uchun.",
+      "allowCamera": "Kameraga ruxsat"
     },
     "review": {
       "billName": "Hisob nomi",
@@ -384,14 +382,14 @@
       "deleteItem": "Mahsulotni o'chirish",
       "delete": "O'chirish",
       "tapToEdit": "Tahrirlash uchun bosing",
-      "extras": "To'lovlar, soliq va chegirmalar",
-      "addExtra": "To'lov, soliq yoki chegirma qo'shish",
+      "extras": "To'lov va soliq",
+      "addExtra": "To'lov qo'shish",
       "totals": "Jami",
       "itemsSubtotal": "Mahsulotlar",
       "calculated": "Hisoblangan jami",
       "receiptTotal": "Chekdagi jami",
-      "mismatchLess": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} kam. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
-      "mismatchMore": "Mahsulotlar yig'indisi chekdagi jamidan {{amount}} ko'p. Mahsulotlarni tekshiring yoki hisoblangan jamini tanlang.",
+      "mismatchLess": "Chekdan {{amount}} kam",
+      "mismatchMore": "Chekdan {{amount}} ko'p",
       "useCalculated": "Hisoblangan jamini ishlatish",
       "currency": "Valyuta",
       "changeCurrency": "O'zgartirish",
@@ -402,30 +400,29 @@
       "lineTotal": "Qator jami",
       "discountHint": "Chegirmani musbat son sifatida kiriting",
       "save": "Saqlash",
-      "needItem": "Davom etish uchun kamida bitta mahsulot qo'shing.",
-      "next": "Keyingisi: odamlarni tanlash",
+      "needItem": "Mahsulot qo'shing",
+      "next": "Keyingisi",
       "errors": {
         "name": "Nomni kiriting",
         "price": "Noldan katta narx kiriting"
-      }
+      },
+      "nextA11y": "Keyingisi: odamlarni tanlash"
     },
     "people": {
       "you": "Siz",
-      "search": "Odamlar va guruhlarni qidirish",
       "groups": "Guruhlar",
       "friends": "Do'stlar",
-      "members": "{{count}} a'zo",
       "remove": "{{name}} ni olib tashlash",
-      "needTwo": "Hisobni bo'lish uchun kamida 2 kishini tanlang.",
-      "next": "Keyingisi: taqsimlash ({{count}} kishi)",
+      "needTwo": "Kamida 2 kishi tanlang",
+      "next": "Keyingisi · {{count}}",
       "emptyTitle": "Hali do'stlar yo'q",
-      "emptyBody": "Hisobni bo'lishish uchun do'stlarni qo'shing yoki QR kodingizni skanerlashlarini so'rang.",
       "addFriends": "Do'st qo'shish",
       "inviteQr": "QR orqali taklif qilish",
-      "noMatches": "Qidiruvga mos odam topilmadi."
+      "searchA11y": "Odamlar va guruhlarni qidirish",
+      "nextA11y": "Keyingisi: taqsimlash ({{count}} kishi)"
     },
     "split": {
-      "equalAll": "Hammasini teng bo'lish",
+      "equalAll": "Teng bo'lish",
       "clear": "Tozalash",
       "single": "Bitta porsiya",
       "notAssigned": "Taqsimlanmagan",
@@ -435,7 +432,7 @@
       },
       "remaining": "Qoldi: {{count}}",
       "allUnits": "Hammasi taqsimlandi",
-      "extras": "To'lovlar, soliq va chegirmalar",
+      "extras": "To'lov va soliq",
       "feeMode": {
         "proportional": "Mutanosib",
         "equal": "Teng"
@@ -445,22 +442,26 @@
         "equal": "To'lov va soliq hamma o'rtasida teng bo'linadi."
       },
       "unassigned": "Taqsimlanmagan: {{amount}}",
-      "allAssigned": "Hammasi taqsimlandi",
-      "finishHint": "Tugatish uchun har bir mahsulotni taqsimlang ({{count}} ta qoldi).",
+      "allAssigned": "Hammasi taqsimlangan",
+      "finishHint": "avval hamma mahsulotni taqsimlang ({{count}} ta qoldi)",
       "finish": "Tugatish",
       "newReceipt": "Yangi chek boshlash",
-      "itemsLeft": "Ba'zi mahsulotlarga hali odam tanlanmagan. Ular pastda belgilangan."
+      "itemsLeft": "Belgilangan mahsulotlarni taqsimlang",
+      "feeModeInfo": "To'lovlar qanday bo'linadi",
+      "left_one": "{{count}} ta qoldi",
+      "left_other": "{{count}} ta qoldi"
     },
     "summary": {
       "total": "Jami",
       "untitled": "Hisob",
-      "addsUp": "Barcha ulushlar jamiga teng",
-      "mismatch": "Ulushlar jamiga teng emas",
+      "addsUp": "Jamiga teng",
+      "mismatch": "Jamiga teng emas",
       "show": "Nimalar oldi",
       "hide": "Yashirish",
       "share": "Ulashish",
       "done": "Tayyor",
-      "copied": "Xulosa nusxalandi"
+      "copied": "Xulosa nusxalandi",
+      "saved": "Saqlandi"
     }
   },
   "friends": {

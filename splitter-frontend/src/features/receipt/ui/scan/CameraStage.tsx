@@ -9,6 +9,7 @@ import { Text } from '@/shared/ui/typography';
 import { CAMERA } from '@/shared/theme/palette';
 import type { LocalImage } from '../../lib/image';
 import AppIcon from '@/shared/ui/AppIcon';
+import { PressableScale, Pulse } from '@/shared/ui/motion';
 
 type Props = {
   onCaptured: (img: LocalImage) => void;
@@ -91,11 +92,12 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
 
           {/* receipt-shaped frame */}
           <View style={styles.frameLayer} pointerEvents="none">
-            <View style={styles.frame}>
+            {/* the frame breathes gently while the camera waits for the shot (still with Reduce Motion) */}
+            <Pulse active={ready && !capturing} style={styles.frame}>
               {(['tl', 'tr', 'bl', 'br'] as const).map((c) => (
                 <View key={c} style={[styles.bracket, styles[c]]} />
               ))}
-            </View>
+            </Pulse>
           </View>
 
           {/* top bar */}
@@ -109,12 +111,10 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: torch }}
                 accessibilityLabel={torch ? t('receipt.scan.lightOn', 'Light on') : t('receipt.scan.lightOff', 'Light off')}
-                style={[styles.pillBtn, torch && { backgroundColor: CAMERA.onCamera }]}
+                // icon only: the bolt (filled = on, slashed = off); the state is in the label and the switch state
+                style={[styles.roundBtn, torch && { backgroundColor: CAMERA.onCamera }]}
               >
-                {torch ? <AppIcon name="flash" size={20} color={CAMERA.black} /> : <AppIcon name="flashOff" size={20} color={CAMERA.onCamera} />}
-                <Text fontSize={14} fontWeight="700" color={torch ? CAMERA.black : CAMERA.onCamera}>
-                  {torch ? t('receipt.scan.on', 'On') : t('receipt.scan.off', 'Off')}
-                </Text>
+                {torch ? <AppIcon name="flash" size={22} color={CAMERA.black} /> : <AppIcon name="flashOff" size={22} color={CAMERA.onCamera} />}
               </Pressable>
             )}
           </View>
@@ -145,15 +145,18 @@ export default function CameraStage({ onCaptured, onGallery, onBack }: Props) {
               <Pressable onPress={onGallery} accessibilityRole="button" accessibilityLabel={t('receipt.scan.gallery', 'Choose from gallery')} style={styles.roundBtn}>
                 <AppIcon name="photo" size={24} color={CAMERA.onCamera} />
               </Pressable>
-              <Pressable
+              {/* shutter: presses in (spring) and stays slightly smaller while the photo is taken */}
+              <PressableScale
                 onPress={shoot}
+                scaleTo={0.88}
                 disabled={capturing || !ready}
                 accessibilityRole="button"
                 accessibilityLabel={t('receipt.scan.shutter', 'Take photo')}
-                style={[styles.shutterOuter, (capturing || !ready) && { opacity: 0.5 }]}
+                accessibilityState={{ disabled: capturing || !ready, busy: capturing }}
+                style={[styles.shutterOuter, !ready && { opacity: 0.5 }]}
               >
-                <View style={styles.shutterInner} />
-              </Pressable>
+                <View style={[styles.shutterInner, capturing && { transform: [{ scale: 0.82 }], opacity: 0.8 }]} />
+              </PressableScale>
               <View style={{ width: 48 }} />
             </View>
           </View>
@@ -176,7 +179,6 @@ const styles = StyleSheet.create({
   br: { bottom: -2, right: -2, borderBottomWidth: 4, borderRightWidth: 4, borderBottomRightRadius: 14 },
   top: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16 },
   roundBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: CAMERA.pill, alignItems: 'center', justifyContent: 'center' },
-  pillBtn: { minWidth: 88, height: 48, borderRadius: 24, backgroundColor: CAMERA.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14 },
   hintWrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center', paddingHorizontal: 24 },
   hint: { backgroundColor: CAMERA.pill, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 },
   bottom: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center', gap: 16 },

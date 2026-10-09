@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, Share, Switch } from 'react-native';
+import { Platform, Share } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
@@ -16,11 +16,14 @@ import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import { useCloseReceiptFlow } from '@/features/receipt/model/close-flow';
 import { queryClient } from '@/shared/config/query-client';
 import { useSetPaid } from '@/features/balances/model/queries';
-import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { haptic } from '@/shared/lib/haptics';
 import { toast } from '@/shared/ui/Toast';
 import { errorMessage } from '@/shared/lib/utils/error-message';
 import AppIcon from '@/shared/ui/AppIcon';
+import Money from '@/shared/ui/Money';
+import StatusChip from '@/shared/ui/StatusChip';
+import CheckToggle from '@/shared/ui/CheckToggle';
+import { Appear, PressableScale, SuccessCheck } from '@/shared/ui/motion';
 
 /** Step 5: the result. Who owes what (expandable), the total, Share and Done. */
 export default function SummaryScreen() {
@@ -33,7 +36,6 @@ export default function SummaryScreen() {
   // settle up right away: "Paid" per person (the creator is never owed by themselves)
   const [paid, setPaidState] = useState<Record<string, boolean>>({});
   const setPaid = useSetPaid();
-  const { colors } = useAppTheme();
   const togglePaid = (uniqueId: string, value: boolean) => {
     if (!finalized) return;
     haptic.select();
@@ -101,65 +103,77 @@ export default function SummaryScreen() {
       step="summary"
       footer={
         <>
-          <Button title={t('receipt.summary.share', 'Share')} variant="outline" size="large" onPress={share} />
-          <Button title={t('receipt.summary.done', 'Done')} variant="primary" size="large" onPress={done} />
+          <Button title={t('receipt.summary.share', 'Share')} icon={<AppIcon name="share" size={18} color="$primaryText" />} variant="outline" size="large" onPress={share} />
+          <Button title={t('receipt.summary.done', 'Done')} icon={<AppIcon name="check" size={20} color="$onPrimary" weight="semibold" />} variant="primary" size="large" onPress={done} />
         </>
       }
     >
-      <YStack backgroundColor="$surface" borderRadius={16} p="$4" gap="$1" ai="center">
+      {/* success: the check draws itself, the total counts up */}
+      <YStack backgroundColor="$surface" borderRadius={16} p="$4" gap="$2" ai="center">
+        <SuccessCheck size={56} withHaptic accessibilityLabel={t('receipt.summary.saved', 'Saved')} />
         <Text fontSize={14} color="$textMuted" numberOfLines={1}>
           {title} · {date}
         </Text>
-        <Text fontSize={32} fontWeight="800" color="$text" accessibilityLabel={`${t('receipt.summary.total', 'Total')}: ${formatMoney(grand, currency)}`}>
-          {formatMoney(grand, currency)}
-        </Text>
-        <Text fontSize={13} color={addsUp ? '$success' : '$danger'}>
-          {addsUp ? t('receipt.summary.addsUp', 'Every share adds up to the total') : t('receipt.summary.mismatch', 'Shares do not add up to the total')}
-        </Text>
+        <Money
+          amount={grand}
+          currency={currency}
+          fontSize={32}
+          fontWeight="800"
+          color="$text"
+          ta="center"
+          animated
+          fromZero
+          accessibilityLabel={`${t('receipt.summary.total', 'Total')}: ${formatMoney(grand, currency)}`}
+        />
+        <StatusChip
+          icon={addsUp ? 'checkCircle' : 'warning'}
+          tone={addsUp ? 'success' : 'danger'}
+          label={addsUp ? t('receipt.summary.addsUp', 'Adds up') : t('receipt.summary.mismatch', "Doesn't add up")}
+        />
       </YStack>
 
       <YStack gap="$2">
-        {people.map((p) => {
+        {people.map((p, idx) => {
           const isOpen = !!open[p.uniqueId];
           const name = p.uniqueId === meId ? t('receipt.people.you', 'You') : p.username;
           return (
-            <YStack key={p.uniqueId} backgroundColor="$surface" borderRadius={16} overflow="hidden">
-              <Pressable
+            <Appear key={p.uniqueId} index={idx + 1}>
+            <YStack backgroundColor="$surface" borderRadius={16} overflow="hidden">
+              <PressableScale
+                scaleTo={0.98}
                 onPress={() => setOpen((o) => ({ ...o, [p.uniqueId]: !o[p.uniqueId] }))}
                 accessibilityRole="button"
                 accessibilityState={{ expanded: isOpen }}
                 accessibilityLabel={`${name}, ${formatMoney(p.amountOwed, currency)}`}
+                accessibilityHint={isOpen ? t('receipt.summary.hide', 'Hide details') : t('receipt.summary.show', 'What they had')}
               >
                 <XStack ai="center" gap="$3" minHeight={72} px="$4" py="$3">
                   <UserAvatar uri={avatarOf.get(p.uniqueId)} label={p.username} seed={p.uniqueId} size={48} />
-                  <YStack f={1} ai="flex-start">
-                    <Text fontSize={17} fontWeight="700" color="$text" numberOfLines={1}>
-                      {name}
-                    </Text>
-                    <Text fontSize={12} color="$textMuted">
-                      {isOpen ? t('receipt.summary.hide', 'Hide details') : t('receipt.summary.show', 'What they had')}
-                    </Text>
-                  </YStack>
-                  <Text fontSize={20} fontWeight="800" color="$text">
-                    {formatMoney(p.amountOwed, currency)}
+                  <Text fontSize={17} fontWeight="700" color="$text" numberOfLines={1} f={1} minWidth={0}>
+                    {name}
                   </Text>
-                  {isOpen ? <AppIcon name="chevronUp" size={18} color="$textSubtle" /> : <AppIcon name="chevronDown" size={18} color="$textSubtle" />}
+                  <Money amount={p.amountOwed} currency={currency} fontSize={20} fontWeight="800" color="$text" />
+                  {/* expand / collapse "what they had": the chevron says it */}
+                  <AppIcon name={isOpen ? 'chevronUp' : 'chevronDown'} size={18} color="$textSubtle" />
                 </XStack>
-              </Pressable>
+              </PressableScale>
               {p.uniqueId !== meId && p.amountOwed > 0 && (
-                <XStack ai="center" jc="space-between" px="$4" pb="$3" gap="$3">
-                  <Text variant="subheadline" color={paid[p.uniqueId] ? '$success' : '$textMuted'}>
-                    {paid[p.uniqueId] ? t('settle.paid') : t('settle.notPaid')}
-                  </Text>
-                  <Switch
+                <XStack ai="center" jc="space-between" px="$4" pb="$2" gap="$3">
+                  {paid[p.uniqueId] ? (
+                    <StatusChip icon="checkCircle" tone="success" label={t('settle.paid')} />
+                  ) : (
+                    <StatusChip icon="pending" tone="warning" label={t('settle.notPaid')} />
+                  )}
+                  <CheckToggle
                     value={!!paid[p.uniqueId]}
-                    onValueChange={(v) => togglePaid(p.uniqueId, v)}
-                    trackColor={{ true: colors.primary, false: colors.surfaceAlt }}
+                    onChange={(v) => togglePaid(p.uniqueId, v)}
                     accessibilityLabel={t('settle.paidA11y', { name })}
+                    accessibilityHint={t('settle.footerCreator')}
                   />
                 </XStack>
               )}
               {isOpen && (
+                <Appear>
                 <YStack px="$4" pb="$3" gap="$1.5" borderTopWidth={1} borderColor="$borderColor" pt="$3">
                   {(p.lines ?? []).map((l, i) => (
                     <XStack key={`${l.itemId}-${i}`} jc="space-between" gap="$3">
@@ -173,8 +187,10 @@ export default function SummaryScreen() {
                     </XStack>
                   ))}
                 </YStack>
+                </Appear>
               )}
             </YStack>
+            </Appear>
           );
         })}
       </YStack>

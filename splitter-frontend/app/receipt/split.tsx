@@ -18,6 +18,8 @@ import { isStaleSession, receiptErrorMessage, unassignedItemIds } from '@/featur
 import FlowScreen from '@/features/receipt/ui/FlowScreen';
 import ItemSplitCard from '@/features/receipt/ui/split/ItemSplitCard';
 import TotalsBar from '@/features/receipt/ui/split/TotalsBar';
+import AppIcon from '@/shared/ui/AppIcon';
+import { Appear } from '@/shared/ui/motion';
 
 /** Step 4: assign every item to people. The totals bar shows the running result; Finish unlocks when all is assigned. */
 export default function SplitScreen() {
@@ -41,6 +43,7 @@ export default function SplitScreen() {
   const [error, setError] = useState<{ message: string; network: boolean; stale: boolean } | null>(null);
   // items the server reported as not assigned (shown highlighted like the local "Not assigned" state)
   const [serverUnassigned, setServerUnassigned] = useState<string[]>([]);
+  const [feeInfo, setFeeInfo] = useState(false);
   const reset = useReceiptSessionStore((s) => s.reset);
 
   // any edit makes the server's old verdict obsolete
@@ -100,7 +103,7 @@ export default function SplitScreen() {
       step="split"
       footer={
         <>
-          <TotalsBar participants={participants} totals={totals} unassigned={unassignedAmount} currency={currency} meId={meId} />
+          <TotalsBar participants={participants} totals={totals} unassigned={unassignedAmount} currency={currency} meId={meId} left={result.complete ? 0 : result.incompleteItemIds.length} />
           {!!error && (
             <Banner
               kind="error"
@@ -112,12 +115,16 @@ export default function SplitScreen() {
                   : {})}
             />
           )}
-          {!result.complete && (
-            <Text fontSize={13} color="$textMuted" ta="center">
-              {t('receipt.split.finishHint', { count: result.incompleteItemIds.length, defaultValue: 'Assign every item to finish ({{count}} left).' })}
-            </Text>
-          )}
-          <Button title={t('receipt.split.finish', 'Finish')} variant="primary" size="large" onPress={finish} disabled={!canFinish} loading={finishing} />
+          <Button
+            title={t('receipt.split.finish', 'Finish')}
+            icon={<AppIcon name="check" size={20} color={canFinish ? '$onPrimary' : '$textSubtle'} weight="semibold" />}
+            accessibilityLabel={result.complete ? t('receipt.split.finish', 'Finish') : `${t('receipt.split.finish', 'Finish')}, ${t('receipt.split.finishHint', { count: result.incompleteItemIds.length })}`}
+            variant="primary"
+            size="large"
+            onPress={finish}
+            disabled={!canFinish}
+            loading={finishing}
+          />
         </>
       }
     >
@@ -126,7 +133,8 @@ export default function SplitScreen() {
         <TextLink title={t('receipt.split.clear', 'Clear')} onPress={clearAssignments} align="right" />
       </XStack>
 
-      {purchased.map((item) => (
+      {purchased.map((item, i) => (
+        <Appear key={item.id} index={i}>
         <ItemSplitCard
           key={item.id}
           item={item}
@@ -139,6 +147,7 @@ export default function SplitScreen() {
           onSetMode={(mode) => setSplitMode(item.id, mode)}
           onCount={(uid, delta) => changeCount(item.id, uid, delta)}
         />
+        </Appear>
       ))}
 
       {adjustments.length > 0 && (
@@ -164,9 +173,25 @@ export default function SplitScreen() {
               </Pressable>
             ))}
           </XStack>
-          <Text fontSize={12} color="$textMuted">
-            {t(`receipt.split.feeModeHint.${feeMode}`, '')}
-          </Text>
+          {/* what the mode means: behind the info button */}
+          <XStack ai="center" jc="flex-end">
+            <Pressable
+              onPress={() => setFeeInfo((v) => !v)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: feeInfo }}
+              accessibilityLabel={t('receipt.split.feeModeInfo', 'How fees are split')}
+              style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 4 }}
+            >
+              <AppIcon name="info" size={16} color="$textMuted" />
+            </Pressable>
+          </XStack>
+          {feeInfo && (
+            <Appear>
+              <Text fontSize={12} color="$textMuted">
+                {t(`receipt.split.feeModeHint.${feeMode}`, '')}
+              </Text>
+            </Appear>
+          )}
         </Section>
       )}
     </FlowScreen>

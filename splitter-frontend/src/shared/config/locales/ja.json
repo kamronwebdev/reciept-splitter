@@ -398,9 +398,9 @@
   },
   "receipt": {
     "titles": {
-      "items": "品目の確認",
-      "people": "誰と割り勘？",
-      "split": "品目の割り当て",
+      "items": "品目",
+      "people": "メンバー",
+      "split": "割り当て",
       "summary": "まとめ"
     },
     "steps": {
@@ -460,11 +460,9 @@
       "SESSION_FORBIDDEN": "このレシートは別のアカウントのものです。新しいレシートを始めてください。"
     },
     "scan": {
-      "hint": "レシート全体を枠に収め、明るい場所で撮影",
+      "hint": "レシート全体を枠に",
       "lightOn": "ライトオン",
       "lightOff": "ライトオフ",
-      "on": "オン",
-      "off": "オフ",
       "zoomTo": "{{level}} にズーム",
       "gallery": "ギャラリーから選ぶ",
       "shutter": "撮影",
@@ -481,12 +479,12 @@
         "reading": "品目を読み取り中…"
       },
       "tryAgain": "もう一度試す",
-      "chooseAnother": "別の写真を選ぶ",
-      "chooseFromGallery": "ギャラリーから選ぶ",
-      "manual": "品目を手入力",
+      "chooseAnother": "別の写真",
+      "chooseFromGallery": "ギャラリー",
+      "manual": "手入力",
       "permissionTitle": "カメラへのアクセスが必要です",
-      "permissionBody": "カメラはレシートを撮影して品目を読み取るためだけに使います。ギャラリーから写真を選ぶか、品目を手入力することもできます。",
-      "allowCamera": "カメラへのアクセスを許可"
+      "permissionBody": "レシートの読み取りにのみ使います。",
+      "allowCamera": "カメラを許可"
     },
     "review": {
       "billName": "割り勘の名前",
@@ -498,14 +496,14 @@
       "deleteItem": "品目を削除",
       "delete": "削除",
       "tapToEdit": "タップして編集",
-      "extras": "サービス料・税・割引",
-      "addExtra": "サービス料・税・割引を追加",
+      "extras": "サービス料・税",
+      "addExtra": "料金を追加",
       "totals": "合計",
       "itemsSubtotal": "品目",
       "calculated": "計算上の合計",
       "receiptTotal": "レシートの合計",
-      "mismatchLess": "品目の合計がレシートの合計より {{amount}} 少ないです。品目を確認するか、計算上の合計を使ってください。",
-      "mismatchMore": "品目の合計がレシートの合計より {{amount}} 多いです。品目を確認するか、計算上の合計を使ってください。",
+      "mismatchLess": "レシートより{{amount}}少ない",
+      "mismatchMore": "レシートより{{amount}}多い",
       "useCalculated": "計算上の合計を使う",
       "currency": "通貨",
       "changeCurrency": "変更",
@@ -516,30 +514,29 @@
       "lineTotal": "小計",
       "discountHint": "割引は正の数で入力してください",
       "save": "保存",
-      "needItem": "続けるには品目を1つ以上追加してください。",
-      "next": "次へ：人を選ぶ",
+      "needItem": "品目を追加してください",
+      "next": "次へ",
       "errors": {
         "name": "名前を入力してください",
         "price": "0より大きい金額を入力してください"
-      }
+      },
+      "nextA11y": "次へ：人を選ぶ"
     },
     "people": {
       "you": "あなた",
-      "search": "人とグループを検索",
       "groups": "グループ",
       "friends": "友だち",
-      "members": "{{count}}人のメンバー",
       "remove": "{{name}} を外す",
-      "needTwo": "割り勘するには2人以上を選んでください。",
-      "next": "次へ：割り当て（{{count}}人）",
+      "needTwo": "2人以上を選択",
+      "next": "次へ・{{count}}人",
       "emptyTitle": "友だちがいません",
-      "emptyBody": "友だちを追加するか、QRコードを読み取ってもらいましょう。",
       "addFriends": "友だちを追加",
       "inviteQr": "QRで招待",
-      "noMatches": "検索に一致する人がいません。"
+      "searchA11y": "人とグループを検索",
+      "nextA11y": "次へ：割り当て（{{count}}人）"
     },
     "split": {
-      "equalAll": "すべて均等に分ける",
+      "equalAll": "均等に分ける",
       "clear": "クリア",
       "single": "1人前",
       "notAssigned": "未割り当て",
@@ -549,7 +546,7 @@
       },
       "remaining": "残り：{{count}}",
       "allUnits": "すべて割り当て済み",
-      "extras": "サービス料・税・割引",
+      "extras": "サービス料・税",
       "feeMode": {
         "proportional": "比例",
         "equal": "均等"
@@ -560,21 +557,25 @@
       },
       "unassigned": "未割り当て：{{amount}}",
       "allAssigned": "すべて割り当て済み",
-      "finishHint": "完了するにはすべての品目を割り当ててください（残り{{count}}件）。",
+      "finishHint": "先にすべての品目を割り当ててください（残り{{count}}件）",
       "finish": "完了",
       "newReceipt": "新しいレシートを始める",
-      "itemsLeft": "まだ割り当てがない品目があります。下で強調表示されています。"
+      "itemsLeft": "強調表示された品目を割り当ててください",
+      "feeModeInfo": "料金の分け方",
+      "left_one": "残り{{count}}件",
+      "left_other": "残り{{count}}件"
     },
     "summary": {
       "total": "合計",
       "untitled": "割り勘",
-      "addsUp": "各自の金額の合計が総額と一致します",
-      "mismatch": "各自の金額の合計が総額と一致しません",
+      "addsUp": "合計一致",
+      "mismatch": "合計不一致",
       "show": "内訳を見る",
       "hide": "内訳を隠す",
       "share": "共有",
       "done": "完了",
-      "copied": "まとめをコピーしました"
+      "copied": "まとめをコピーしました",
+      "saved": "保存しました"
     }
   },
   "tabs": {

@@ -401,9 +401,9 @@
   },
   "receipt": {
     "titles": {
-      "items": "Review items",
-      "people": "Who is splitting?",
-      "split": "Split items",
+      "items": "Items",
+      "people": "People",
+      "split": "Split",
       "summary": "Summary"
     },
     "steps": {
@@ -463,11 +463,9 @@
       "SESSION_FORBIDDEN": "This receipt belongs to another account. Start a new receipt."
     },
     "scan": {
-      "hint": "Fit the whole receipt in the frame, good light",
+      "hint": "Fit the whole receipt",
       "lightOn": "Light on",
       "lightOff": "Light off",
-      "on": "On",
-      "off": "Off",
       "zoomTo": "Zoom {{level}}",
       "gallery": "Choose from gallery",
       "shutter": "Take photo",
@@ -484,12 +482,12 @@
         "reading": "Reading items…"
       },
       "tryAgain": "Try again",
-      "chooseAnother": "Choose another photo",
-      "chooseFromGallery": "Choose from gallery",
-      "manual": "Enter items manually",
+      "chooseAnother": "Other photo",
+      "chooseFromGallery": "Gallery",
+      "manual": "Type items",
       "permissionTitle": "Camera access is needed",
-      "permissionBody": "The camera is only used to photograph your receipt so the items can be read. You can also pick a photo from the gallery or type the items yourself.",
-      "allowCamera": "Allow camera access"
+      "permissionBody": "Only used to read your receipt.",
+      "allowCamera": "Allow camera"
     },
     "review": {
       "billName": "Bill name",
@@ -501,14 +499,14 @@
       "deleteItem": "Delete item",
       "delete": "Delete",
       "tapToEdit": "Tap to edit",
-      "extras": "Fees, tax and discounts",
-      "addExtra": "Add fee, tax or discount",
+      "extras": "Fees & tax",
+      "addExtra": "Add fee",
       "totals": "Totals",
       "itemsSubtotal": "Items",
       "calculated": "Calculated total",
       "receiptTotal": "Total on the receipt",
-      "mismatchLess": "The items add up to {{amount}} less than the receipt total. Check the items, or use the calculated total.",
-      "mismatchMore": "The items add up to {{amount}} more than the receipt total. Check the items, or use the calculated total.",
+      "mismatchLess": "{{amount}} less than the receipt",
+      "mismatchMore": "{{amount}} more than the receipt",
       "useCalculated": "Use calculated total",
       "currency": "Currency",
       "changeCurrency": "Change",
@@ -519,30 +517,29 @@
       "lineTotal": "Line total",
       "discountHint": "Enter the discount as a positive number",
       "save": "Save",
-      "needItem": "Add at least one item to continue.",
-      "next": "Next: choose people",
+      "needItem": "Add an item",
+      "next": "Next",
       "errors": {
         "name": "Enter a name",
         "price": "Enter a price greater than zero"
-      }
+      },
+      "nextA11y": "Next: choose people"
     },
     "people": {
       "you": "You",
-      "search": "Search people and groups",
       "groups": "Groups",
       "friends": "Friends",
-      "members": "{{count}} members",
       "remove": "Remove {{name}}",
-      "needTwo": "Select at least 2 people to split the bill.",
-      "next": "Next: split items ({{count}} people)",
+      "needTwo": "Pick 2+ people",
+      "next": "Next · {{count}}",
       "emptyTitle": "No friends yet",
-      "emptyBody": "Add friends to split the bill with them, or let them scan your QR code.",
       "addFriends": "Add friends",
       "inviteQr": "Invite by QR",
-      "noMatches": "No one matches your search."
+      "searchA11y": "Search people and groups",
+      "nextA11y": "Next: split items ({{count}} people)"
     },
     "split": {
-      "equalAll": "Split everything equally",
+      "equalAll": "Split equally",
       "clear": "Clear",
       "single": "One portion",
       "notAssigned": "Not assigned",
@@ -552,7 +549,7 @@
       },
       "remaining": "Remaining: {{count}}",
       "allUnits": "All units assigned",
-      "extras": "Fees, tax and discounts",
+      "extras": "Fees & tax",
       "feeMode": {
         "proportional": "Proportional",
         "equal": "Equally"
@@ -562,22 +559,26 @@
         "equal": "Fees and tax are split equally between everyone."
       },
       "unassigned": "Unassigned: {{amount}}",
-      "allAssigned": "Everything is assigned",
-      "finishHint": "Assign every item to finish ({{count}} left).",
+      "allAssigned": "All assigned",
+      "finishHint": "assign every item first ({{count}} left)",
       "finish": "Finish",
       "newReceipt": "Start a new receipt",
-      "itemsLeft": "Some items still need people. They are highlighted below."
+      "itemsLeft": "Assign the highlighted items",
+      "feeModeInfo": "How fees are split",
+      "left_one": "{{count}} left",
+      "left_other": "{{count}} left"
     },
     "summary": {
       "total": "Total",
       "untitled": "Bill",
-      "addsUp": "Every share adds up to the total",
-      "mismatch": "Shares do not add up to the total",
+      "addsUp": "Adds up",
+      "mismatch": "Doesn't add up",
       "show": "What they had",
       "hide": "Hide details",
       "share": "Share",
       "done": "Done",
-      "copied": "Summary copied"
+      "copied": "Summary copied",
+      "saved": "Saved"
     }
   },
   "tabs": {

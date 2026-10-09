@@ -6,8 +6,10 @@ import UserAvatar from '@/shared/ui/UserAvatar';
 import { Text } from '@/shared/ui/typography';
 import type { Candidate } from './PersonRow';
 import AppIcon from '@/shared/ui/AppIcon';
+import Animated from 'react-native-reanimated';
+import { listEntering, listExiting, listLayout } from '@/shared/ui/motion';
 
-/** Selected people as removable chips (you cannot remove yourself). */
+/** Selected people as removable chips (you cannot remove yourself). Chips fade in / out and the rest reflow smoothly. */
 export default function SelectedChips({ people, onRemove }: { people: Candidate[]; onRemove: (uniqueId: string) => void }) {
   const { t } = useTranslation();
   return (
@@ -15,8 +17,8 @@ export default function SelectedChips({ people, onRemove }: { people: Candidate[
       {people.map((p) => {
         const name = p.isMe ? t('receipt.people.you', 'You') : p.username;
         return (
+          <Animated.View key={p.uniqueId} layout={listLayout} entering={listEntering} exiting={listExiting}>
           <Pressable
-            key={p.uniqueId}
             disabled={!!p.isMe}
             onPress={() => onRemove(p.uniqueId)}
             accessibilityRole="button"
@@ -31,6 +33,7 @@ export default function SelectedChips({ people, onRemove }: { people: Candidate[
               {!p.isMe && <AppIcon name="close" size={16} color="$textMuted" />}
             </XStack>
           </Pressable>
+          </Animated.View>
         );
       })}
     </XStack>
