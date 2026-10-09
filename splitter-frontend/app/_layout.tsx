@@ -1,3 +1,4 @@
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, ThemeProvider, DarkTheme, DefaultTheme } from 'expo-router';
 import AppProviders from '../src/application/providers/AppProviders';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
@@ -49,8 +50,10 @@ function ThemedStack() {
 
 export default function RootLayout() {
   return (
-    <AppProviders>
-      <ThemedStack />
-    </AppProviders>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AppProviders>
+        <ThemedStack />
+      </AppProviders>
+    </GestureHandlerRootView>
   );
 }
