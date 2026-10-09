@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
 import SearchField from '@/shared/ui/SearchField';
 import { Button } from '@/shared/ui/Button';
@@ -16,6 +15,8 @@ import { useAppStore } from '@/shared/lib/stores/app-store';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip, { type StatusTone } from '@/shared/ui/StatusChip';
+import type { IconName } from '@/shared/ui/AppIcon';
 
 type UserLite = { uniqueId?: string; username?: string; displayName?: string; avatarUrl?: string | null };
 
@@ -65,12 +66,12 @@ export default function FriendsSearchScreen() {
     }
   };
 
-  const statusOf = (uid?: string) => {
+  const statusOf = (uid?: string): { icon: IconName; tone: StatusTone; label: string } | null => {
     if (!uid) return null;
-    if (uid === meUniqueId) return t('friends.status.you', 'You');
-    if (known.friendsSet.has(uid)) return t('friends.status.friend', 'Friend');
-    if (known.out.has(uid) || sent.has(uid)) return t('friends.status.requested', 'Requested');
-    if (known.inc.has(uid)) return t('friends.status.incoming', 'Incoming');
+    if (uid === meUniqueId) return { icon: 'profile', tone: 'neutral', label: t('friends.status.you', 'You') };
+    if (known.friendsSet.has(uid)) return { icon: 'checkCircle', tone: 'success', label: t('friends.status.friend', 'Friend') };
+    if (known.out.has(uid) || sent.has(uid)) return { icon: 'pending', tone: 'warning', label: t('friends.status.requested', 'Requested') };
+    if (known.inc.has(uid)) return { icon: 'arrowDownLeft', tone: 'primary', label: t('friends.status.incoming', 'Incoming') };
     return null;
   };
 
@@ -84,7 +85,7 @@ export default function FriendsSearchScreen() {
         onSubmitEditing={doSearch}
         clearLabel={t('common.clear')}
       />
-      <Button title={t('friends.search.button')} variant="secondary" onPress={doSearch} loading={loading} disabled={!query.trim()} />
+      <Button title={t('common.search')} variant="secondary" onPress={doSearch} loading={loading} disabled={!query.trim()} />
 
       {loading ? (
         <ListSkeleton rows={1} />
@@ -128,11 +129,17 @@ export default function FriendsSearchScreen() {
                 subtitle={handleOf(u.uniqueId)}
                 right={
                   status ? (
-                    <Text variant="footnote" color="$textMuted">
-                      {status}
-                    </Text>
+                    <StatusChip icon={status.icon} tone={status.tone} label={status.label} />
                   ) : (
-                    <Button title={t('friends.status.add', 'Add')} size="small" variant="secondary" loading={sendingId === u.uniqueId} onPress={() => void add(u)} />
+                    <Button
+                      title={t('friends.status.add', 'Add')}
+                      icon={<AppIcon name="userAdd" size={16} color="$primaryText" />}
+                      accessibilityLabel={t('groups.detail.addA11y', { name })}
+                      size="small"
+                      variant="secondary"
+                      loading={sendingId === u.uniqueId}
+                      onPress={() => void add(u)}
+                    />
                   )
                 }
               />

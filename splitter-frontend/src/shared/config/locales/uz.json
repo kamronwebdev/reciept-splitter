@@ -482,12 +482,12 @@
       "rejected": "{{target}} so'rovi rad etildi",
       "emptyIncoming": "Kiruvchi so'rovlar yo'q",
       "emptyOutgoing": "Yuborilgan so'rovlar yo'q",
-      "requestedLabel": "Yuborilgan",
+      "requestedLabel": "Kutilmoqda",
       "tabIncoming": "Kiruvchi",
       "tabOutgoing": "Yuborilgan"
     },
     "add": "Do'st qo'shish",
-    "empty": "Hali do'stlar yo'q. Do'stingizning QR kodini skanerlang yoki o'zingiznikini ko'rsating.",
+    "empty": "Hali do'stlar yo'q",
     "searchPlaceholder": "uniqueId kiriting, masalan USER#1234",
     "send": "So'rov yuborish",
     "remove": "O'chirish",
@@ -496,12 +496,10 @@
     "qr": {
       "scanQr": "QR skanerlash",
       "myQr": "Mening QR kodim",
-      "requestsLink": "Do'stlik so'rovlari",
-      "requestsCount": "{{count}} ta yangi",
-      "addHint": "Do'stlarni yonma-yon qo'shing: biringiz \"Mening QR kodim\"ni ochadi, ikkinchingiz \"QR skanerlash\"ni bosadi.",
+      "requestsLink": "So'rovlar",
       "my": {
         "title": "Mening QR kodim",
-        "subtitle": "Do'stlaringiz sizni qo'shish uchun shu kodni skanerlaydi",
+        "subtitle": "Meni qo'shish uchun skanerlang",
         "share": "Ulashish",
         "save": "Rasmni saqlash",
         "copy": "Havolani nusxalash",
@@ -518,31 +516,27 @@
         "resetDone": "Yangi QR kodingiz tayyor",
         "loadError": "QR kodni yuklab bo'lmadi.",
         "newFriend": "{{name}} sizni do'st qilib qo'shdi",
-        "permanentNote": "Bu kodning muddati tugamaydi. Adashib ulashgan bo'lsangiz, uni yangilang."
+        "permanentNote": "Bu kodning muddati tugamaydi. Adashib ulashgan bo'lsangiz, uni yangilang.",
+        "aboutCode": "Bu kod haqida"
       },
       "scan": {
         "title": "QR skanerlash",
-        "hint": "Kamerani do'stingizning QR kodiga qarating",
-        "fromPhotos": "Rasmlardan tanlash",
+        "hint": "QR kodga qarating",
+        "fromPhotos": "Rasmlardan",
         "light": "Chiroq",
         "checking": "Kod tekshirilmoqda…",
         "noQrInImage": "Bu rasmda QR kod topilmadi. Aniqroq skrinshot tanlang.",
         "permissionTitle": "Kameraga ruxsat kerak",
-        "permissionBody": "Kamera faqat QR kodlarni skanerlash uchun ishlatiladi. QR kod skrinshotini rasmlardan ham tanlashingiz mumkin.",
-        "allowCamera": "Kameraga ruxsat berish",
+        "permissionBody": "Faqat QR kodlarni skanerlash uchun.",
+        "allowCamera": "Kameraga ruxsat",
         "openSettings": "Sozlamalarni ochish"
       },
       "card": {
         "add": "Do'st qo'shish",
-        "alreadyFriends": "Allaqachon do'stsiz",
+        "alreadyFriends": "Do'stsiz",
         "self": "Bu sizsiz",
-        "selfHint": "Bu sizning QR kodingiz. Uni do'stingizga ko'rsating, u skanerlasin.",
-        "pendingIncoming": "{{name}} sizga allaqachon do'stlik so'rovi yuborgan",
         "accept": "So'rovni qabul qilish",
-        "pendingOutgoing": "Siz allaqachon so'rov yuborgansiz. Yonma-yon skanerlash uni darhol qo'shadi.",
-        "friendsHint": "Siz allaqachon do'stsiz.",
         "addedTitle": "Endi do'stsiz!",
-        "addedBody": "{{name}} do'stlaringiz ro'yxatida.",
         "done": "Tayyor",
         "scanAnother": "Yana skanerlash"
       },
@@ -552,14 +546,14 @@
         "joinedGeneric": "Siz guruhga qo'shildingiz",
         "alreadyMember": "Siz allaqachon bu guruhdasiz",
         "owner": "Bu sizning guruhingiz",
-        "friendsToo": "Siz va guruh egasi endi do'stsiz.",
+        "friendsToo": "Endi guruh egasi bilan do'stsiz.",
         "open": "Guruhlarni ochish"
       },
       "errors": {
         "NOT_OUR_QR": "Bu Receipt Splitter QR kodi emas",
-        "NOT_OUR_QR_body": "Bu QR kod do'stlik yoki guruh taklifi emas. Do'stingizdan Do'stlar → Mening QR kodimni ochishini so'rang.",
+        "NOT_OUR_QR_body": "Bu do'stlik yoki guruh taklifi emas.",
         "INVALID_CODE": "Bu QR kod endi yaroqsiz",
-        "INVALID_CODE_body": "U yangilangan yoki muddati tugagan. Do'stingizdan QR kodini qayta ko'rsatishini so'rang.",
+        "INVALID_CODE_body": "Kodni qayta ko'rsatishini so'rang.",
         "NETWORK": "Internet yo'q",
         "NETWORK_body": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
         "RATE_LIMITED": "Juda ko'p urinish",
@@ -571,8 +565,6 @@
       },
       "expiresAt": "{{time}} gacha"
     },
-    "filter": "Do'stlaringizni qidiring",
-    "noMatches": "Qidiruvga mos do'st topilmadi",
     "addById": "ID orqali qo'shish",
     "addTitle": "Do'st qo'shish",
     "common": {
@@ -585,16 +577,15 @@
     "removed": "{{name}} o'chirildi",
     "swipeHint": "O'chirish uchun chapga suring yoki bosib turing",
     "search": {
-      "button": "Qidirish",
       "inviteSent": "{{target}}ga so'rov yuborildi",
-      "noResults": "Bu ID bilan hech kim topilmadi",
-      "orInPerson": "Yoki yonma-yon qo'shing",
+      "noResults": "Topilmadi",
+      "orInPerson": "Yonma-yon",
       "placeholder": "Do'st ID si, masalan USER#1234"
     },
     "status": {
       "add": "Qo'shish",
       "friend": "Do'st",
-      "incoming": "Sizni qo'shmoqchi",
+      "incoming": "Kiruvchi",
       "requested": "Yuborilgan",
       "you": "Siz"
     }

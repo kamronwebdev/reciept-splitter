@@ -1,6 +1,5 @@
 // app/(tabs)/friends/index.tsx — Friends: Scan QR / My QR, requests, search, the list (swipe to remove).
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +21,7 @@ import { errorMessage } from '@/shared/lib/utils/error-message';
 import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { handleOf } from '@/features/friends/lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import { Appear, PressableScale } from '@/shared/ui/motion';
 
 type FriendView = { uniqueId: string; name: string; avatarUrl: string | null };
 
@@ -78,8 +78,8 @@ export default function FriendsScreen() {
     <Screen refreshing={refreshing} onRefresh={refresh}>
       {/* the two ways to add someone in person */}
       <XStack gap="$3">
-        <BigAction icon={<AppIcon name="scan" size={26} color="$onPrimary" />} label={t('friends.qr.scanQr')} primary onPress={() => router.push('/scan-invite')} />
-        <BigAction icon={<AppIcon name="qr" size={26} color="$text" />} label={t('friends.qr.myQr')} onPress={() => router.push('/my-qr')} />
+        <BigAction index={0} icon={<AppIcon name="scan" size={26} color="$onPrimary" />} label={t('friends.qr.scanQr')} primary onPress={() => router.push('/scan-invite')} />
+        <BigAction index={1} icon={<AppIcon name="qr" size={26} color="$text" />} label={t('friends.qr.myQr')} onPress={() => router.push('/my-qr')} />
       </XStack>
 
       <ListSection>
@@ -114,17 +114,17 @@ export default function FriendsScreen() {
         <ListSkeleton rows={4} />
       ) : list.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<AppIcon name="friends" size={28} color="$textMuted" />} message={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
+          <EmptyState icon={<AppIcon name="friends" size={28} color="$textMuted" />} title={t('friends.empty')} actionLabel={t('friends.qr.myQr')} onAction={() => router.push('/my-qr')} />
         </YStack>
       ) : (
         <YStack gap="$3">
-          <SearchField value={query} onChangeText={setQuery} placeholder={t('friends.filter')} clearLabel={t('common.clear')} />
+          <SearchField value={query} onChangeText={setQuery} placeholder={t('common.search')} clearLabel={t('common.clear')} />
           {visible.length === 0 ? (
             <Text variant="subheadline" color="$textMuted" ta="center">
-              {t('friends.noMatches')}
+              {t('common.noResults')}
             </Text>
           ) : (
-            <ListSection header={t('friends.listHeader', { count: list.length })} footer={t('friends.swipeHint')}>
+            <ListSection header={t('friends.listHeader', { count: list.length })} animateChanges>
               {visible.map((f) => (
                 <SwipeRow key={f.uniqueId} actions={[{ label: t('friends.remove', 'Remove'), destructive: true, onPress: () => askRemove(f) }]}>
                   <YStack backgroundColor="$surface">
@@ -132,6 +132,7 @@ export default function FriendsScreen() {
                       left={<UserAvatar uri={f.avatarUrl} label={f.name} seed={f.uniqueId} size={40} textSize={15} />}
                       title={f.name}
                       subtitle={handleOf(f.uniqueId)}
+                      accessibilityHint={t('friends.swipeHint')}
                       onLongPress={() =>
                         showActionSheet({
                           title: f.name,
@@ -151,17 +152,19 @@ export default function FriendsScreen() {
   );
 }
 
-function BigAction({ icon, label, onPress, primary }: { icon: React.ReactNode; label: string; onPress: () => void; primary?: boolean }) {
+function BigAction({ icon, label, onPress, primary, index }: { icon: React.ReactNode; label: string; onPress: () => void; primary?: boolean; index: number }) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1 }}>
+    <PressableScale onPress={onPress} haptic={primary ? 'tap' : 'select'} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1 }}>
       {({ pressed }) => (
+        <Appear index={index}>
         <YStack minHeight={88} borderRadius={16} ai="center" jc="center" gap="$2" p="$3" backgroundColor={primary ? '$primary' : '$surface'} opacity={pressed ? 0.8 : 1}>
           {icon}
           <Text variant="headline" color={primary ? '$onPrimary' : '$text'} ta="center" numberOfLines={2}>
             {label}
           </Text>
         </YStack>
+        </Appear>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }

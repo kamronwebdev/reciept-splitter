@@ -2,9 +2,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { XStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
-import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
 import SegmentedControl from '@/shared/ui/SegmentedControl';
 import { ListRow, ListSection } from '@/shared/ui/List';
@@ -19,13 +18,23 @@ import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { FriendsApi } from '@/features/friends/api/friends.api';
 import { handleOf } from '@/features/friends/lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip from '@/shared/ui/StatusChip';
+import { PressableScale } from '@/shared/ui/motion';
 
 type Person = { id?: number; uniqueId?: string; username?: string; displayName?: string; avatarUrl?: string | null };
 
 function RoundAction({ onPress, label, kind, busy }: { onPress: () => void; label: string; kind: 'accept' | 'decline'; busy: boolean }) {
   const { colors } = useAppTheme();
   return (
-    <Pressable onPress={onPress} disabled={busy} accessibilityRole="button" accessibilityLabel={label} hitSlop={6}>
+    <PressableScale
+      onPress={onPress}
+      disabled={busy}
+      haptic={kind === 'accept' ? 'tap' : 'select'}
+      scaleTo={0.9}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+    >
       {({ pressed }) => (
         <XStack width={36} height={36} borderRadius={18} ai="center" jc="center" backgroundColor={kind === 'accept' ? '$primary' : '$surfaceAlt'} opacity={pressed || busy ? 0.6 : 1}>
           {busy ? (
@@ -37,7 +46,7 @@ function RoundAction({ onPress, label, kind, busy }: { onPress: () => void; labe
           )}
         </XStack>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -101,7 +110,8 @@ export default function FriendRequestsScreen() {
           message={tab === 'incoming' ? t('friends.requests.emptyIncoming', 'No incoming requests') : t('friends.requests.emptyOutgoing', 'No outgoing requests')}
         />
       ) : (
-        <ListSection>
+        // accepted / declined requests fade out and the rest move up
+        <ListSection animateChanges>
           {tab === 'incoming'
             ? incoming.map((r) => (
                 <ListRow
@@ -110,7 +120,7 @@ export default function FriendRequestsScreen() {
                   title={nameOf(r.from)}
                   subtitle={handleOf(r.from.uniqueId)}
                   right={
-                    <XStack gap="$2">
+                    <XStack gap="$1">
                       <RoundAction kind="decline" label={t('friends.requests.decline')} busy={busyId === r.from.id} onPress={() => void act('decline', r.from)} />
                       <RoundAction kind="accept" label={t('friends.requests.accept')} busy={busyId === r.from.id} onPress={() => void act('accept', r.from)} />
                     </XStack>
@@ -123,11 +133,7 @@ export default function FriendRequestsScreen() {
                   left={<UserAvatar uri={r.to.avatarUrl} label={nameOf(r.to)} seed={r.to.uniqueId} size={40} textSize={15} />}
                   title={nameOf(r.to)}
                   subtitle={handleOf(r.to.uniqueId)}
-                  right={
-                    <Text variant="footnote" color="$textMuted">
-                      {t('friends.requests.requestedLabel', 'Requested')}
-                    </Text>
-                  }
+                  right={<StatusChip icon="pending" tone="warning" label={t('friends.requests.requestedLabel', 'Pending')} />}
                 />
               ))}
         </ListSection>

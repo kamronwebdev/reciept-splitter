@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner, YStack } from 'tamagui';
+import { YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
@@ -10,6 +10,8 @@ import type { GroupJoinResult } from '@/features/groups/api/groups.api';
 import type { FriendQrErrorCode } from '../../model/qr-errors';
 import { handleOf } from '../../lib/format';
 import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip from '@/shared/ui/StatusChip';
+import { IndeterminateBar, SuccessCheck } from '@/shared/ui/motion';
 
 export type ScanResult =
   | { kind: 'checking' }
@@ -72,8 +74,11 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
     case 'checking':
     case 'group-joining':
       return (
-        <YStack minHeight={180} ai="center" jc="center" gap="$3" accessibilityLiveRegion="polite">
-          <Spinner size="large" />
+        <YStack minHeight={180} ai="center" jc="center" gap="$4" w="100%" accessibilityLiveRegion="polite">
+          <AppIcon name="qr" size={36} color="$textMuted" />
+          <YStack w="60%">
+            <IndeterminateBar />
+          </YStack>
           <Text fontSize={16} color="$textMuted" ta="center">
             {result.kind === 'checking' ? t('friends.qr.scan.checking') : t('friends.qr.group.joining')}
           </Text>
@@ -86,20 +91,15 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
       return (
         <>
           <Person friend={card} />
-          {status === 'self' && <Hint text={t('friends.qr.card.selfHint')} />}
-          {status === 'friends' && <Hint text={t('friends.qr.card.friendsHint')} />}
-          {status === 'pending_incoming' && <Hint text={t('friends.qr.card.pendingIncoming', { name: card.username })} />}
-          {status === 'pending_outgoing' && <Hint text={t('friends.qr.card.pendingOutgoing')} />}
+          {/* the relationship as a chip (icon + color + word) instead of a sentence */}
+          {status === 'self' && <StatusChip icon="profile" tone="neutral" label={t('friends.qr.card.self')} />}
+          {status === 'friends' && <StatusChip icon="checkCircle" tone="success" label={t('friends.qr.card.alreadyFriends')} />}
+          {status === 'pending_incoming' && <StatusChip icon="arrowDownLeft" tone="primary" label={t('friends.status.incoming')} />}
+          {status === 'pending_outgoing' && <StatusChip icon="pending" tone="warning" label={t('friends.requests.requestedLabel')} />}
           <Actions>
-            {status === 'self' && (
-              <>
-                <Badge text={t('friends.qr.card.self')} />
-                {scanAnother}
-              </>
-            )}
+            {status === 'self' && scanAnother}
             {status === 'friends' && (
               <>
-                <Badge text={t('friends.qr.card.alreadyFriends')} ok />
                 {done}
                 {scanAnother}
               </>
@@ -108,6 +108,7 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
               <>
                 <Button
                   title={status === 'pending_incoming' ? t('friends.qr.card.accept') : t('friends.qr.card.add')}
+                  icon={<AppIcon name={status === 'pending_incoming' ? 'check' : 'userAdd'} size={20} color="$onPrimary" />}
                   variant="primary"
                   size="large"
                   loading={!!busy}
@@ -124,12 +125,11 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
     case 'added':
       return (
         <>
-          <AppIcon name="checkCircle" size={40} color="$success" />
-          {result.friend && <Person friend={result.friend} />}
+          <SuccessCheck size={56} withHaptic />
           <Text fontSize={20} fontWeight="800" color="$text" ta="center" accessibilityRole="alert">
             {t('friends.qr.card.addedTitle')}
           </Text>
-          {result.friend && <Hint text={t('friends.qr.card.addedBody', { name: result.friend.username })} />}
+          {result.friend && <Person friend={result.friend} />}
           <Actions>
             {done}
             {scanAnother}
@@ -149,9 +149,13 @@ function Body({ result, onAdd, onDone, onScanAnother, onOpenGroups }: { result: 
               : t('friends.qr.group.joinedGeneric');
       return (
         <>
-          <YStack w={72} h={72} br={36} ai="center" jc="center" backgroundColor="$primarySoft">
-            <AppIcon name="friends" size={32} color="$primary" />
-          </YStack>
+          {r.member === 'created' ? (
+            <SuccessCheck size={64} withHaptic />
+          ) : (
+            <YStack w={64} h={64} br={32} ai="center" jc="center" backgroundColor="$primarySoft">
+              <AppIcon name={r.member === 'owner' ? 'owner' : 'groups'} size={30} color="$primaryText" />
+            </YStack>
+          )}
           <Text fontSize={20} fontWeight="800" color="$text" ta="center" accessibilityRole="alert">
             {title}
           </Text>
@@ -199,16 +203,6 @@ function Hint({ text }: { text: string }) {
     <Text fontSize={15} color="$textMuted" ta="center">
       {text}
     </Text>
-  );
-}
-
-function Badge({ text, ok }: { text: string; ok?: boolean }) {
-  return (
-    <YStack alignSelf="center" px="$3.5" py="$2" borderRadius={999} backgroundColor={ok ? '$primarySoft' : '$surfaceAlt'}>
-      <Text fontSize={15} fontWeight="700" color={ok ? '$primaryText' : '$text'}>
-        {text}
-      </Text>
-    </YStack>
   );
 }
 

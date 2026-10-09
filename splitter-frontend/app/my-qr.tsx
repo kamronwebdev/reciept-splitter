@@ -19,6 +19,7 @@ import { useFriendsStore } from '@/features/friends/model/friends.store';
 import { friendQrErrorCode } from '@/features/friends/model/qr-errors';
 import PersonalQrCard from '@/features/friends/ui/PersonalQrCard';
 import AppIcon from '@/shared/ui/AppIcon';
+import { Appear, PressableScale, Shimmer } from '@/shared/ui/motion';
 
 const isNative = Platform.OS !== 'web';
 
@@ -47,6 +48,7 @@ export default function MyQrScreen() {
   const [notice, setNotice] = useState<Notice>(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [showNote, setShowNote] = useState(false);
   const cardRef = useRef<View>(null);
   const knownFriends = useRef<Set<string> | null>(null);
 
@@ -195,7 +197,7 @@ export default function MyQrScreen() {
       {!data ? (
         <YStack minHeight={320} ai="center" jc="center" gap="$3">
           {loading || !loadError ? (
-            <Spinner size="large" />
+            <Shimmer width={280} height={340} radius={26} />
           ) : (
             <>
               <Banner kind="error" message={loadError} />
@@ -205,65 +207,73 @@ export default function MyQrScreen() {
         </YStack>
       ) : (
         <>
+          <Appear>
           <YStack ai="center" opacity={resetting ? 0.4 : 1}>
             <YStack borderRadius={26} borderWidth={1} borderColor="$borderColor" overflow="hidden">
               <PersonalQrCard ref={cardRef} value={data.url} name={name} uniqueId={me?.uniqueId} avatarUrl={me?.avatarUrl} />
             </YStack>
           </YStack>
+          </Appear>
 
           {!!notice && <Banner kind={notice.kind} message={notice.message} />}
 
-          <XStack gap="$2" jc="center">
-            <ActionTile icon={<AppIcon name="share" size={22} color="$onPrimary" />} label={t('friends.qr.my.share')} onPress={share} primary />
-            {isNative && <ActionTile icon={<AppIcon name="download" size={22} color="$text" />} label={t('friends.qr.my.save')} onPress={save} busy={saving} />}
-            <ActionTile icon={<AppIcon name="copy" size={22} color="$text" />} label={t('friends.qr.my.copy')} onPress={copy} />
+          {/* Share is the main action (icon + word); save and copy are universal icons */}
+          <XStack gap="$2" ai="center" jc="center" w="100%" maxWidth={360} alignSelf="center">
+            <YStack f={1}>
+              <Button title={t('friends.qr.my.share')} size="large" icon={<AppIcon name="share" size={20} color="$onPrimary" />} onPress={share} />
+            </YStack>
+            {isNative && <IconAction icon="download" label={t('friends.qr.my.save')} onPress={save} busy={saving} />}
+            <IconAction icon="copy" label={t('friends.qr.my.copy')} onPress={copy} />
           </XStack>
 
-          <Text fontSize={13} color="$textMuted" ta="center">
-            {t('friends.qr.my.permanentNote')}
-          </Text>
-
-          <Pressable
-            onPress={reset}
-            disabled={resetting}
-            accessibilityRole="button"
-            accessibilityLabel={t('friends.qr.my.reset')}
-            style={{ alignSelf: 'center', minHeight: 44, paddingHorizontal: 12, justifyContent: 'center' }}
-          >
-            <XStack ai="center" gap="$2">
-              {resetting ? <Spinner size="small" /> : <AppIcon name="refresh" size={16} color="$danger" />}
-              <Text fontSize={15} fontWeight="600" color="$danger">
-                {t('friends.qr.my.reset')}
+          <XStack ai="center" jc="center" gap="$1">
+            <Pressable
+              onPress={reset}
+              disabled={resetting}
+              accessibilityRole="button"
+              accessibilityLabel={t('friends.qr.my.reset')}
+              style={{ minHeight: 44, paddingHorizontal: 12, justifyContent: 'center' }}
+            >
+              <XStack ai="center" gap="$2">
+                {resetting ? <Spinner size="small" /> : <AppIcon name="refresh" size={16} color="$danger" />}
+                <Text fontSize={15} fontWeight="600" color="$danger">
+                  {t('friends.qr.my.reset')}
+                </Text>
+              </XStack>
+            </Pressable>
+            {/* "doesn't expire, reset if shared by mistake": behind the info button */}
+            <Pressable
+              onPress={() => setShowNote((v) => !v)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: showNote }}
+              accessibilityLabel={t('friends.qr.my.aboutCode')}
+              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <AppIcon name="info" size={18} color="$textMuted" />
+            </Pressable>
+          </XStack>
+          {showNote && (
+            <Appear>
+              <Text variant="footnote" color="$textMuted" ta="center" maxWidth={320} alignSelf="center">
+                {t('friends.qr.my.permanentNote')}
               </Text>
-            </XStack>
-          </Pressable>
+            </Appear>
+          )}
         </>
       )}
     </ScrollView>
   );
 }
 
-function ActionTile({ icon, label, onPress, primary, busy }: { icon: React.ReactNode; label: string; onPress: () => void; primary?: boolean; busy?: boolean }) {
+/** Round icon-only action (50pt) with its name as the accessibility label. */
+function IconAction({ icon, label, onPress, busy }: { icon: 'download' | 'copy'; label: string; onPress: () => void; busy?: boolean }) {
   return (
-    <Pressable onPress={onPress} disabled={busy} accessibilityRole="button" accessibilityLabel={label} style={{ flex: 1, maxWidth: 140 }}>
+    <PressableScale onPress={onPress} disabled={busy} haptic="select" accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ busy: !!busy }}>
       {({ pressed }) => (
-        <YStack
-          minHeight={76}
-          borderRadius={16}
-          ai="center"
-          jc="center"
-          gap="$1.5"
-          px="$2"
-          py="$2.5"
-          backgroundColor={primary ? '$primary' : '$surfaceAlt'}
-          opacity={pressed || busy ? 0.7 : 1}
-        >
-          {busy ? <Spinner size="small" /> : icon}
-          <Text fontSize={13} fontWeight="700" color={primary ? '$onPrimary' : '$text'} ta="center" numberOfLines={2}>
-            {label}
-          </Text>
+        <YStack width={50} height={50} borderRadius={25} ai="center" jc="center" backgroundColor="$surfaceAlt" opacity={pressed || busy ? 0.7 : 1}>
+          {busy ? <Spinner size="small" /> : <AppIcon name={icon} size={22} color="$text" />}
         </YStack>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }

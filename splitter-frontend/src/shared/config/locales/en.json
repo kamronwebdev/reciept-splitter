@@ -123,12 +123,12 @@
       "rejected": "Request from {{target}} declined",
       "emptyIncoming": "No incoming requests",
       "emptyOutgoing": "No outgoing requests",
-      "requestedLabel": "Requested",
+      "requestedLabel": "Pending",
       "tabIncoming": "Incoming",
       "tabOutgoing": "Sent"
     },
     "add": "Add Friend",
-    "empty": "No friends yet. Scan a friend's QR code or show them yours.",
+    "empty": "No friends yet",
     "searchPlaceholder": "Enter uniqueId, e.g. USER#1234",
     "send": "Send request",
     "remove": "Remove",
@@ -137,12 +137,10 @@
     "qr": {
       "scanQr": "Scan QR",
       "myQr": "My QR",
-      "requestsLink": "Friend requests",
-      "requestsCount": "{{count}} new",
-      "addHint": "Add friends in person: one of you opens My QR, the other taps Scan QR.",
+      "requestsLink": "Requests",
       "my": {
         "title": "My QR code",
-        "subtitle": "Friends scan this code to add you",
+        "subtitle": "Scan to add me",
         "share": "Share",
         "save": "Save image",
         "copy": "Copy link",
@@ -159,31 +157,27 @@
         "resetDone": "Your new QR code is ready",
         "loadError": "Could not load your QR code.",
         "newFriend": "{{name}} added you as a friend",
-        "permanentNote": "This code doesn't expire. Reset it if you shared it by mistake."
+        "permanentNote": "This code doesn't expire. Reset it if you shared it by mistake.",
+        "aboutCode": "About this code"
       },
       "scan": {
         "title": "Scan QR",
-        "hint": "Point the camera at a friend's QR code",
-        "fromPhotos": "Choose from photos",
+        "hint": "Point at a QR code",
+        "fromPhotos": "From photos",
         "light": "Light",
         "checking": "Checking the code…",
         "noQrInImage": "No QR code found in this picture. Try a clearer screenshot.",
         "permissionTitle": "Camera access is needed",
-        "permissionBody": "The camera is only used to scan QR codes. You can also choose a screenshot of a QR code from your photos.",
-        "allowCamera": "Allow camera access",
+        "permissionBody": "Only used to scan QR codes.",
+        "allowCamera": "Allow camera",
         "openSettings": "Open Settings"
       },
       "card": {
         "add": "Add friend",
-        "alreadyFriends": "Already friends",
+        "alreadyFriends": "Friends",
         "self": "That's you",
-        "selfHint": "This is your own QR code. Show it to a friend so they can scan it.",
-        "pendingIncoming": "{{name}} already sent you a friend request",
         "accept": "Accept request",
-        "pendingOutgoing": "You already sent a request. Scanning in person adds them right away.",
-        "friendsHint": "You are already friends.",
-        "addedTitle": "You're now friends!",
-        "addedBody": "{{name}} is in your friends list.",
+        "addedTitle": "Friends!",
         "done": "Done",
         "scanAnother": "Scan another"
       },
@@ -193,14 +187,14 @@
         "joinedGeneric": "You joined the group",
         "alreadyMember": "You're already in this group",
         "owner": "This is your own group",
-        "friendsToo": "You and the group owner are now friends.",
+        "friendsToo": "You're now friends with the owner.",
         "open": "Open groups"
       },
       "errors": {
         "NOT_OUR_QR": "Not a Receipt Splitter QR code",
-        "NOT_OUR_QR_body": "This QR code is not a friend or group invite. Ask your friend to open Friends → My QR.",
+        "NOT_OUR_QR_body": "Not a friend or group invite.",
         "INVALID_CODE": "This QR code is no longer valid",
-        "INVALID_CODE_body": "It was reset or has expired. Ask your friend to show their QR code again.",
+        "INVALID_CODE_body": "Ask them to show their code again.",
         "NETWORK": "No connection",
         "NETWORK_body": "Check your internet connection and try again.",
         "RATE_LIMITED": "Too many attempts",
@@ -212,8 +206,6 @@
       },
       "expiresAt": "Expires {{time}}"
     },
-    "filter": "Search your friends",
-    "noMatches": "No friends match your search",
     "addById": "Add by ID",
     "addTitle": "Add friend",
     "common": {
@@ -226,16 +218,15 @@
     "removed": "{{name}} was removed",
     "swipeHint": "Swipe left or touch and hold to remove",
     "search": {
-      "button": "Search",
       "inviteSent": "Request sent to {{target}}",
-      "noResults": "No one found with this ID",
-      "orInPerson": "Or add someone in person",
+      "noResults": "Not found",
+      "orInPerson": "In person",
       "placeholder": "Friend's ID, e.g. USER#1234"
     },
     "status": {
       "add": "Add",
       "friend": "Friend",
-      "incoming": "Wants to add you",
+      "incoming": "Incoming",
       "requested": "Requested",
       "you": "You"
     }

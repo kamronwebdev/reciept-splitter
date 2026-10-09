@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { CAMERA } from '@/shared/theme/palette';
 import AppIcon from '@/shared/ui/AppIcon';
+import { PressableScale, Pulse } from '@/shared/ui/motion';
 
 type Props = {
   /** false while a result is shown: the camera stays on but ignores codes */
@@ -36,11 +37,12 @@ export default function QrCameraStage({ scanning, onScanned, onPickPhoto, onBack
       />
 
       <View style={styles.frameLayer} pointerEvents="none">
-        <View style={{ width: frame, height: frame }}>
+        {/* the frame breathes gently while waiting for a code (still with Reduce Motion) */}
+        <Pulse active={scanning} style={{ width: frame, height: frame }}>
           {(['tl', 'tr', 'bl', 'br'] as const).map((c) => (
             <View key={c} style={[styles.bracket, styles[c]]} />
           ))}
-        </View>
+        </Pulse>
       </View>
 
       <View style={[styles.top, { paddingTop: insets.top + 8 }]}>
@@ -80,12 +82,9 @@ export default function QrCameraStage({ scanning, onScanned, onPickPhoto, onBack
       {/* hidden while a result sheet is open, so nothing shows through or competes with it */}
       {scanning && (
         <View style={[styles.bottom, { paddingBottom: insets.bottom + 24 }]}>
-          <Pressable onPress={onPickPhoto} accessibilityRole="button" style={styles.photoBtn}>
-            <AppIcon name="photo" size={22} color={CAMERA.onCamera} />
-            <Text fontSize={16} fontWeight="700" color={CAMERA.onCamera}>
-              {t('friends.qr.scan.fromPhotos')}
-            </Text>
-          </Pressable>
+          <PressableScale onPress={onPickPhoto} haptic="select" accessibilityRole="button" accessibilityLabel={t('friends.qr.scan.fromPhotos')} style={styles.photoBtn}>
+            <AppIcon name="photo" size={26} color={CAMERA.onCamera} />
+          </PressableScale>
         </View>
       )}
     </View>
@@ -181,12 +180,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   photoBtn: {
-    minHeight: 56,
+    width: 56,
+    height: 56,
     borderRadius: 28,
-    paddingHorizontal: 22,
     backgroundColor: CAMERA.pill,
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'center',
   },
 });
