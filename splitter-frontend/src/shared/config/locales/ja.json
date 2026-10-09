@@ -15,12 +15,9 @@
     "emailPlaceholder": "メールアドレスを入力",
     "password": "パスワード",
     "passwordPlaceholder": "パスワードを入力",
-    "confirmPassword": "パスワードを確認",
     "username": "ユーザー名",
     "usernamePlaceholder": "ユーザー名を入力",
     "forgotPassword": "パスワードをお忘れですか？",
-    "loginError": "ログイン中にエラーが発生しました",
-    "registerError": "登録中にエラーが発生しました",
     "hidePassword": "パスワードを隠す",
     "showPassword": "パスワードを表示",
     "clearEmail": "メールアドレスを消去",
@@ -96,13 +93,7 @@
     }
   },
   "common": {
-    "welcome": "ようこそ",
-    "loading": "読み込み中...",
-    "error": "エラー",
-    "success": "成功",
     "cancel": "キャンセル",
-    "confirm": "確認",
-    "continue": "続ける",
     "back": "戻る",
     "retry": "再試行",
     "close": "閉じる",
@@ -127,13 +118,8 @@
       "tabIncoming": "受信",
       "tabOutgoing": "送信済み"
     },
-    "add": "友だちを追加",
     "empty": "まだ友達がいません",
-    "searchPlaceholder": "ID を入力してください (例: USER#1234)",
-    "send": "リクエストを送信",
     "remove": "削除",
-    "loading": "読み込み中...",
-    "error": "読み込みに失敗しました",
     "qr": {
       "scanQr": "QRをスキャン",
       "myQr": "マイQR",
@@ -232,20 +218,9 @@
   },
   "home": {
     "header": {
-      "greeting": "{{name}}さん、こんにちは！",
       "friendFallback": "友だち"
     },
-    "scan": {
-      "cta": "招待をスキャンする"
-    },
-    "actions": {
-      "friends": "友だち",
-      "groups": "グループ"
-    },
     "recent": "最近",
-    "features": {
-      "title": "できること"
-    },
     "greetingSmall": "こんにちは、",
     "scanReceipt": "レシートをスキャン",
     "enterManually": "手入力",
@@ -330,24 +305,12 @@
     "change": "変更"
   },
   "navigation": {
-    "mainMenu": "メインメニュー",
-    "tabs": {
-      "home": "ホーム",
-      "settings": "設定",
-      "profile": "プロフィール"
-    },
     "groups": {
       "title": "グループ",
       "create": "新しいグループ",
       "details": "グループ"
     },
-    "scanInvite": "QRをスキャン",
-    "friendQr": "マイQRコード",
     "groupQr": "グループQRコード",
-    "scanReceipt": "レシートをスキャン",
-    "participants": "参加者",
-    "itemsSplit": "アイテムの分割",
-    "finish": "完了",
     "history": "明細一覧",
     "historyDetails": "明細"
   },
@@ -665,8 +628,7 @@
       "members_other": "メンバー{{count}}人"
     },
     "roles": {
-      "owner": "オーナー",
-      "admin": "管理者"
+      "owner": "オーナー"
     },
     "create": {
       "action": "作成",

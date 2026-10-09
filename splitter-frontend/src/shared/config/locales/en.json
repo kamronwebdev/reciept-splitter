@@ -15,12 +15,9 @@
     "emailPlaceholder": "Enter your email",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
-    "confirmPassword": "Confirm Password",
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
     "forgotPassword": "Forgot Password?",
-    "loginError": "An error occurred during login",
-    "registerError": "An error occurred during registration",
     "hidePassword": "Hide password",
     "showPassword": "Show password",
     "clearEmail": "Clear email",
@@ -96,13 +93,7 @@
     }
   },
   "common": {
-    "welcome": "Welcome",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
     "cancel": "Cancel",
-    "confirm": "Confirm",
-    "continue": "Continue",
     "back": "Back",
     "retry": "Try again",
     "close": "Close",
@@ -127,13 +118,8 @@
       "tabIncoming": "Incoming",
       "tabOutgoing": "Sent"
     },
-    "add": "Add Friend",
     "empty": "No friends yet",
-    "searchPlaceholder": "Enter uniqueId, e.g. USER#1234",
-    "send": "Send request",
     "remove": "Remove",
-    "loading": "Loading...",
-    "error": "Failed to load",
     "qr": {
       "scanQr": "Scan QR",
       "myQr": "My QR",
@@ -233,20 +219,9 @@
   },
   "home": {
     "header": {
-      "greeting": "Hi, {{name}}!",
       "friendFallback": "friend"
     },
-    "scan": {
-      "cta": "Scan invite"
-    },
-    "actions": {
-      "friends": "Friends",
-      "groups": "Groups"
-    },
     "recent": "Recent",
-    "features": {
-      "title": "What you can do"
-    },
     "greetingSmall": "Hello,",
     "scanReceipt": "Scan receipt",
     "enterManually": "Enter manually",
@@ -333,24 +308,12 @@
     "change": "Change"
   },
   "navigation": {
-    "mainMenu": "Main menu",
-    "tabs": {
-      "home": "Home",
-      "settings": "Settings",
-      "profile": "Profile"
-    },
     "groups": {
       "title": "Groups",
       "create": "New group",
       "details": "Group"
     },
-    "scanInvite": "Scan QR",
-    "friendQr": "My QR code",
     "groupQr": "Group QR",
-    "scanReceipt": "Scan Receipt",
-    "participants": "Participants",
-    "itemsSplit": "Items Split",
-    "finish": "Finish",
     "history": "Bills",
     "historyDetails": "Bill"
   },
@@ -673,8 +636,7 @@
       "members_other": "{{count}} members"
     },
     "roles": {
-      "owner": "Owner",
-      "admin": "Admin"
+      "owner": "Owner"
     },
     "create": {
       "action": "Create",

@@ -15,7 +15,6 @@
     "emailPlaceholder": "Email kiriting",
     "password": "Parol",
     "passwordPlaceholder": "Parolingizni kiriting",
-    "confirmPassword": "Parolni tasdiqlash",
     "username": "Foydalanuvchi nomi",
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
@@ -91,18 +90,10 @@
       "UNSUPPORTED_TYPE": "Bu rasm formati qo'llab-quvvatlanmaydi.",
       "FILE_REQUIRED": "Rasm tanlang.",
       "INVALID_PASSWORD": "Parol noto'g'ri"
-    },
-    "loginError": "Kirishda xatolik yuz berdi",
-    "registerError": "Ro'yxatdan o'tishda xatolik yuz berdi"
+    }
   },
   "common": {
-    "welcome": "Xush kelibsiz",
-    "loading": "Yuklanmoqda...",
-    "error": "Xato",
-    "success": "Muvaffaqiyat",
     "cancel": "Bekor qilish",
-    "confirm": "Tasdiqlash",
-    "continue": "Davom etish",
     "back": "Orqaga",
     "retry": "Qayta urinish",
     "close": "Yopish",
@@ -116,20 +107,9 @@
   },
   "home": {
     "header": {
-      "greeting": "Salom, {{name}}!",
       "friendFallback": "do'stim"
     },
-    "scan": {
-      "cta": "Taklifni skanerlang"
-    },
-    "actions": {
-      "friends": "Do'stlar",
-      "groups": "Guruhlar"
-    },
     "recent": "So'nggi",
-    "features": {
-      "title": "Nimalar qilishingiz mumkin"
-    },
     "greetingSmall": "Salom,",
     "scanReceipt": "Chekni skanerlash",
     "enterManually": "Qo'lda kiritish",
@@ -216,24 +196,12 @@
     "change": "O'zgartirish"
   },
   "navigation": {
-    "mainMenu": "Bosh menyu",
-    "tabs": {
-      "home": "Bosh sahifa",
-      "settings": "Sozlamalar",
-      "profile": "Profil"
-    },
     "groups": {
       "title": "Guruhlar",
       "create": "Yangi guruh",
       "details": "Guruh"
     },
-    "scanInvite": "QR skanerlash",
-    "friendQr": "Mening QR kodim",
     "groupQr": "Guruh QR kodi",
-    "scanReceipt": "Chekni skanerlash",
-    "participants": "Ishtirokchilar",
-    "itemsSplit": "Xarajatlarni bo'lish",
-    "finish": "Yakunlash",
     "history": "Hisoblar",
     "historyDetails": "Hisob"
   },
@@ -477,13 +445,8 @@
       "tabIncoming": "Kiruvchi",
       "tabOutgoing": "Yuborilgan"
     },
-    "add": "Do'st qo'shish",
     "empty": "Hali do'stlar yo'q",
-    "searchPlaceholder": "uniqueId kiriting, masalan USER#1234",
-    "send": "So'rov yuborish",
     "remove": "O'chirish",
-    "loading": "Yuklanmoqda...",
-    "error": "Yuklab bo'lmadi",
     "qr": {
       "scanQr": "QR skanerlash",
       "myQr": "Mening QR kodim",
@@ -673,8 +636,7 @@
       "members_other": "{{count}} a'zo"
     },
     "roles": {
-      "owner": "Egasi",
-      "admin": "Admin"
+      "owner": "Egasi"
     },
     "create": {
       "action": "Yaratish",
