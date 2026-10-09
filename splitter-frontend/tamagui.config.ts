@@ -21,6 +21,8 @@ function semantic(p: Palette) {
     primaryText: p.primaryText,
     danger: p.danger,
     dangerSoft: p.dangerSoft,
+    successSoft: p.successSoft,
+    warningSoft: p.warningSoft,
     success: p.success,
     warning: p.warning,
     overlay: p.overlay,

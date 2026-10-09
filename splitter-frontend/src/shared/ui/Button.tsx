@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, Pressable } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import PressableScale from '@/shared/ui/motion/PressableScale';
 import { XStack } from 'tamagui';
 import { useAppTheme } from '@/shared/theme/useAppTheme';
 import { Text } from '@/shared/ui/typography';
@@ -27,7 +28,7 @@ const HEIGHT = { small: CONTROL_HEIGHT.small, medium: CONTROL_HEIGHT.medium, lar
 
 /**
  * The app's buttons (iOS style): filled primary, tinted secondary, outline, destructive and plain text.
- * Primary actions give a light haptic tap.
+ * Primary actions give a light haptic tap; every button scales to 0.97 while pressed.
  */
 export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary', size = 'medium', disabled = false, loading = false, icon, multiline = false, accessibilityLabel, onPress }) => {
   const { colors } = useAppTheme();
@@ -55,7 +56,7 @@ export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary'
   const spinner = v === 'primary' ? colors.onPrimary : v === 'destructive' ? '#FFFFFF' : colors.primaryText;
 
   return (
-    <Pressable
+    <PressableScale
       onPress={
         isDisabled
           ? undefined
@@ -90,7 +91,7 @@ export const Button: React.FC<CustomButtonProps> = ({ title, variant = 'primary'
           </Text>
         </XStack>
       )}
-    </Pressable>
+    </PressableScale>
   );
 };
 

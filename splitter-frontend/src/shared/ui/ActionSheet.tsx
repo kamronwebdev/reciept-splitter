@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ActionSheetIOS, Platform, Pressable } from 'react-native';
 import { create } from 'zustand';
 import { YStack } from 'tamagui';
@@ -37,10 +37,14 @@ export function showActionSheet(options: Options) {
 
 /** Rendered once at the root (AppProviders). */
 export function ActionSheetHost() {
-  const { options, set } = useSheet();
+  const { options: current, set } = useSheet();
+  // keep the last content while the sheet animates out
+  const last = useRef<Options | null>(null);
+  if (current) last.current = current;
+  const options = current ?? last.current;
   const close = () => set(null);
   return (
-    <BottomSheet visible={!!options} onClose={close} {...(options?.title ? { label: options.title } : {})}>
+    <BottomSheet visible={!!current} onClose={close} {...(options?.title ? { label: options.title } : {})}>
       {options && (
         <YStack gap="$2" pb="$1">
           {(!!options.title || !!options.message) && (

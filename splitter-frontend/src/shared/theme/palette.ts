@@ -24,7 +24,9 @@ export interface Palette {
   danger: string;
   dangerSoft: string;
   success: string;
+  successSoft: string;
   warning: string;
+  warningSoft: string;
   overlay: string; // modal scrims
   shadow: string;
   /** iOS "grouped" screen background behind inset list sections */
@@ -57,7 +59,9 @@ export const palettes: Record<Scheme, Palette> = {
     danger: '#D93636',
     dangerSoft: 'rgba(217,54,54,0.10)',
     success: '#1E9E55',
+    successSoft: 'rgba(30,158,85,0.12)',
     warning: '#B7791F',
+    warningSoft: 'rgba(183,121,31,0.12)',
     overlay: 'rgba(0,0,0,0.45)',
     shadow: 'rgba(0,0,0,0.12)',
     groupedBackground: '#F2F4F3',
@@ -82,7 +86,9 @@ export const palettes: Record<Scheme, Palette> = {
     danger: '#FF6B6B',
     dangerSoft: 'rgba(255,107,107,0.16)',
     success: '#43DB85',
+    successSoft: 'rgba(67,219,133,0.16)',
     warning: '#F0B34A',
+    warningSoft: 'rgba(240,179,74,0.16)',
     overlay: 'rgba(0,0,0,0.65)',
     shadow: 'rgba(0,0,0,0.5)',
     groupedBackground: '#0E1512',

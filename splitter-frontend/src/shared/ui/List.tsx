@@ -1,9 +1,13 @@
 import React from 'react';
-import { Pressable, Platform } from 'react-native';
+import { Pressable, Platform, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { XStack, YStack } from 'tamagui';
 import { Text } from '@/shared/ui/typography';
 import { haptic } from '@/shared/lib/haptics';
 import AppIcon from '@/shared/ui/AppIcon';
+import PressableScale from '@/shared/ui/motion/PressableScale';
+import Appear, { AppearGroup } from '@/shared/ui/motion/Appear';
+import { listExiting, listLayout } from '@/shared/ui/motion/layout';
 
 /**
  * iOS "inset grouped" lists: a section is a rounded card on the grouped background, with an optional
@@ -16,6 +20,13 @@ type SectionProps = {
   children: React.ReactNode;
   /** right side of the header row (e.g. "See all") */
   headerRight?: React.ReactNode;
+  /**
+   * Rows are added / removed while the list is on screen (friends, members, requests, items): a removed row
+   * fades out and the rest slide into place. Rows need stable keys.
+   */
+  animateChanges?: boolean;
+  /** no entering animation (e.g. rows that re-mount often) */
+  still?: boolean;
 };
 
 /** Hairlines start where the row text starts (16 + leading element + 12), like iOS. */
@@ -28,9 +39,11 @@ function separatorInset(row: unknown): number {
   return 16 + size + 12;
 }
 
-export function ListSection({ header, footer, children, headerRight }: SectionProps) {
+export function ListSection({ header, footer, children, headerRight, animateChanges, still }: SectionProps) {
   const rows = React.Children.toArray(children).filter(Boolean);
+  const Wrap = animateChanges ? Animated.View : View;
   return (
+    <AppearGroup>
     <YStack gap="$1.5">
       {(!!header || headerRight) && (
         <XStack px="$4" ai="flex-end" jc="space-between" minHeight={20}>
@@ -44,10 +57,13 @@ export function ListSection({ header, footer, children, headerRight }: SectionPr
       )}
       <YStack backgroundColor="$surface" borderRadius={12} overflow="hidden">
         {rows.map((row, i) => (
-          <YStack key={(row as any)?.key ?? i}>
-            {i > 0 && <YStack height={Platform.OS === 'web' ? 1 : 0.5} backgroundColor="$separator" ml={separatorInset(row)} />}
-            {row}
-          </YStack>
+          // first paint: rows fade + slide in, 30ms apart (first 8 only); later additions animate on their own
+          <Wrap key={(row as any)?.key ?? i} {...(animateChanges ? { layout: listLayout, exiting: listExiting } : {})}>
+            <Appear index={i} disabled={!!still}>
+              {i > 0 && <YStack height={Platform.OS === 'web' ? 1 : 0.5} backgroundColor="$separator" ml={separatorInset(row)} />}
+              {row}
+            </Appear>
+          </Wrap>
         ))}
       </YStack>
       {!!footer && (
@@ -56,12 +72,14 @@ export function ListSection({ header, footer, children, headerRight }: SectionPr
         </Text>
       )}
     </YStack>
+    </AppearGroup>
   );
 }
 
 type RowProps = {
   title: string;
-  subtitle?: string | null | undefined;
+  /** a short line, or a small inline element (status chip, icon + count) */
+  subtitle?: React.ReactNode;
   /** value shown on the right in gray (e.g. current setting) */
   value?: string | null | undefined;
   /** leading element: icon tile or avatar */
@@ -79,6 +97,8 @@ type RowProps = {
   /** separator inset from the left edge (set by the row, read by ListSection) */
   inset?: number;
   accessibilityLabel?: string;
+  /** what happens on press / which gestures exist (the explanation that is no longer on screen) */
+  accessibilityHint?: string;
   /** title lines (1 in lists: long names truncate) */
   numberOfLines?: number;
   subtitleLines?: number;
@@ -97,6 +117,7 @@ export function ListRow({
   tint,
   disabled,
   accessibilityLabel,
+  accessibilityHint,
   numberOfLines = 1,
   subtitleLines = 1,
 }: RowProps) {
@@ -109,10 +130,14 @@ export function ListRow({
         <Text variant="body" color={color} numberOfLines={numberOfLines} ta="left">
           {title}
         </Text>
-        {!!subtitle && (
-          <Text variant="subheadline" color="$textMuted" numberOfLines={subtitleLines} ta="left">
-            {subtitle}
-          </Text>
+        {typeof subtitle === 'string' || typeof subtitle === 'number' ? (
+          subtitle !== '' && (
+            <Text variant="subheadline" color="$textMuted" numberOfLines={subtitleLines} ta="left">
+              {subtitle}
+            </Text>
+          )
+        ) : (
+          subtitle ?? null
         )}
       </YStack>
       {!!value && (
@@ -124,9 +149,18 @@ export function ListRow({
       {chevron && <AppIcon name="chevronRight" size={16} color="$inactive" />}
     </XStack>
   );
-  if (!onPress && !onLongPress) return content(false);
+  const textLabel = [title, typeof subtitle === 'string' ? subtitle : null, value].filter(Boolean).join(', ');
+  if (!onPress && !onLongPress)
+    return accessibilityLabel || accessibilityHint ? (
+      <View accessible accessibilityLabel={accessibilityLabel ?? textLabel} accessibilityHint={accessibilityHint}>
+        {content(false)}
+      </View>
+    ) : (
+      content(false)
+    );
   return (
-    <Pressable
+    <PressableScale
+      scaleTo={0.98}
       onPress={
         onPress
           ? () => {
@@ -138,11 +172,12 @@ export function ListRow({
       onLongPress={onLongPress}
       disabled={disabled}
       accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel ?? [title, subtitle, value].filter(Boolean).join(', ')}
+      accessibilityLabel={accessibilityLabel ?? textLabel}
+      accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: !!disabled }}
     >
       {({ pressed }) => content(pressed)}
-    </Pressable>
+    </PressableScale>
   );
 }
 

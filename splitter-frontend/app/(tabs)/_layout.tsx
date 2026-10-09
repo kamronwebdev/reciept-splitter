@@ -5,6 +5,7 @@ import { AppState, Platform } from 'react-native';
 import { Redirect, Tabs, usePathname, useRouter } from 'expo-router';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useReducedMotion } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 
 import { useAppStore } from '@/shared/lib/stores/app-store';
@@ -122,6 +123,7 @@ function IosTabs({ labels, badges }: TabsProps) {
 /** Android / web: JS tabs with the iOS look (49pt bar + safe area, hairline, icon + short label). */
 function JsTabs({ labels, badges }: TabsProps) {
   const { colors } = useAppTheme();
+  const reduced = useReducedMotion();
   const insets = useSafeAreaInsets();
   const label = useTextStyle(500, 10);
   const { openScanner } = useReceiptLauncher();
@@ -130,6 +132,8 @@ function JsTabs({ labels, badges }: TabsProps) {
       backBehavior="history"
       screenOptions={{
         headerShown: false,
+        // a subtle cross-fade between tabs (none with Reduce Motion)
+        animation: reduced ? 'none' : 'fade',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.inactive,
         tabBarLabelStyle: { ...label, marginTop: 0 },
