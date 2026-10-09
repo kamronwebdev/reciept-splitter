@@ -5,23 +5,12 @@
   },
   "features": {
     "scan": "Chek skanerlash",
-    "scanDesc": "Cheklaringizni suratga oling",
-    "split": "Pulni bo'lish",
-    "splitDesc": "Do'stlar bilan xarajatni taqsimlang",
-    "calculate": "Avtomatik hisoblash",
-    "calculateDesc": "Kim qancha to'lashini biling"
-  },
-  "welcome": {
-    "message": "Xush kelibsiz! Boshlaymiz",
-    "newUser": "Chek Bo'lishda yangimisiz?",
-    "newUserDesc": "Hisob yarating va pulni bo'lishni boshlang",
-    "existingUser": "Hisobingiz bormi?"
+    "split": "Bo'lish",
+    "calculate": "Avtomatik hisoblash"
   },
   "auth": {
     "signIn": "Kirish",
-    "signInDesc": "Xush kelibsiz! Davom etish uchun tizimga kiring",
     "createAccount": "Hisob yaratish",
-    "createAccountDesc": "Do'stlar bilan hisob-kitobni hoziroq boshlang",
     "email": "Email",
     "emailPlaceholder": "Email kiriting",
     "password": "Parol",
@@ -30,8 +19,6 @@
     "username": "Foydalanuvchi nomi",
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
-    "noAccount": "Hisobingiz yo'qmi?",
-    "haveAccount": "Hisobingiz bormi?",
     "hidePassword": "Parolni yashirish",
     "showPassword": "Parolni ko'rsatish",
     "clearEmail": "Emailni tozalash",
@@ -60,12 +47,12 @@
     },
     "forgot": {
       "title": "Parolni unutdingizmi?",
-      "desc": "Emailingizni kiriting, parolni tiklash uchun 6 xonali kod yuboramiz.",
+      "desc": "Emailingizga 6 xonali kod yuboramiz.",
       "send": "Kod yuborish"
     },
     "reset": {
       "codeTitle": "Kodni kiriting",
-      "codeDesc": "{{email}} manziliga 6 xonali kod yubordik. U 15 daqiqa amal qiladi.",
+      "codeDesc": "{{email}} manziliga yuborildi",
       "codeLabel": "Tasdiqlash kodi",
       "codeSent": "Yangi kod yuborildi.",
       "verify": "Davom etish",
@@ -73,7 +60,6 @@
       "resendIn": "Kodni qayta yuborish: {{seconds}} soniya",
       "changeEmail": "Emailni o'zgartirish",
       "newPasswordTitle": "Yangi parol tanlang",
-      "newPasswordDesc": "Ilgari ishlatmagan kuchli parolni tanlang.",
       "submit": "Parolni yangilash",
       "success": "Parol yangilandi. Siz tizimga kirdingiz.",
       "startOver": "Boshidan boshlash"
@@ -123,7 +109,9 @@
     "done": "Tayyor",
     "clear": "Tozalash",
     "decrease": "Kamaytirish",
-    "increase": "Ko'paytirish"
+    "increase": "Ko'paytirish",
+    "search": "Qidirish",
+    "noResults": "Hech narsa topilmadi"
   },
   "home": {
     "header": {
@@ -137,27 +125,27 @@
       "friends": "Do'stlar",
       "groups": "Guruhlar"
     },
-    "recent": "So'nggi cheklar",
+    "recent": "So'nggi",
     "features": {
       "title": "Nimalar qilishingiz mumkin"
     },
     "greetingSmall": "Salom,",
     "scanReceipt": "Chekni skanerlash",
     "enterManually": "Qo'lda kiritish",
-    "attention": "E'tiboringizni kutmoqda",
+    "attention": "Bajarish kerak",
     "friendRequests_one": "{{count}} ta do'stlik so'rovi",
     "friendRequests_other": "{{count}} ta do'stlik so'rovi",
     "youOwe": "{{name}}ga qarzingiz bor",
     "seeAll": "Hammasi",
     "empty": {
-      "title": "Hali cheklar yo'q",
-      "message": "Chekni skanerlang, kim nima yeganini tanlang — har kim o'z ulushini ko'radi."
+      "title": "Hali cheklar yo'q"
     },
     "myGroups": "Guruhlarim",
     "newGroup": "Yangi guruh",
     "people_one": "{{count}} kishi",
     "people_other": "{{count}} kishi",
-    "yourShare": "siz: {{amount}}"
+    "yourShare": "siz: {{amount}}",
+    "requests": "So'rovlar"
   },
   "profile": {
     "title": "Profil",
@@ -248,8 +236,8 @@
     "participants": "Ishtirokchilar",
     "itemsSplit": "Xarajatlarni bo'lish",
     "finish": "Yakunlash",
-    "history": "So'nggi hisoblar",
-    "historyDetails": "Hisob tafsilotlari"
+    "history": "Hisoblar",
+    "historyDetails": "Hisob"
   },
   "settings": {
     "title": "Sozlamalar",
@@ -638,14 +626,15 @@
   "balances": {
     "title": "Balans",
     "none": "—",
-    "allSettled": "Barcha hisob-kitoblar yopilgan.",
+    "allSettled": "Qarz yo'q",
     "owedToMe": "Sizga qarzdor",
     "iOwe": "Sizning qarzingiz",
     "loadError": "Balansni yuklab bo'lmadi.",
     "emptyPeople": "Hozircha hech kim qarzdor emas.",
     "owesYou": "sizga {{amount}} qarzdor",
     "youOweThem": "siz {{amount}} qarzdorsiz",
-    "footer": "Ulush to'langanini belgilash uchun chekni oching."
+    "owesYouChip": "Sizga qarzdor",
+    "receiptHint": "Chekni ochadi, u yerda ulushlar to'langan deb belgilanadi"
   },
   "settle": {
     "settled": "Yopilgan",
@@ -654,7 +643,7 @@
     "people": "Ulushlar",
     "footerCreator": "Kimdir sizga pulni qaytarganda \"To'landi\"ni yoqing.",
     "footerParticipant": "Ulushingizni to'lagach, \"To'landi\"ni yoqing.",
-    "paidTheBill": "Hisobni to'lagan",
+    "paidTheBill": "To'lovchi",
     "paid": "To'landi",
     "notPaid": "To'lanmagan",
     "paidA11y": "{{name}} to'ladi"
@@ -748,9 +737,5 @@
       "invalid": "Guruh topilmadi.",
       "new": "Yangi QR kod"
     }
-  },
-  "history": {
-    "search": "Chek yoki odamni qidirish",
-    "noMatches": "Qidiruvga mos chek yo'q."
   }
 }

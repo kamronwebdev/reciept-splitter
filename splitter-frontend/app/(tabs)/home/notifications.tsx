@@ -1,6 +1,6 @@
 // app/(tabs)/home/notifications.tsx — the bell: Today / Earlier, unread dots, tap to open, swipe to delete.
 import React, { useMemo } from 'react';
-import { Pressable, RefreshControl, SectionList } from 'react-native';
+import { RefreshControl, SectionList } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,8 @@ import { useNotificationMutations, useNotifications } from '@/features/notificat
 import type { AppNotification } from '@/features/notifications/api/notifications.api';
 import { notificationTarget, notificationText } from '@/features/notifications/lib/present';
 import AppIcon from '@/shared/ui/AppIcon';
+import Animated from 'react-native-reanimated';
+import { Appear, PressableScale, listExiting } from '@/shared/ui/motion';
 
 export default function NotificationsScreen() {
   const { t, i18n } = useTranslation();
@@ -29,6 +31,8 @@ export default function NotificationsScreen() {
 
   const items = useMemo(() => query.data?.pages.flatMap((p) => p.items) ?? [], [query.data]);
   const hasUnread = items.some((n) => !n.read);
+  // position in the whole list: only the first screenful staggers in
+  const order = useMemo(() => new Map(items.map((n, i) => [n.id, i])), [items]);
   const sections = useMemo(() => {
     const today = items.filter((n) => isToday(n.createdAt));
     const earlier = items.filter((n) => !isToday(n.createdAt));
@@ -81,6 +85,9 @@ export default function NotificationsScreen() {
             const first = index === 0;
             const last = index === section.data.length - 1;
             return (
+              // deleted notifications fade out
+              <Animated.View exiting={listExiting}>
+              <Appear index={order.get(item.id) ?? 99}>
               <YStack
                 backgroundColor="$surface"
                 overflow="hidden"
@@ -91,11 +98,12 @@ export default function NotificationsScreen() {
               >
                 {!first && <YStack height={0.5} backgroundColor="$separator" ml={64} />}
                 <SwipeRow actions={[{ label: t('notifications.delete'), destructive: true, onPress: () => remove.mutate(item.id) }]}>
-                  <Pressable
+                  <PressableScale
+                    scaleTo={0.98}
                     onPress={() => open(item)}
                     onLongPress={() => showActionSheet({ actions: actionsFor(item), cancelLabel: t('common.cancel') })}
                     accessibilityRole="button"
-                    accessibilityHint={item.read ? undefined : t('notifications.unread')}
+                    accessibilityLabel={[item.read ? null : t('notifications.unread'), notificationText(item, t, meId), timeAgo(item.createdAt, t, i18n.language)].filter(Boolean).join(', ')}
                   >
                     {({ pressed }) => (
                       <XStack px="$4" py="$3" gap="$3" ai="center" backgroundColor={pressed ? '$surfaceAlt' : '$surface'}>
@@ -117,9 +125,11 @@ export default function NotificationsScreen() {
                         {!item.read && <YStack width={9} height={9} borderRadius={5} backgroundColor="$primary" accessibilityLabel={t('notifications.unread')} />}
                       </XStack>
                     )}
-                  </Pressable>
+                  </PressableScale>
                 </SwipeRow>
               </YStack>
+              </Appear>
+              </Animated.View>
             );
           }}
           ListEmptyComponent={

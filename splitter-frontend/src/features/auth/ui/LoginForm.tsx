@@ -130,9 +130,6 @@ export default function LoginForm() {
           <Text fontSize="$8" fontWeight="900" color="$gray12">
             {t('auth.signIn', 'Sign In')}
           </Text>
-          <Text fontSize="$4" color="$gray10" textAlign="center">
-            {t('auth.signInDesc', 'Welcome back! Please sign in to continue')}
-          </Text>
         </YStack>
 
         {sessionExpired && (
@@ -219,9 +216,6 @@ export default function LoginForm() {
         </Card>
 
         <YStack alignItems="center" space="$1">
-          <Text fontSize="$3" color="$gray9">
-            {t('auth.noAccount', "Don't have an account?")}
-          </Text>
           <TextLink title={t('auth.createAccount', 'Create Account')} onPress={goRegister} />
         </YStack>
       </YStack>

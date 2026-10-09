@@ -5,23 +5,12 @@
   },
   "features": {
     "scan": "Scan",
-    "scanDesc": "Take photos of your receipts",
-    "split": "Split Bills",
-    "splitDesc": "Divide costs with friends",
-    "calculate": "Calculate",
-    "calculateDesc": "Know who owes what"
-  },
-  "welcome": {
-    "message": "Welcome! Let's get started",
-    "newUser": "New to Receipt Splitter?",
-    "newUserDesc": "Create an account to start splitting bills",
-    "existingUser": "Already have an account?"
+    "split": "Split",
+    "calculate": "Calculate"
   },
   "auth": {
     "signIn": "Sign In",
-    "signInDesc": "Welcome back! Please sign in to continue",
     "createAccount": "Create Account",
-    "createAccountDesc": "Join us to start splitting bills with friends",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
     "password": "Password",
@@ -30,8 +19,6 @@
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
     "forgotPassword": "Forgot Password?",
-    "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?",
     "loginError": "An error occurred during login",
     "registerError": "An error occurred during registration",
     "hidePassword": "Hide password",
@@ -62,12 +49,12 @@
     },
     "forgot": {
       "title": "Forgot password?",
-      "desc": "Enter your email and we'll send you a 6-digit code to reset your password.",
+      "desc": "We'll email you a 6-digit code.",
       "send": "Send code"
     },
     "reset": {
       "codeTitle": "Enter the code",
-      "codeDesc": "We sent a 6-digit code to {{email}}. It expires in 15 minutes.",
+      "codeDesc": "Sent to {{email}}",
       "codeLabel": "Verification code",
       "codeSent": "A new code has been sent.",
       "verify": "Continue",
@@ -75,7 +62,6 @@
       "resendIn": "Resend code in {{seconds}}s",
       "changeEmail": "Change email",
       "newPasswordTitle": "Choose a new password",
-      "newPasswordDesc": "Pick a strong password you have not used before.",
       "submit": "Update password",
       "success": "Password updated. You are now signed in.",
       "startOver": "Start over"
@@ -123,7 +109,9 @@
     "done": "Done",
     "clear": "Clear",
     "decrease": "Decrease",
-    "increase": "Increase"
+    "increase": "Increase",
+    "search": "Search",
+    "noResults": "No results"
   },
   "friends": {
     "title": "Friends",
@@ -264,27 +252,27 @@
       "friends": "Friends",
       "groups": "Groups"
     },
-    "recent": "Recent receipts",
+    "recent": "Recent",
     "features": {
       "title": "What you can do"
     },
     "greetingSmall": "Hello,",
     "scanReceipt": "Scan receipt",
     "enterManually": "Enter manually",
-    "attention": "Needs your attention",
+    "attention": "To do",
     "friendRequests_one": "{{count}} friend request",
     "friendRequests_other": "{{count}} friend requests",
     "youOwe": "You owe {{name}}",
     "seeAll": "See all",
     "empty": {
-      "title": "No receipts yet",
-      "message": "Scan a receipt, choose who had what, and everyone sees their share."
+      "title": "No receipts yet"
     },
     "myGroups": "My groups",
     "newGroup": "New group",
     "people_one": "{{count}} person",
     "people_other": "{{count}} people",
-    "yourShare": "you: {{amount}}"
+    "yourShare": "you: {{amount}}",
+    "requests": "Requests"
   },
   "profile": {
     "title": "Profile",
@@ -375,8 +363,8 @@
     "participants": "Participants",
     "itemsSplit": "Items Split",
     "finish": "Finish",
-    "history": "Recent bills",
-    "historyDetails": "Bill details"
+    "history": "Bills",
+    "historyDetails": "Bill"
   },
   "settings": {
     "title": "Settings",
@@ -638,14 +626,15 @@
   "balances": {
     "title": "Balance",
     "none": "—",
-    "allSettled": "You're all settled up.",
+    "allSettled": "All settled",
     "owedToMe": "You are owed",
     "iOwe": "You owe",
     "loadError": "Couldn't load balances.",
     "emptyPeople": "Nobody owes anything right now.",
     "owesYou": "owes you {{amount}}",
     "youOweThem": "you owe {{amount}}",
-    "footer": "Open a receipt to mark shares as paid."
+    "owesYouChip": "Owes you",
+    "receiptHint": "Opens the receipt, where shares are marked as paid"
   },
   "settle": {
     "settled": "Settled",
@@ -654,7 +643,7 @@
     "people": "Shares",
     "footerCreator": "Turn on \"Paid\" when someone has paid you back.",
     "footerParticipant": "Turn on \"Paid\" after you've paid your share.",
-    "paidTheBill": "Paid the bill",
+    "paidTheBill": "Payer",
     "paid": "Paid",
     "notPaid": "Not paid",
     "paidA11y": "{{name}} paid"
@@ -748,9 +737,5 @@
       "invalid": "Group not found.",
       "new": "New QR code"
     }
-  },
-  "history": {
-    "search": "Search receipts or people",
-    "noMatches": "No receipts match your search."
   }
 }

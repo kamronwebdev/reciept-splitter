@@ -71,9 +71,6 @@ export default function ResetPasswordForm() {
           <Text fontSize="$8" fontWeight="900" color="$gray12" textAlign="center">
             {t('auth.reset.newPasswordTitle', 'Choose a new password')}
           </Text>
-          <Text fontSize="$4" color="$gray10" textAlign="center">
-            {t('auth.reset.newPasswordDesc', 'Pick a strong password you have not used before.')}
-          </Text>
         </YStack>
 
         <Card>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Pressable } from 'react-native';
 import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui/typography';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import AppIcon from '@/shared/ui/AppIcon';
 import Money from '@/shared/ui/Money';
+import PressableScale from '@/shared/ui/motion/PressableScale';
 import type { Balances, Money as MoneyT } from '../api/balances.api';
 
 /** "You are owed  9 465 020 so'm" — label shrinks, amounts never wrap (one line per currency). */
@@ -18,7 +18,8 @@ function BalanceLine({ label, list, color }: { label: string; list: MoneyT[]; co
       </Text>
       <YStack ai="flex-end" flexShrink={0}>
         {list.length ? (
-          list.map((m) => <Money key={m.currency} amount={m.amount} currency={m.currency} variant="headline" color={color as any} />)
+          // counts up from 0 the first time, then to each new total
+          list.map((m) => <Money key={m.currency} amount={m.amount} currency={m.currency} variant="headline" color={color as any} animated fromZero />)
         ) : (
           <Text variant="headline" color="$textMuted">
             {t('balances.none')}
@@ -34,7 +35,7 @@ export default function BalanceCard({ data, loading, onPress }: { data: Balances
   const { t } = useTranslation();
   const settled = !!data && !data.owedToMe.length && !data.iOwe.length;
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={t('balances.title')}>
+    <PressableScale onPress={onPress} haptic="select" accessibilityRole="button" accessibilityLabel={t('balances.title')}>
       {({ pressed }) => (
         <YStack backgroundColor="$surface" borderRadius={12} px="$4" py="$3" gap="$2" opacity={pressed ? 0.85 : 1}>
           <XStack ai="center" jc="space-between" minHeight={28}>
@@ -47,9 +48,12 @@ export default function BalanceCard({ data, loading, onPress }: { data: Balances
               <Skeleton width="100%" height={20} />
             </YStack>
           ) : settled ? (
-            <Text variant="subheadline" color="$textMuted">
-              {t('balances.allSettled')}
-            </Text>
+            <XStack ai="center" gap="$2">
+              <AppIcon name="checkCircle" size={18} color="$success" />
+              <Text variant="subheadline" color="$textMuted">
+                {t('balances.allSettled')}
+              </Text>
+            </XStack>
           ) : (
             <YStack gap="$1">
               <BalanceLine label={t('balances.owedToMe')} list={data?.owedToMe ?? []} color="$success" />
@@ -58,6 +62,6 @@ export default function BalanceCard({ data, loading, onPress }: { data: Balances
           )}
         </YStack>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }

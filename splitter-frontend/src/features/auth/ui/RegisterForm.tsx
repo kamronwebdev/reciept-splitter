@@ -137,9 +137,6 @@ export default function RegisterForm() {
           <Text fontSize="$8" fontWeight="900" color="$gray12">
             {t('auth.createAccount', 'Create Account')}
           </Text>
-          <Text fontSize="$4" color="$gray10" textAlign="center">
-            {t('auth.createAccountDesc', 'Join us to start splitting bills with friends')}
-          </Text>
         </YStack>
 
         <Card>
@@ -251,9 +248,6 @@ export default function RegisterForm() {
         </Card>
 
         <YStack alignItems="center" space="$1">
-          <Text fontSize="$3" color="$gray9">
-            {t('auth.haveAccount', 'Already have an account?')}
-          </Text>
           <TextLink title={t('auth.signIn', 'Sign In')} onPress={goLogin} />
         </YStack>
       </YStack>

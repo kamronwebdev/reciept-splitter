@@ -1,9 +1,8 @@
 // app/(tabs)/home/balances.tsx — who owes whom, grouped by person; each receipt opens its detail (Paid toggles).
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { YStack } from 'tamagui';
+import { XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
-import { Text } from '@/shared/ui/typography';
 import Screen from '@/shared/ui/Screen';
 import { ListRow, ListSection } from '@/shared/ui/List';
 import { ListSkeleton } from '@/shared/ui/Skeleton';
@@ -16,6 +15,7 @@ import BalanceCard from '@/features/balances/ui/BalanceCard';
 import { formatMoney } from '@/features/receipt/lib/money';
 import Money from '@/shared/ui/Money';
 import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip from '@/shared/ui/StatusChip';
 
 export default function BalancesScreen() {
   const { t, i18n } = useTranslation();
@@ -44,7 +44,24 @@ export default function BalancesScreen() {
                 left={<UserAvatar uri={p.avatarUrl} label={p.username} seed={p.uniqueId} size={40} textSize={15} />}
                 inset={68}
                 title={p.username}
-                subtitle={[owesMe && t('balances.owesYou', { amount: owesMe }), iOwe && t('balances.youOweThem', { amount: iOwe })].filter(Boolean).join(' · ')}
+                // who owes whom as chips (arrow + color + word), the amounts on the right; the sentence is for screen readers
+                subtitle={
+                  <XStack gap="$1.5" flexWrap="wrap">
+                    {!!owesMe && <StatusChip icon="arrowDownLeft" tone="success" label={t('balances.owesYouChip')} />}
+                    {!!iOwe && <StatusChip icon="arrowUpRight" tone="danger" label={t('balances.iOwe')} />}
+                  </XStack>
+                }
+                right={
+                  <YStack ai="flex-end">
+                    {p.owedToMe.map((m) => (
+                      <Money key={`in-${m.currency}`} amount={m.amount} currency={m.currency} variant="headline" color="$success" animated />
+                    ))}
+                    {p.iOwe.map((m) => (
+                      <Money key={`out-${m.currency}`} amount={m.amount} currency={m.currency} variant="headline" color="$danger" animated />
+                    ))}
+                  </YStack>
+                }
+                accessibilityLabel={[p.username, owesMe && t('balances.owesYou', { amount: owesMe }), iOwe && t('balances.youOweThem', { amount: iOwe })].filter(Boolean).join(', ')}
               />
               {p.receipts.map((r) => (
                 <ListRow
@@ -53,17 +70,13 @@ export default function BalancesScreen() {
                   subtitle={shortDate(r.finalizedAt, i18n.language)}
                   right={<Money amount={r.amount} currency={r.currency} color={r.direction === 'owedToMe' ? '$success' : '$danger'} />}
                   chevron
+                  accessibilityHint={t('balances.receiptHint')}
                   onPress={() => router.push({ pathname: '/home/history/[historyId]', params: { historyId: String(r.sessionId) } })}
                 />
               ))}
             </ListSection>
           );
         })
-      )}
-      {people.length > 0 && (
-        <Text variant="footnote" color="$textMuted" px="$4">
-          {t('balances.footer')}
-        </Text>
       )}
     </Screen>
   );

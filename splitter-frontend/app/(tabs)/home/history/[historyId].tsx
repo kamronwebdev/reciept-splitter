@@ -22,6 +22,7 @@ import CheckToggle from '@/shared/ui/CheckToggle';
 import { dateTime } from '@/shared/lib/utils/time';
 import { errorMessage } from '@/shared/lib/utils/error-message';
 import AppIcon from '@/shared/ui/AppIcon';
+import StatusChip, { IconCount } from '@/shared/ui/StatusChip';
 
 const DETAIL_LIMIT = 50;
 
@@ -97,23 +98,19 @@ export default function ReceiptDetailScreen() {
         <Text variant="title1" accessibilityRole="header">
           {bill.sessionName || t('receipt.summary.untitled', 'Bill')}
         </Text>
-        <Text variant="subheadline" color="$textMuted">
-          {date} · {t('home.people', { count: people.length })}
-        </Text>
+        <XStack ai="center" gap="$2">
+          <Text variant="subheadline" color="$textMuted">
+            {date}
+          </Text>
+          <IconCount icon="friends" count={people.length} label={t('home.people', { count: people.length })} />
+        </XStack>
         <XStack ai="center" gap="$2" pt="$2">
           <Money amount={bill.grandTotal ?? 0} currency={currency} variant="title2" color="$primaryText" ta="left" />
-          {bill.settled && (
-            <XStack ai="center" gap="$1" px="$2.5" py="$1" borderRadius={999} backgroundColor="$primarySoft" accessibilityLabel={t('settle.settled')}>
-              <AppIcon name="checkCircle" size={14} color="$primaryText" />
-              <Text variant="footnote" fontWeight="600" color="$primaryText">
-                {t('settle.settled')}
-              </Text>
-            </XStack>
-          )}
+          {bill.settled && <StatusChip icon="checkCircle" tone="success" label={t('settle.settled')} />}
         </XStack>
       </YStack>
 
-      <ListSection header={t('settle.people')} footer={bill.isCreator ? t('settle.footerCreator') : t('settle.footerParticipant')}>
+      <ListSection header={t('settle.people')}>
         {people.map((p) => {
           const isCreatorRow = p.uniqueId === creatorId;
           const paid = !!payments[p.uniqueId];
@@ -124,14 +121,35 @@ export default function ReceiptDetailScreen() {
               key={p.uniqueId}
               left={<UserAvatar uri={p.avatarUrl} label={p.username} seed={p.uniqueId} size={36} textSize={14} />}
               title={name}
-              // status first (always visible), then what they had
-              subtitle={[isCreatorRow ? t('settle.paidTheBill') : paid ? t('settle.paid') : t('settle.notPaid'), p.items.join(', ')].filter(Boolean).join(' · ')}
-              accessibilityLabel={`${name}, ${formatMoney(p.amount, currency)}`}
+              // status chip first (icon + color + word, always visible), then what they had
+              subtitle={
+                <XStack ai="center" gap="$2" minWidth={0}>
+                  {isCreatorRow ? (
+                    <StatusChip icon="wallet" tone="primary" label={t('settle.paidTheBill')} />
+                  ) : paid ? (
+                    <StatusChip icon="checkCircle" tone="success" label={t('settle.paid')} />
+                  ) : (
+                    <StatusChip icon="pending" tone="warning" label={t('settle.notPaid')} />
+                  )}
+                  {p.items.length > 0 && (
+                    <Text variant="subheadline" color="$textMuted" numberOfLines={1} flexShrink={1}>
+                      {p.items.join(', ')}
+                    </Text>
+                  )}
+                </XStack>
+              }
+              accessibilityLabel={[name, isCreatorRow ? t('settle.paidTheBill') : paid ? t('settle.paid') : t('settle.notPaid'), formatMoney(p.amount, currency), p.items.join(', ')].filter(Boolean).join(', ')}
               right={
                 <>
                   <Money amount={p.amount} currency={currency} variant="body" fontWeight="600" />
                   {canToggle && (
-                    <CheckToggle value={paid} onChange={(v) => toggle(p.uniqueId, v)} disabled={setPaid.isPending} accessibilityLabel={t('settle.paidA11y', { name })} />
+                    <CheckToggle
+                      value={paid}
+                      onChange={(v) => toggle(p.uniqueId, v)}
+                      disabled={setPaid.isPending}
+                      accessibilityLabel={t('settle.paidA11y', { name })}
+                      accessibilityHint={bill.isCreator ? t('settle.footerCreator') : t('settle.footerParticipant')}
+                    />
                   )}
                 </>
               }

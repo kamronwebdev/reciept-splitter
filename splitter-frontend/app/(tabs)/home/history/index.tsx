@@ -57,14 +57,14 @@ export default function HistoryScreen() {
         <ListSkeleton rows={5} avatar={false} />
       ) : sessions.length === 0 ? (
         <YStack backgroundColor="$surface" borderRadius={16}>
-          <EmptyState icon={<AppIcon name="receipt" size={28} color="$textMuted" />} title={t('home.empty.title')} message={t('home.empty.message')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
+          <EmptyState icon={<AppIcon name="receipt" size={28} color="$textMuted" />} title={t('home.empty.title')} actionLabel={t('home.scanReceipt')} onAction={openScanner} />
         </YStack>
       ) : (
         <>
-          <SearchField value={query} onChangeText={setQuery} placeholder={t('history.search')} clearLabel={t('common.clear')} />
+          <SearchField value={query} onChangeText={setQuery} placeholder={t('common.search')} clearLabel={t('common.clear')} />
           {visible.length === 0 ? (
             <Text variant="subheadline" color="$textMuted" ta="center">
-              {t('history.noMatches')}
+              {t('common.noResults')}
             </Text>
           ) : (
             <ListSection>

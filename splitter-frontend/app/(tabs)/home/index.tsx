@@ -1,6 +1,6 @@
 // app/(tabs)/home/index.tsx — Home: greeting + bell, balances, scan, things that need you, recent receipts, groups.
 import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -11,6 +11,8 @@ import { Text } from '@/shared/ui/typography';
 import { Button } from '@/shared/ui/Button';
 import Screen from '@/shared/ui/Screen';
 import { HeaderLink, ListRow, ListSection, IconTile } from '@/shared/ui/List';
+import StatusChip from '@/shared/ui/StatusChip';
+import { Appear, PressableScale } from '@/shared/ui/motion';
 import { ListSkeleton } from '@/shared/ui/Skeleton';
 import EmptyState from '@/shared/ui/EmptyState';
 import UserAvatar from '@/shared/ui/UserAvatar';
@@ -27,6 +29,7 @@ import { useUnreadCount, notificationKeys } from '@/features/notifications/model
 import { useReceiptLauncher } from '@/features/receipt/model/launcher';
 import ReceiptRow from '@/features/sessions/ui/ReceiptRow';
 import Money from '@/shared/ui/Money';
+import { formatMoney } from '@/features/receipt/lib/money';
 
 const RECENT = 5;
 
@@ -81,9 +84,9 @@ export default function HomeScreen() {
     <Screen refreshing={refreshing} onRefresh={refresh} contentContainerStyle={{ paddingTop: insets.top + 8 }}>
       {/* header: greeting, avatar, bell */}
       <XStack ai="center" gap="$3">
-        <Pressable onPress={() => router.navigate('/profile')} accessibilityRole="button" accessibilityLabel={t('profile.title')}>
+        <PressableScale scaleTo={0.92} onPress={() => router.navigate('/profile')} accessibilityRole="button" accessibilityLabel={t('profile.title')}>
           <UserAvatar uri={me?.avatarUrl} label={name} seed={me?.uniqueId} size={44} textSize={17} />
-        </Pressable>
+        </PressableScale>
         <YStack f={1}>
           <Text variant="footnote" color="$textMuted">
             {t('home.greetingSmall')}
@@ -92,7 +95,8 @@ export default function HomeScreen() {
             {name}
           </Text>
         </YStack>
-        <Pressable
+        <PressableScale
+          scaleTo={0.9}
           onPress={() => router.push('/home/notifications')}
           hitSlop={8}
           accessibilityRole="button"
@@ -105,15 +109,19 @@ export default function HomeScreen() {
               <CountBadge count={unread} />
             </YStack>
           )}
-        </Pressable>
+        </PressableScale>
       </XStack>
 
-      <BalanceCard data={balances.data} loading={balances.isLoading} onPress={() => router.push('/home/balances')} />
+      <Appear index={0}>
+        <BalanceCard data={balances.data} loading={balances.isLoading} onPress={() => router.push('/home/balances')} />
+      </Appear>
 
-      <YStack gap="$2">
-        <Button title={t('home.scanReceipt')} size="large" icon={<AppIcon name="scan" size={22} color="$onPrimary" />} onPress={openScanner} />
-        <Button title={t('home.enterManually')} variant="plain" onPress={() => void enterManually()} loading={manualBusy} />
-      </YStack>
+      <Appear index={1}>
+        <YStack gap="$2">
+          <Button title={t('home.scanReceipt')} size="large" icon={<AppIcon name="scan" size={22} color="$onPrimary" />} onPress={openScanner} />
+          <Button title={t('home.enterManually')} variant="plain" onPress={() => void enterManually()} loading={manualBusy} />
+        </YStack>
+      </Appear>
 
       {showAttention && (
         <ListSection header={t('home.attention')}>
@@ -125,7 +133,8 @@ export default function HomeScreen() {
                   <AppIcon name="userAdd" size={20} color="$primaryText" />
                 </IconTile>
               }
-              title={t('home.friendRequests', { count: incoming })}
+              title={t('home.requests')}
+              accessibilityLabel={t('home.friendRequests', { count: incoming })}
               right={<CountBadge count={incoming} />}
               chevron
               onPress={() => router.navigate('/friends/requests')}
@@ -135,7 +144,9 @@ export default function HomeScreen() {
             <ListRow
               key={`owe-${p.uniqueId}`}
               left={<UserAvatar uri={p.avatarUrl} label={p.username} seed={p.uniqueId} size={30} textSize={12} />}
-              title={t('home.youOwe', { name: p.username })}
+              title={p.username}
+              subtitle={<StatusChip icon="arrowUpRight" tone="danger" label={t('balances.iOwe')} />}
+              accessibilityLabel={`${t('home.youOwe', { name: p.username })}, ${p.iOwe.map((m) => formatMoney(m.amount, m.currency)).join(', ')}`}
               right={
                 <YStack ai="flex-end">
                   {p.iOwe.map((m) => (
@@ -163,7 +174,6 @@ export default function HomeScreen() {
           <EmptyState
             icon={<AppIcon name="receipt" size={28} color="$textMuted" />}
             title={t('home.empty.title')}
-            message={t('home.empty.message')}
             actionLabel={t('home.scanReceipt')}
             onAction={openScanner}
           />
@@ -182,7 +192,7 @@ export default function HomeScreen() {
           {t('home.myGroups')}
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 16, paddingHorizontal: 4, paddingVertical: 4 }}>
-          <Pressable onPress={() => router.navigate('/groups/create')} accessibilityRole="button" accessibilityLabel={t('home.newGroup')}>
+          <PressableScale onPress={() => router.navigate('/groups/create')} accessibilityRole="button" accessibilityLabel={t('home.newGroup')}>
             <YStack ai="center" gap="$1.5" width={72}>
               <YStack width={56} height={56} borderRadius={28} ai="center" jc="center" backgroundColor="$primarySoft">
                 <AppIcon name="plus" size={24} color="$primaryText" />
@@ -191,16 +201,18 @@ export default function HomeScreen() {
                 {t('home.newGroup')}
               </Text>
             </YStack>
-          </Pressable>
-          {groups.map((g) => (
-            <Pressable key={g.id} onPress={() => router.navigate({ pathname: '/groups/[groupId]', params: { groupId: String(g.id) } })} accessibilityRole="button" accessibilityLabel={g.name}>
+          </PressableScale>
+          {groups.map((g, i) => (
+            <PressableScale key={g.id} onPress={() => router.navigate({ pathname: '/groups/[groupId]', params: { groupId: String(g.id) } })} accessibilityRole="button" accessibilityLabel={g.name}>
+              <Appear index={i + 1}>
               <YStack ai="center" gap="$1.5" width={72}>
                 <UserAvatar label={g.name} seed={`group-${g.id}`} size={56} textSize={20} />
                 <Text variant="caption" numberOfLines={1} ta="center">
                   {g.name}
                 </Text>
               </YStack>
-            </Pressable>
+              </Appear>
+            </PressableScale>
           ))}
         </ScrollView>
       </YStack>

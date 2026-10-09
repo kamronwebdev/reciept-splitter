@@ -5,23 +5,12 @@
   },
   "features": {
     "scan": "スキャン",
-    "scanDesc": "レシートを撮影しましょう",
     "split": "割り勘",
-    "splitDesc": "友だちと費用を分ける",
-    "calculate": "計算",
-    "calculateDesc": "誰がいくら支払うかを把握"
-  },
-  "welcome": {
-    "message": "ようこそ！さっそく始めましょう",
-    "newUser": "レシートスプリッターは初めてですか？",
-    "newUserDesc": "アカウントを作成して割り勘を始めましょう",
-    "existingUser": "すでにアカウントをお持ちですか？"
+    "calculate": "計算"
   },
   "auth": {
     "signIn": "ログイン",
-    "signInDesc": "お帰りなさい！ログインして続けてください",
     "createAccount": "アカウントを作成",
-    "createAccountDesc": "友だちと割り勘を始めましょう",
     "email": "メールアドレス",
     "emailPlaceholder": "メールアドレスを入力",
     "password": "パスワード",
@@ -30,8 +19,6 @@
     "username": "ユーザー名",
     "usernamePlaceholder": "ユーザー名を入力",
     "forgotPassword": "パスワードをお忘れですか？",
-    "noAccount": "アカウントをお持ちでないですか？",
-    "haveAccount": "すでにアカウントをお持ちですか？",
     "loginError": "ログイン中にエラーが発生しました",
     "registerError": "登録中にエラーが発生しました",
     "hidePassword": "パスワードを隠す",
@@ -62,12 +49,12 @@
     },
     "forgot": {
       "title": "パスワードをお忘れですか？",
-      "desc": "メールアドレスを入力してください。パスワード再設定用の6桁のコードを送信します。",
+      "desc": "6桁のコードをメールで送ります。",
       "send": "コードを送信"
     },
     "reset": {
       "codeTitle": "コードを入力",
-      "codeDesc": "{{email}} に6桁のコードを送信しました。有効期限は15分です。",
+      "codeDesc": "{{email}} に送信しました",
       "codeLabel": "認証コード",
       "codeSent": "新しいコードを送信しました。",
       "verify": "続ける",
@@ -75,7 +62,6 @@
       "resendIn": "{{seconds}}秒後に再送信できます",
       "changeEmail": "メールアドレスを変更",
       "newPasswordTitle": "新しいパスワードを設定",
-      "newPasswordDesc": "以前に使っていない強力なパスワードを選んでください。",
       "submit": "パスワードを更新",
       "success": "パスワードを更新しました。ログインしました。",
       "startOver": "最初からやり直す"
@@ -123,7 +109,9 @@
     "done": "完了",
     "clear": "クリア",
     "decrease": "減らす",
-    "increase": "増やす"
+    "increase": "増やす",
+    "search": "検索",
+    "noResults": "見つかりません"
   },
   "friends": {
     "title": "友だち",
@@ -263,25 +251,25 @@
       "friends": "友だち",
       "groups": "グループ"
     },
-    "recent": "最近のレシート",
+    "recent": "最近",
     "features": {
       "title": "できること"
     },
     "greetingSmall": "こんにちは、",
     "scanReceipt": "レシートをスキャン",
     "enterManually": "手入力",
-    "attention": "確認が必要",
+    "attention": "やること",
     "friendRequests_other": "友達リクエスト{{count}}件",
     "youOwe": "{{name}}さんへの支払い",
     "seeAll": "すべて",
     "empty": {
-      "title": "まだレシートがありません",
-      "message": "レシートをスキャンして、誰が何を頼んだか選ぶだけで、みんなの負担額がわかります。"
+      "title": "まだレシートがありません"
     },
     "myGroups": "マイグループ",
     "newGroup": "新規グループ",
     "people_other": "{{count}}人",
-    "yourShare": "あなた：{{amount}}"
+    "yourShare": "あなた：{{amount}}",
+    "requests": "リクエスト"
   },
   "profile": {
     "title": "プロフィール",
@@ -372,8 +360,8 @@
     "participants": "参加者",
     "itemsSplit": "アイテムの分割",
     "finish": "完了",
-    "history": "最近の明細",
-    "historyDetails": "明細の詳細"
+    "history": "明細一覧",
+    "historyDetails": "明細"
   },
   "settings": {
     "title": "設定",
@@ -632,14 +620,15 @@
   "balances": {
     "title": "残高",
     "none": "—",
-    "allSettled": "精算はすべて完了しています。",
+    "allSettled": "貸し借りなし",
     "owedToMe": "受け取る額",
     "iOwe": "支払う額",
     "loadError": "残高を読み込めませんでした。",
     "emptyPeople": "現在、未払いはありません。",
     "owesYou": "あなたに{{amount}}",
     "youOweThem": "あなたが{{amount}}",
-    "footer": "レシートを開いて支払い済みにできます。"
+    "owesYouChip": "受け取る額",
+    "receiptHint": "レシートを開いて支払い済みにできます"
   },
   "settle": {
     "settled": "精算済み",
@@ -648,7 +637,7 @@
     "people": "負担額",
     "footerCreator": "返金を受け取ったら「支払い済み」をオンにします。",
     "footerParticipant": "自分の分を支払ったら「支払い済み」をオンにします。",
-    "paidTheBill": "会計を支払った人",
+    "paidTheBill": "立替",
     "paid": "支払い済み",
     "notPaid": "未払い",
     "paidA11y": "{{name}}さんが支払い済み"
@@ -740,9 +729,5 @@
       "invalid": "グループが見つかりません。",
       "new": "新しいQRコード"
     }
-  },
-  "history": {
-    "search": "レシートや人を検索",
-    "noMatches": "一致するレシートはありません。"
   }
 }

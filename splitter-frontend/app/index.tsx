@@ -109,15 +109,9 @@ export default function Welcome() {
 
       {/* actions: one primary, one secondary, both full width */}
       <YStack gap="$3">
-        <Text variant="headline" ta="center">
-          {t('welcome.message', "Welcome! Let's get started")}
-        </Text>
         <Link href="/register" asChild>
           <Button title={t('auth.createAccount', 'Create Account')} variant="primary" size="large" />
         </Link>
-        <Text variant="footnote" color="$textMuted" ta="center" pt="$2">
-          {t('welcome.existingUser', 'Already have an account?')}
-        </Text>
         <Link href="/login" asChild>
           <Button title={t('auth.signIn', 'Sign In')} variant="outline" size="large" />
         </Link>
