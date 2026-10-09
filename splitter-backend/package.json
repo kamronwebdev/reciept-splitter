@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --loader ts-node/esm -r dotenv/config src/server.ts",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "start": "tsx --env-file-if-exists=.env src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start:prod": "node dist/server.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "start:ts-node": "node --loader ts-node/esm -r dotenv/config src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -25,15 +27,17 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.899.0",
     "@aws-sdk/s3-request-presigner": "^3.899.0",
-    "@prisma/client": "^6.16.2",
     "@google/generative-ai": "^0.21.0",
+    "@prisma/client": "^6.16.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.7.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
+    "resend": "^6.32.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
@@ -50,6 +54,7 @@
     "prisma": "^6.15.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.2"
   }
 }

@@ -73,9 +73,15 @@ export const GroupsApi = {
     return data as { token: string; url: string; expiresAt: string };
   },
 
-  /** POST /groups/join { token } -> 200 */
-  async joinByToken(token: string) {
+  /** POST /groups/join { token } -> joined / already a member / own group (+ group name) */
+  async joinByToken(token: string): Promise<GroupJoinResult> {
     const { data } = await apiClient.post('/groups/join', { token });
-    return data;
+    return {
+      joined: !!data?.joined,
+      member: data?.member === 'created' || data?.member === 'owner' ? data.member : 'existing',
+      groupName: typeof data?.group?.name === 'string' ? data.group.name : null,
+    };
   },
 };
+
+export type GroupJoinResult = { joined: boolean; member: 'created' | 'existing' | 'owner'; groupName: string | null };

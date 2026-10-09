@@ -37,8 +37,10 @@ export type SessionHistoryPayload = {
   totals: {
     byItem: SessionHistoryTotalsByItem[];
     grandTotal: number;
+    currency?: string;
     byParticipant: SessionHistoryTotalsByParticipant[];
   };
+  currency?: string;
   createdAt: string; // ISO
   sessionId: number;
   allocations: SessionHistoryAllocation[];
@@ -52,9 +54,14 @@ export interface SessionHistoryEntryRaw {
   sessionName: string;
   finalizedAt: string;
   grandTotal: number;
+  currency?: string;
   participantUniqueIds: string[];
   isCreator: boolean;
   payload: SessionHistoryPayload;
+  /** settle up: uniqueId -> paidAt (null = unpaid); the creator is never listed */
+  payments?: Record<string, string | null>;
+  settled?: boolean;
+  creatorUniqueId?: string | null;
 }
 
 /** Облегчённый вид участника для UI */
@@ -71,6 +78,7 @@ export interface SessionHistoryEntry {
   finalizedAt?: string;
   createdAt?: string;
   grandTotal: number;
+  currency?: string;
 
   participantUniqueIds: string[];
 
@@ -80,6 +88,9 @@ export interface SessionHistoryEntry {
 
   isCreator: boolean;
   payload: SessionHistoryPayload;
+  payments: Record<string, string | null>;
+  settled: boolean;
+  creatorUniqueId: string | null;
 }
 
 /** Сырой ответ всего списка */
@@ -94,14 +105,13 @@ const HISTORY_ENDPOINT = '/sessions/history';
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 5;
 
+import { DEBUG_API } from '@/shared/api/debug';
+
 let currentRequest: AbortController | null = null;
 let isLoading = false;
 
 /** ===== Debug helpers ===== */
-const DEBUG_HISTORY =
-  (typeof __DEV__ !== 'undefined' && __DEV__) ||
-  process.env.EXPO_PUBLIC_DEBUG_HISTORY === '1' ||
-  process.env.NODE_ENV === 'development';
+const DEBUG_HISTORY = DEBUG_API;
 
 const safeStringify = (obj: any) => {
   try {

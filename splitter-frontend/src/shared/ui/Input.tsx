@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
 import { TextInputProps } from 'react-native';
-import { YStack, XStack, Text, Input as TInput } from 'tamagui';
+import { YStack, XStack, Input as TInput } from 'tamagui';
+import { Text, useTextStyle } from '@/shared/ui/typography';
+import { CONTROL_HEIGHT, RADIUS } from '@/shared/theme/spacing';
 
 export type CustomInputProps = {
   label?: string;
@@ -12,6 +14,11 @@ export type CustomInputProps = {
   secureTextEntry?: boolean;
   error?: string;
   required?: boolean;
+  /** small helper text under the field (hidden while an error is shown) */
+  hint?: string;
+  accessibilityLabel?: string;
+  /** ref to the underlying TextInput (for focus chaining) */
+  inputRef?: React.Ref<any>;
 
   /** Иконка/кнопка справа (например, «глаз»). */
   rightAdornment?: ReactNode;
@@ -30,58 +37,65 @@ export function Input({
   secureTextEntry,
   error,
   required,
+  hint,
+  accessibilityLabel,
+  inputRef,
   rightAdornment,
   textInputProps,
 }: CustomInputProps) {
+  const inputFont = useTextStyle(400, 17);
   return (
-    <YStack space="$2" w="100%">
+    <YStack gap="$2" w="100%">
       {!!label && (
-        <Text fontSize="$3" fontWeight="600" color="$gray11">
+        <Text variant="subheadline" fontWeight="600" color="$textMuted">
           {label}
-          {required && <Text color="$red10"> *</Text>}
+          {required && <Text color="$danger"> *</Text>}
         </Text>
       )}
 
-      <XStack position="relative" w="100%">
+      {/* fixed 50pt field; the adornment (eye / clear) sits on the same vertical axis as the text */}
+      <XStack position="relative" w="100%" ai="center">
         <TInput
-          w="100%"      // >>> всегда на полную ширину строки
-          f={1}         // >>> растягивается внутри строки
+          ref={inputRef as any}
+          accessibilityLabel={accessibilityLabel ?? label ?? placeholder}
+          w="100%"
+          f={1}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           secureTextEntry={secureTextEntry}
-          // запас под адорнмент справа
-          paddingRight={rightAdornment ? 44 : undefined}
-          borderRadius="$4"
+          height={CONTROL_HEIGHT.input}
+          px="$4"
+          paddingRight={rightAdornment ? 52 : undefined}
+          borderRadius={RADIUS.control}
           borderWidth={1}
-          borderColor={error ? '$red8' : '$gray7'}
-          backgroundColor="$white1"
-          height="$4"
-          fontSize="$4"
-          focusStyle={{ borderColor: error ? '$red8' : '$green9' }}
+          borderColor={error ? '$danger' : '$borderColor'}
+          backgroundColor="$surface"
+          fontSize={inputFont.fontSize}
+          fontFamily={(inputFont as any).fontFamily}
+          color="$color"
+          placeholderTextColor="$textSubtle"
+          focusStyle={{ borderColor: error ? '$danger' : '$primary' }}
           {...textInputProps}
         />
 
         {rightAdornment && (
-          <XStack
-            position="absolute"
-            right={8}
-            top={0}
-            bottom={0}
-            ai="center"
-            jc="center"
-            pointerEvents="box-none"
-          >
+          <XStack position="absolute" right={4} top={0} bottom={0} width={44} ai="center" jc="center" pointerEvents="box-none">
             {rightAdornment}
           </XStack>
         )}
       </XStack>
 
       {!!error && (
-        <Text fontSize="$3" color="$red10">
+        <Text variant="footnote" color="$danger" accessibilityRole="alert">
           {error}
+        </Text>
+      )}
+      {!error && !!hint && (
+        <Text variant="footnote" color="$textMuted">
+          {hint}
         </Text>
       )}
     </YStack>
