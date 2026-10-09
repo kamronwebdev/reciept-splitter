@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
-import { XStack, Paragraph, Button } from 'tamagui';
+import { XStack } from 'tamagui';
+import { Paragraph, Button } from '@/shared/ui/typography';
 
 type Props = { label?: string; value: string };
 

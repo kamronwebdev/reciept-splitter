@@ -5,177 +5,676 @@
   },
   "features": {
     "scan": "Chek skanerlash",
-    "scanDesc": "Cheklaringizni suratga oling",
-    "split": "Pulni bo'lish",
-    "splitDesc": "Do'stlar bilan xarajatni taqsimlang",
-    "calculate": "Avtomatik hisoblash",
-    "calculateDesc": "Kim qancha to'lashini biling"
-  },
-  "welcome": {
-    "message": "Xush kelibsiz! Boshlaymiz",
-    "newUser": "Chek Bo'lishda yangimisiz?",
-    "newUserDesc": "Hisob yarating va pulni bo'lishni boshlang",
-    "existingUser": "Hisobingiz bormi?"
+    "split": "Bo'lish",
+    "calculate": "Avtomatik hisoblash"
   },
   "auth": {
     "signIn": "Kirish",
-    "signInDesc": "Xush kelibsiz! Davom etish uchun tizimga kiring",
     "createAccount": "Hisob yaratish",
-    "createAccountDesc": "Do'stlar bilan hisob-kitobni hoziroq boshlang",
     "email": "Email",
     "emailPlaceholder": "Email kiriting",
     "password": "Parol",
     "passwordPlaceholder": "Parolingizni kiriting",
-    "confirmPassword": "Parolni tasdiqlash",
     "username": "Foydalanuvchi nomi",
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
-    "noAccount": "Hisobingiz yo'qmi?",
-    "haveAccount": "Hisobingiz bormi?"
+    "hidePassword": "Parolni yashirish",
+    "showPassword": "Parolni ko'rsatish",
+    "clearEmail": "Emailni tozalash",
+    "didYouMeanPrefix": "Shuni nazarda tutdingizmi:",
+    "didYouMean": "Shuni nazarda tutdingizmi: {{email}}?",
+    "passwordRequirements": "Parol talablari",
+    "ruleMet": "bajarilgan",
+    "ruleNotMet": "bajarilmagan",
+    "passwordRules": {
+      "length": "Kamida 8 ta belgi",
+      "upper": "Bitta bosh harf",
+      "lower": "Bitta kichik harf",
+      "number": "Bitta raqam",
+      "special": "Bitta maxsus belgi"
+    },
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "Parol o'ylab toping",
+    "usernameRule": "2-30 ta belgi",
+    "logInInstead": "Kirish sahifasiga o'tish",
+    "backToLogin": "Kirishga qaytish",
+    "sessionExpired": "Sessiyangiz tugadi, qaytadan kiring",
+    "logout": {
+      "title": "Chiqasizmi?",
+      "message": "Ilovadan foydalanish uchun qaytadan kirishingiz kerak bo'ladi.",
+      "confirm": "Chiqish"
+    },
+    "forgot": {
+      "title": "Parolni unutdingizmi?",
+      "desc": "Emailingizga 6 xonali kod yuboramiz.",
+      "send": "Kod yuborish"
+    },
+    "reset": {
+      "codeTitle": "Kodni kiriting",
+      "codeDesc": "{{email}} manziliga yuborildi",
+      "codeLabel": "Tasdiqlash kodi",
+      "codeSent": "Yangi kod yuborildi.",
+      "verify": "Davom etish",
+      "resend": "Kodni qayta yuborish",
+      "resendIn": "Kodni qayta yuborish: {{seconds}} soniya",
+      "changeEmail": "Emailni o'zgartirish",
+      "newPasswordTitle": "Yangi parol tanlang",
+      "submit": "Parolni yangilash",
+      "success": "Parol yangilandi. Siz tizimga kirdingiz.",
+      "startOver": "Boshidan boshlash"
+    },
+    "errors": {
+      "emailRequired": "Emailni kiriting",
+      "passwordRequired": "Parolni kiriting",
+      "NETWORK": "Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "VALIDATION_ERROR": "Kiritilgan ma'lumotlarni tekshiring.",
+      "INVALID_EMAIL": "To'g'ri email kiriting",
+      "INVALID_USERNAME": "Foydalanuvchi nomi 2-30 ta belgidan iborat bo'lishi kerak",
+      "EMAIL_IN_USE": "Bu email allaqachon ro'yxatdan o'tgan",
+      "INVALID_CREDENTIALS": "Email yoki parol noto'g'ri",
+      "WEAK_PASSWORD": "Parol talablarga javob bermaydi",
+      "INVALID_CODE": "Kod noto'g'ri. Qayta urinib ko'ring.",
+      "CODE_EXPIRED": "Kod muddati tugagan. Yangi kod so'rang.",
+      "TOO_MANY_ATTEMPTS": "Juda ko'p noto'g'ri urinish. Yangi kod so'rang.",
+      "INVALID_RESET_TOKEN": "Tiklash sessiyasi tugagan. Boshidan boshlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Davom etish uchun tizimga kiring.",
+      "TOKEN_EXPIRED": "Sessiyangiz tugadi, qaytadan kiring",
+      "TOKEN_INVALID": "Sessiyangiz tugadi, qaytadan kiring",
+      "SESSION_REVOKED": "Sessiyangiz tugadi, qaytadan kiring",
+      "USER_NOT_FOUND": "Hisob topilmadi",
+      "WRONG_CURRENT_PASSWORD": "Joriy parol noto'g'ri",
+      "SERVER_ERROR": "Server xatosi. Keyinroq qayta urinib ko'ring.",
+      "FILE_TOO_LARGE": "Rasm hajmi juda katta. Kichikroq rasm tanlang.",
+      "UNSUPPORTED_TYPE": "Bu rasm formati qo'llab-quvvatlanmaydi.",
+      "FILE_REQUIRED": "Rasm tanlang.",
+      "INVALID_PASSWORD": "Parol noto'g'ri"
+    }
   },
   "common": {
-    "welcome": "Xush kelibsiz",
-    "loading": "Yuklanmoqda...",
-    "error": "Xato",
-    "success": "Muvaffaqiyat",
     "cancel": "Bekor qilish",
-    "confirm": "Tasdiqlash",
-    "continue": "Davom etish",
-    "back": "Orqaga"
+    "back": "Orqaga",
+    "retry": "Qayta urinish",
+    "close": "Yopish",
+    "done": "Tayyor",
+    "clear": "Tozalash",
+    "decrease": "Kamaytirish",
+    "increase": "Ko'paytirish",
+    "search": "Qidirish",
+    "noResults": "Hech narsa topilmadi",
+    "save": "Saqlash"
   },
   "home": {
     "header": {
-      "greeting": "Salom, {{name}}!",
       "friendFallback": "do'stim"
     },
-    "scan": {
-      "cta": "Taklifni skanerlang"
+    "recent": "So'nggi",
+    "greetingSmall": "Salom,",
+    "scanReceipt": "Chekni skanerlash",
+    "enterManually": "Qo'lda kiritish",
+    "attention": "Bajarish kerak",
+    "friendRequests_one": "{{count}} ta do'stlik so'rovi",
+    "friendRequests_other": "{{count}} ta do'stlik so'rovi",
+    "youOwe": "{{name}}ga qarzingiz bor",
+    "seeAll": "Hammasi",
+    "empty": {
+      "title": "Hali cheklar yo'q"
     },
-    "actions": {
-      "friends": "Do'stlar",
-      "groups": "Guruhlar"
-    },
-    "recent": {
-      "title": "So'nggi hisoblar",
-      "showMore": "Ko'proq ko'rish",
-      "loading": "Hisoblar yuklanmoqda...",
-      "empty": "Hali hisoblar mavjud emas",
-      "summary": "{{date}} • {{participants}}",
-      "fallbackName": "Hisob",
-      "participants": "{{count}} ishtirokchi",
-      "participants_one": "{{count}} ishtirokchi",
-      "participants_other": "{{count}} ishtirokchi",
-      "amount": "{{currency}} {{amount}}"
-    },
-    "features": {
-      "title": "Nimalar qilishingiz mumkin"
-    }
+    "myGroups": "Guruhlarim",
+    "newGroup": "Yangi guruh",
+    "people_one": "{{count}} kishi",
+    "people_other": "{{count}} kishi",
+    "yourShare": "siz: {{amount}}",
+    "requests": "So'rovlar"
   },
   "profile": {
     "title": "Profil",
-    "status": {
-      "saved": "Saqlandi"
-    },
-    "actions": {
-      "copy": "Nusxa olish"
-    },
     "labels": {
-      "guest": "Mehmon",
-      "notAvailable": "Mavjud emas"
+      "guest": "Mehmon"
+    },
+    "header": {
+      "copyId": "ID ni nusxalash",
+      "copied": "Nusxalandi",
+      "shareQr": "Mening QR",
+      "idLabel": "ID"
     },
     "avatar": {
-      "title": "Avatar",
-      "hint": "Yuklangan avatarlar bizning CDN orqali darhol yangilanadi.",
-      "upload": "Telefoningizdan yuklash",
-      "uploading": "Yuklanmoqda...",
-      "reset": "Avatarni tiklash",
-      "resetting": "Tiklanmoqda..."
+      "change": "Profil rasmini o'zgartirish",
+      "sheetTitle": "Profil rasmi",
+      "takePhoto": "Rasmga olish",
+      "chooseLibrary": "Galereyadan tanlash",
+      "remove": "Rasmni o'chirish",
+      "cancel": "Bekor qilish",
+      "uploading": "Yuklanmoqda…",
+      "updated": "Profil rasmi yangilandi",
+      "removed": "Profil rasmi o'chirildi",
+      "cameraBlockedTitle": "Kameraga ruxsat berilmagan",
+      "photosBlockedTitle": "Rasmlarga ruxsat berilmagan",
+      "blockedBody": "Telefon sozlamalarida ruxsat bering, so'ng qayta urinib ko'ring.",
+      "openSettings": "Sozlamalarni ochish",
+      "pickFailed": "Rasmni o'qib bo'lmadi. Boshqa rasm tanlang."
     },
-    "info": {
-      "title": "Foydalanuvchi ma'lumotlari",
-      "usernameLabel": "Foydalanuvchi nomi",
-      "usernamePlaceholder": "Yangi foydalanuvchi nomini kiriting",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Yangi email kiriting",
-      "userId": "Foydalanuvchi ID"
+    "stats": {
+      "sessions": "Hisoblar",
+      "friends": "Do'stlar",
+      "groups": "Guruhlar"
+    },
+    "username": {
+      "label": "Foydalanuvchi nomi",
+      "edit": "Nomni tahrirlash",
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "rule": "2-30 ta belgi",
+      "updated": "Foydalanuvchi nomi yangilandi"
+    },
+    "email": {
+      "title": "Email",
+      "newEmail": "Yangi email",
+      "currentPassword": "Joriy parol",
+      "submit": "Emailni yangilash",
+      "updated": "Email yangilandi",
+      "same": "Bu allaqachon sizning emailingiz"
     },
     "password": {
-      "title": "Parolni o'zgartirish",
-      "currentLabel": "Joriy parol",
-      "currentPlaceholder": "Joriy parolni kiriting",
-      "newLabel": "Yangi parol",
-      "newPlaceholder": "Yangi parolni kiriting",
-      "confirmLabel": "Yangi parolni tasdiqlang",
-      "confirmPlaceholder": "Yangi parolni qayta kiriting",
-      "requirements": "Parol kamida 8 ta belgi bo'lib, katta va kichik harf, raqam va maxsus belgini o'z ichiga olishi kerak.",
-      "submit": "Parolni o'zgartirish",
-      "updating": "Yangilanmoqda..."
+      "title": "Parol",
+      "current": "Joriy parol",
+      "new": "Yangi parol",
+      "submit": "Parolni yangilash",
+      "updated": "Parol yangilandi. Boshqa qurilmalardan chiqarildi.",
+      "same": "Boshqa parol tanlang"
+    },
+    "danger": {
+      "title": "Xavfli hudud",
+      "delete": "Hisobni o'chirish",
+      "warning": "Hisobingiz, yaratgan hisoblaringiz, guruhlaringiz va do'stlaringiz o'chiriladi. Buni qaytarib bo'lmaydi.",
+      "passwordLabel": "Tasdiqlash uchun parolni kiriting",
+      "confirm": "Hisobimni o'chirish"
     },
     "logout": "Chiqish",
-    "copy": {
-      "successTitle": "Nusxa olindi",
-      "successMessage": "{{field}} almashish buferiga nusxalandi.",
-      "unavailableMessage": "{{field}} hali mavjud emas."
-    },
-    "alerts": {
-      "permissionTitle": "Ruxsat kerak",
-      "permissionMessage": "Avatar tanlash uchun galereyaga kirishga ruxsat bering.",
-      "unavailableTitle": "Mavjud emas",
-      "avatarLoginRequired": "Avatarni yangilash uchun tizimga kiring.",
-      "profileLoginRequired": "Profilni yangilash uchun tizimga kiring.",
-      "passwordLoginRequired": "Parolni o'zgartirish uchun tizimga kiring.",
-      "avatarUpdateFailed": "Avatarni yangilab bo'lmadi.",
-      "avatarResetFailed": "Avatarni tiklab bo'lmadi.",
-      "usernameUpdateFailed": "Foydalanuvchi nomini yangilab bo'lmadi.",
-      "emailUpdateFailed": "Emailni yangilab bo'lmadi.",
-      "passwordChangeFailed": "Parolni o'zgartirib bo'lmadi.",
-      "logoutFailed": "Chiqib bo'lmadi. Iltimos, yana urinib ko'ring.",
-      "imageMissing": "Rasm faylining URI topilmadi.",
-      "uploadReadFailed": "Tanlangan faylni o'qib bo'lmadi."
-    },
-    "validation": {
-      "usernameRequired": "Foydalanuvchi nomini kiriting.",
-      "usernameMin": "Foydalanuvchi nomi kamida 2 ta belgidan iborat bo'lishi kerak.",
-      "emailRequired": "Email kiriting.",
-      "emailInvalid": "Yaroqli email kiriting.",
-      "passwordCurrent": "Joriy parolni kiriting.",
-      "passwordLength": "Yangi parol kamida 8 ta belgi bo'lishi kerak.",
-      "passwordComplexity": "Parolda katta va kichik harf, raqam va maxsus belgi bo'lishi kerak.",
-      "passwordMismatch": "Parollar mos emas.",
-      "passwordDifferent": "Boshqa parol tanlang."
-    }
+    "refreshFailed": "Profilni yangilab bo'lmadi. Qayta urinish uchun pastga torting.",
+    "change": "O'zgartirish"
   },
   "navigation": {
-    "mainMenu": "Bosh menyu",
-    "tabs": {
-      "home": "Bosh sahifa",
-      "settings": "Sozlamalar",
-      "profile": "Profil"
-    },
     "groups": {
       "title": "Guruhlar",
       "create": "Yangi guruh",
       "details": "Guruh"
     },
-    "scanInvite": "Taklifni skanerlash",
-    "friendQr": "Do'st QR kodi",
     "groupQr": "Guruh QR kodi",
-    "scanReceipt": "Chekni skanerlash",
-    "participants": "Ishtirokchilar",
-    "itemsSplit": "Xarajatlarni bo'lish",
-    "finish": "Yakunlash",
-    "history": "So'nggi hisoblar",
-    "historyDetails": "Hisob tafsilotlari"
+    "history": "Hisoblar",
+    "historyDetails": "Hisob"
   },
   "settings": {
+    "title": "Sozlamalar",
+    "appearance": {
+      "title": "Ko'rinish",
+      "theme": {
+        "title": "Mavzu",
+        "system": "Tizim",
+        "light": "Yorug'",
+        "dark": "Qorong'i"
+      },
+      "font": {
+        "title": "Shrift",
+        "preview": "Receipt Splitter",
+        "inter": "Inter",
+        "interDesc": "Sodda va toza",
+        "nunito": "Nunito",
+        "nunitoDesc": "Yumshoq va yumaloq",
+        "manrope": "Manrope",
+        "manropeDesc": "Zamonaviy, geometrik",
+        "japaneseNote": "Yapon tilida tizim shrifti ishlatiladi."
+      },
+      "textSize": {
+        "title": "Matn o'lchami",
+        "small": "Kichik",
+        "default": "Oddiy",
+        "large": "Katta",
+        "sample": "Tez jigarrang tulki"
+      }
+    },
     "language": {
       "title": "Til",
-      "description": "Ilovada ishlatiladigan tilni tanlang.",
       "options": {
-        "en": "Ingliz tili",
-        "ja": "Yapon tili",
-        "uz": "O'zbek tili"
+        "en": "Inglizcha",
+        "ja": "Yaponcha",
+        "uz": "O'zbekcha"
       }
+    },
+    "about": {
+      "title": "Ilova haqida",
+      "version": "Versiya",
+      "support": "Yordam va fikr-mulohaza",
+      "supportSubject": "Receipt Splitter fikr-mulohaza",
+      "mailFailed": "Pochta ilovasini ochib bo'lmadi. {{email}} manziliga yozing."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Mahsulotlar",
+      "people": "Odamlar",
+      "split": "Taqsimlash",
+      "summary": "Xulosa"
+    },
+    "steps": {
+      "scan": "Skaner",
+      "items": "Mahsulot",
+      "people": "Odamlar",
+      "split": "Taqsim",
+      "summary": "Tayyor"
+    },
+    "demoBanner": "Demo ma'lumot: bu sizning chekingiz emas.",
+    "kinds": {
+      "item": "Mahsulot",
+      "fee": "Xizmat / to'lovlar",
+      "tax": "Soliq",
+      "discount": "Chegirma"
+    },
+    "discard": {
+      "title": "Bu chekni bekor qilasizmi?",
+      "message": "Kiritgan mahsulotlaringiz va taqsimot yo'qoladi.",
+      "confirm": "Bekor qilish",
+      "keep": "Davom etish"
+    },
+    "resume": {
+      "title": "Chekni davom ettirasizmi?",
+      "message": "Tugallanmagan chekingiz bor.",
+      "continue": "Davom etish",
+      "startNew": "Yangisini boshlash"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Skanerlash mavjud emas",
+      "PARSE_FAILED": "Chekni o'qib bo'lmadi",
+      "NOT_A_RECEIPT": "Bu chek emas",
+      "IMAGE_UNREADABLE": "Rasm o'qilmadi",
+      "ITEM_NOT_ASSIGNED": "Ba'zi mahsulotlar taqsimlanmagan",
+      "RATE_LIMITED": "Juda ko'p so'rov",
+      "UNAUTHORIZED": "Qaytadan kiring",
+      "SESSION_REVOKED": "Qaytadan kiring",
+      "NETWORK": "Aloqa yo'q",
+      "CANCELLED": "Bekor qilindi",
+      "SERVER_ERROR": "Nimadir xato ketdi",
+      "UNKNOWN": "Nimadir xato ketdi"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Serverda chekni skanerlash hali sozlanmagan. Mahsulotlarni qo'lda kiritishingiz mumkin.",
+      "PARSE_FAILED": "Chek o'qish xizmati hozir ishlamayapti. Qayta urinib ko'ring, boshqa rasm tanlang yoki mahsulotlarni qo'lda kiriting.",
+      "NOT_A_RECEIPT": "Bu rasmda chek topilmadi. Butun chek kadrga sig'ishi uchun qayta suratga oling.",
+      "IMAGE_UNREADABLE": "Hech qanday mahsulot o'qilmadi. Yaxshiroq yorug'likda, yaqinroqdan va yaltiroqsiz qayta suratga oling.",
+      "ITEM_NOT_ASSIGNED": "Har bir mahsulotni kamida bitta odamga taqsimlang.",
+      "RATE_LIMITED": "Juda ko'p urinish. Biroz kutib, qayta urinib ko'ring.",
+      "UNAUTHORIZED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "SESSION_REVOKED": "Sessiyangiz tugadi. Qaytadan kiring.",
+      "NETWORK": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
+      "CANCELLED": "Bekor qilindi.",
+      "SERVER_ERROR": "Serverda muammo bo'ldi. Birozdan keyin qayta urinib ko'ring.",
+      "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      "SESSION_NOT_FOUND": "Bu chek serverda topilmadi (eski qoralama bo'lishi mumkin). Yangi chek boshlang.",
+      "SESSION_FORBIDDEN": "Bu chek boshqa akkauntga tegishli. Yangi chek boshlang."
+    },
+    "scan": {
+      "hint": "Butun chekni kadrga joylang",
+      "lightOn": "Chiroq yoniq",
+      "lightOff": "Chiroq o'chiq",
+      "zoomTo": "{{level}} yaqinlashtirish",
+      "gallery": "Galereyadan tanlash",
+      "shutter": "Suratga olish",
+      "captureFailed": "Suratga olib bo'lmadi. Qayta urinib ko'ring.",
+      "previewLabel": "Chek rasmining ko'rinishi",
+      "rotate": "Burish",
+      "crop": "Qirqish",
+      "applyCrop": "Qirqishni qo'llash",
+      "retake": "Qayta olish",
+      "usePhoto": "Rasmni ishlatish",
+      "phase": {
+        "preparing": "Rasm tayyorlanmoqda…",
+        "uploading": "Yuborilmoqda…",
+        "reading": "Mahsulotlar o'qilmoqda…"
+      },
+      "tryAgain": "Qayta urinish",
+      "chooseAnother": "Boshqa rasm",
+      "chooseFromGallery": "Galereya",
+      "manual": "Qo'lda kiritish",
+      "permissionTitle": "Kameraga ruxsat kerak",
+      "permissionBody": "Faqat chekni o'qish uchun.",
+      "allowCamera": "Kameraga ruxsat"
+    },
+    "review": {
+      "billName": "Hisob nomi",
+      "viewPhoto": "Chek rasmini ko'rish",
+      "items": "Mahsulotlar",
+      "empty": "Hozircha mahsulot yo'q. Sotib olinganlarni qo'shing.",
+      "addItem": "Mahsulot qo'shish",
+      "editItem": "Mahsulotni tahrirlash",
+      "deleteItem": "Mahsulotni o'chirish",
+      "delete": "O'chirish",
+      "tapToEdit": "Tahrirlash uchun bosing",
+      "extras": "To'lov va soliq",
+      "addExtra": "To'lov qo'shish",
+      "totals": "Jami",
+      "itemsSubtotal": "Mahsulotlar",
+      "calculated": "Hisoblangan jami",
+      "receiptTotal": "Chekdagi jami",
+      "mismatchLess": "Chekdan {{amount}} kam",
+      "mismatchMore": "Chekdan {{amount}} ko'p",
+      "useCalculated": "Hisoblangan jamini ishlatish",
+      "currency": "Valyuta",
+      "changeCurrency": "O'zgartirish",
+      "name": "Nomi",
+      "quantity": "Miqdori",
+      "unitPrice": "Birlik narxi",
+      "amount": "Summa",
+      "lineTotal": "Qator jami",
+      "discountHint": "Chegirmani musbat son sifatida kiriting",
+      "save": "Saqlash",
+      "needItem": "Mahsulot qo'shing",
+      "next": "Keyingisi",
+      "errors": {
+        "name": "Nomni kiriting",
+        "price": "Noldan katta narx kiriting"
+      },
+      "nextA11y": "Keyingisi: odamlarni tanlash"
+    },
+    "people": {
+      "you": "Siz",
+      "groups": "Guruhlar",
+      "friends": "Do'stlar",
+      "remove": "{{name}} ni olib tashlash",
+      "needTwo": "Kamida 2 kishi tanlang",
+      "next": "Keyingisi · {{count}}",
+      "emptyTitle": "Hali do'stlar yo'q",
+      "addFriends": "Do'st qo'shish",
+      "inviteQr": "QR orqali taklif qilish",
+      "searchA11y": "Odamlar va guruhlarni qidirish",
+      "nextA11y": "Keyingisi: taqsimlash ({{count}} kishi)"
+    },
+    "split": {
+      "equalAll": "Teng bo'lish",
+      "clear": "Tozalash",
+      "single": "Bitta porsiya",
+      "notAssigned": "Taqsimlanmagan",
+      "mode": {
+        "equal": "Teng",
+        "count": "Soni bo'yicha"
+      },
+      "remaining": "Qoldi: {{count}}",
+      "allUnits": "Hammasi taqsimlandi",
+      "extras": "To'lov va soliq",
+      "feeMode": {
+        "proportional": "Mutanosib",
+        "equal": "Teng"
+      },
+      "feeModeHint": {
+        "proportional": "Har kim to'lov va soliqni buyurtmasiga mutanosib to'laydi.",
+        "equal": "To'lov va soliq hamma o'rtasida teng bo'linadi."
+      },
+      "unassigned": "Taqsimlanmagan: {{amount}}",
+      "allAssigned": "Hammasi taqsimlangan",
+      "finishHint": "avval hamma mahsulotni taqsimlang ({{count}} ta qoldi)",
+      "finish": "Tugatish",
+      "newReceipt": "Yangi chek boshlash",
+      "itemsLeft": "Belgilangan mahsulotlarni taqsimlang",
+      "feeModeInfo": "To'lovlar qanday bo'linadi",
+      "left_one": "{{count}} ta qoldi",
+      "left_other": "{{count}} ta qoldi"
+    },
+    "summary": {
+      "total": "Jami",
+      "untitled": "Hisob",
+      "addsUp": "Jamiga teng",
+      "mismatch": "Jamiga teng emas",
+      "show": "Nimalar oldi",
+      "hide": "Yashirish",
+      "share": "Ulashish",
+      "done": "Tayyor",
+      "copied": "Xulosa nusxalandi",
+      "saved": "Saqlandi"
+    }
+  },
+  "friends": {
+    "title": "Do'stlar",
+    "requests": {
+      "accept": "Qabul qilish",
+      "decline": "Rad etish",
+      "accepted": "Siz va {{target}} endi do'stsiz",
+      "rejected": "{{target}} so'rovi rad etildi",
+      "emptyIncoming": "Kiruvchi so'rovlar yo'q",
+      "emptyOutgoing": "Yuborilgan so'rovlar yo'q",
+      "requestedLabel": "Kutilmoqda",
+      "tabIncoming": "Kiruvchi",
+      "tabOutgoing": "Yuborilgan"
+    },
+    "empty": "Hali do'stlar yo'q",
+    "remove": "O'chirish",
+    "qr": {
+      "scanQr": "QR skanerlash",
+      "myQr": "Mening QR kodim",
+      "requestsLink": "So'rovlar",
+      "my": {
+        "title": "Mening QR kodim",
+        "subtitle": "Meni qo'shish uchun skanerlang",
+        "share": "Ulashish",
+        "save": "Rasmni saqlash",
+        "copy": "Havolani nusxalash",
+        "copied": "Havola nusxalandi",
+        "saved": "Rasmlarga saqlandi",
+        "saveFailed": "Rasmni saqlab bo'lmadi. Qayta urinib ko'ring.",
+        "photosDenied": "QR kodni saqlash uchun Sozlamalarda Rasmlarga ruxsat bering.",
+        "shareMessage": "Receipt Splitter'da meni do'st qilib qo'shing: {{url}}",
+        "shareTitle": "Receipt Splitter'da meni qo'shing",
+        "reset": "QR kodni yangilash",
+        "resetTitle": "QR kod yangilansinmi?",
+        "resetMessage": "Eski QR kod, ulashilgan havolalar va skrinshotlar ishlamay qoladi. Mavjud do'stlaringiz saqlanib qoladi.",
+        "resetConfirm": "Yangilash",
+        "resetDone": "Yangi QR kodingiz tayyor",
+        "loadError": "QR kodni yuklab bo'lmadi.",
+        "newFriend": "{{name}} sizni do'st qilib qo'shdi",
+        "permanentNote": "Bu kodning muddati tugamaydi. Adashib ulashgan bo'lsangiz, uni yangilang.",
+        "aboutCode": "Bu kod haqida"
+      },
+      "scan": {
+        "title": "QR skanerlash",
+        "hint": "QR kodga qarating",
+        "fromPhotos": "Rasmlardan",
+        "light": "Chiroq",
+        "checking": "Kod tekshirilmoqda…",
+        "noQrInImage": "Bu rasmda QR kod topilmadi. Aniqroq skrinshot tanlang.",
+        "permissionTitle": "Kameraga ruxsat kerak",
+        "permissionBody": "Faqat QR kodlarni skanerlash uchun.",
+        "allowCamera": "Kameraga ruxsat",
+        "openSettings": "Sozlamalarni ochish"
+      },
+      "card": {
+        "add": "Do'st qo'shish",
+        "alreadyFriends": "Do'stsiz",
+        "self": "Bu sizsiz",
+        "accept": "So'rovni qabul qilish",
+        "addedTitle": "Endi do'stsiz!",
+        "done": "Tayyor",
+        "scanAnother": "Yana skanerlash"
+      },
+      "group": {
+        "joining": "Guruhga qo'shilmoqda…",
+        "joined": "Siz {{name}} guruhiga qo'shildingiz",
+        "joinedGeneric": "Siz guruhga qo'shildingiz",
+        "alreadyMember": "Siz allaqachon bu guruhdasiz",
+        "owner": "Bu sizning guruhingiz",
+        "friendsToo": "Endi guruh egasi bilan do'stsiz.",
+        "open": "Guruhlarni ochish"
+      },
+      "errors": {
+        "NOT_OUR_QR": "Bu Receipt Splitter QR kodi emas",
+        "NOT_OUR_QR_body": "Bu do'stlik yoki guruh taklifi emas.",
+        "INVALID_CODE": "Bu QR kod endi yaroqsiz",
+        "INVALID_CODE_body": "Kodni qayta ko'rsatishini so'rang.",
+        "NETWORK": "Internet yo'q",
+        "NETWORK_body": "Internet aloqasini tekshirib, qayta urinib ko'ring.",
+        "RATE_LIMITED": "Juda ko'p urinish",
+        "RATE_LIMITED_body": "Biroz kutib, qayta urinib ko'ring.",
+        "UNKNOWN": "Nimadir xato ketdi",
+        "UNKNOWN_body": "Qayta urinib ko'ring.",
+        "tryAgain": "Qayta urinish",
+        "scanAgain": "Qayta skanerlash"
+      },
+      "expiresAt": "{{time}} gacha"
+    },
+    "addById": "ID orqali qo'shish",
+    "addTitle": "Do'st qo'shish",
+    "common": {
+      "unknownUser": "Noma'lum foydalanuvchi"
+    },
+    "listHeader_one": "{{count}} ta do'st",
+    "listHeader_other": "{{count}} ta do'st",
+    "removeTitle": "{{name}} o'chirilsinmi?",
+    "removeMessage": "Keyinroq yana do'st bo'lishingiz mumkin.",
+    "removed": "{{name}} o'chirildi",
+    "swipeHint": "O'chirish uchun chapga suring yoki bosib turing",
+    "search": {
+      "inviteSent": "{{target}}ga so'rov yuborildi",
+      "noResults": "Topilmadi",
+      "orInPerson": "Yonma-yon",
+      "placeholder": "Do'st ID si, masalan USER#1234"
+    },
+    "status": {
+      "add": "Qo'shish",
+      "friend": "Do'st",
+      "incoming": "Kiruvchi",
+      "requested": "Yuborilgan",
+      "you": "Siz"
+    }
+  },
+  "tabs": {
+    "home": "Asosiy",
+    "groups": "Guruhlar",
+    "scan": "Skaner",
+    "friends": "Do'stlar",
+    "profile": "Profil"
+  },
+  "errors": {
+    "NETWORK": "Internet yo'q. Aloqani tekshirib, qayta urinib ko'ring.",
+    "RATE_LIMITED": "Juda ko'p urinish. Biroz kuting.",
+    "FORBIDDEN": "Buni qila olmaysiz.",
+    "NOT_FOUND": "Bu endi mavjud emas.",
+    "SERVER_ERROR": "Serverda xatolik. Qayta urinib ko'ring.",
+    "UNKNOWN": "Nimadir xato ketdi. Qayta urinib ko'ring."
+  },
+  "time": {
+    "now": "hozir",
+    "minutes_one": "{{count}} daq",
+    "minutes_other": "{{count}} daq",
+    "hours_one": "{{count}} soat",
+    "hours_other": "{{count}} soat",
+    "days_one": "{{count}} kun",
+    "days_other": "{{count}} kun"
+  },
+  "balances": {
+    "title": "Balans",
+    "none": "—",
+    "allSettled": "Qarz yo'q",
+    "owedToMe": "Sizga qarzdor",
+    "iOwe": "Qarzingiz",
+    "loadError": "Balansni yuklab bo'lmadi.",
+    "emptyPeople": "Hozircha hech kim qarzdor emas.",
+    "owesYou": "sizga {{amount}} qarzdor",
+    "youOweThem": "siz {{amount}} qarzdorsiz",
+    "owesYouChip": "Sizga qarzdor",
+    "receiptHint": "Chekni ochadi, u yerda ulushlar to'langan deb belgilanadi"
+  },
+  "settle": {
+    "settled": "Yopilgan",
+    "notFound": "Bu chek topilmadi.",
+    "allPaid": "Hamma to'ladi",
+    "people": "Ulushlar",
+    "footerCreator": "Kimdir sizga pulni qaytarganda \"To'landi\"ni yoqing.",
+    "footerParticipant": "Ulushingizni to'lagach, \"To'landi\"ni yoqing.",
+    "paidTheBill": "To'lovchi",
+    "paid": "To'landi",
+    "notPaid": "To'lanmagan",
+    "paidA11y": "{{name}} to'ladi"
+  },
+  "notifications": {
+    "title": "Bildirishnomalar",
+    "unreadA11y_one": "{{count}} ta o'qilmagan",
+    "unreadA11y_other": "{{count}} ta o'qilmagan",
+    "today": "Bugun",
+    "earlier": "Avvalroq",
+    "markRead": "O'qilgan deb belgilash",
+    "markAllRead": "O'qildi",
+    "delete": "O'chirish",
+    "unread": "O'qilmagan",
+    "empty": "Yangi bildirishnomalar yo'q.",
+    "someone": "Kimdir",
+    "types": {
+      "FRIEND_REQUEST": "{{name}} sizga do'stlik so'rovi yubordi",
+      "FRIEND_ACCEPTED": "{{name}} do'stlik so'rovingizni qabul qildi",
+      "FRIEND_ADDED": "{{name}} sizni do'st qilib qo'shdi",
+      "GROUP_ADDED": "{{name}} sizni {{group}} guruhiga qo'shdi",
+      "GROUP_JOIN_REQUEST": "{{name}} {{group}} guruhiga qo'shilmoqchi",
+      "GROUP_JOIN_APPROVED": "Siz {{group}} guruhiga qo'shildingiz",
+      "GROUP_ROLE_ADMIN": "Siz endi {{group}} guruhining adminisiz",
+      "GROUP_ROLE_MEMBER": "Siz endi {{group}} guruhining admini emassiz",
+      "GROUP_REMOVED": "Siz {{group}} guruhidan chiqarildingiz",
+      "RECEIPT_INCLUDED": "{{name}} sizni «{{receipt}}» chekiga qo'shdi. Ulushingiz: {{amount}}",
+      "RECEIPT_PAID": "{{name}} «{{receipt}}» uchun {{amount}} to'ladi",
+      "RECEIPT_UNPAID": "{{name}} «{{receipt}}» dagi ulushini to'lanmagan deb belgiladi",
+      "RECEIPT_PAID_YOURS": "{{name}} «{{receipt}}» dagi ulushingizni to'langan deb belgiladi",
+      "RECEIPT_UNPAID_YOURS": "{{name}} «{{receipt}}» dagi ulushingizni to'lanmagan deb belgiladi",
+      "UNKNOWN": "Yangi bildirishnoma"
+    }
+  },
+  "groups": {
+    "actions": {
+      "scanInvite": "Guruhga qo'shilish"
+    },
+    "common": {
+      "untitled": "Guruh"
+    },
+    "emptyTitle": "Hali guruhlar yo'q",
+    "list": {
+      "members_one": "{{count}} a'zo",
+      "members_other": "{{count}} a'zo"
+    },
+    "roles": {
+      "owner": "Egasi"
+    },
+    "create": {
+      "action": "Yaratish",
+      "inGroup": "guruhda",
+      "notInGroup": "guruhda emas",
+      "manageMembers": "A'zolar",
+      "namePlaceholder": "Guruh nomi",
+      "noFriends": "Hali do'stlar yo'q",
+      "notice": {
+        "success": "Guruh yaratildi"
+      }
+    },
+    "detail": {
+      "addFromFriends": "Do'stlarni qo'shish",
+      "added": "{{name}} qo'shildi",
+      "delete": "Guruhni o'chirish",
+      "deleteTitle": "Guruh o'chirilsinmi?",
+      "deleteMessage": "Guruh hamma uchun o'chiriladi. Buni qaytarib bo'lmaydi.",
+      "leave": "Guruhdan chiqish",
+      "leaveTitle": "Guruhdan chiqasizmi?",
+      "leaveMessage": "Taklif orqali yana qo'shilishingiz mumkin.",
+      "members": "A'zolar",
+      "nameTitle": "Guruh nomi",
+      "noFriendsToAdd": "Qo'shadigan odam yo'q",
+      "remove": "Chiqarish",
+      "removeTitle": "{{name}} chiqarilsinmi?",
+      "removeMessage": "U endi bu guruhni ko'rmaydi.",
+      "removed": "{{name}} chiqarildi",
+      "renamed": "Guruh nomi o'zgartirildi",
+      "showQr": "QR kod bilan taklif qilish",
+      "swipeHint": "O'chirish uchun chapga suring yoki bosib turing",
+      "addA11y": "{{name}}ni qo'shish"
+    },
+    "invite": {
+      "description": "Qo'shilish uchun skanerlang",
+      "error": "Taklif yaratib bo'lmadi.",
+      "invalid": "Guruh topilmadi.",
+      "new": "Yangi kod"
     }
   }
 }

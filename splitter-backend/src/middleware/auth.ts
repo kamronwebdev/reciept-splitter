@@ -1,6 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import type { JwtPayload as LibJwtPayload } from "jsonwebtoken";
 import jwtPkg from "jsonwebtoken";
+import { prisma } from "../config/prisma.js";
+import { sendError } from "../utils/errors.js";
 const jwt = jwtPkg as unknown as {
   verify: typeof jwtPkg.verify;
   decode: typeof jwtPkg.decode;
@@ -10,6 +12,8 @@ const { TokenExpiredError, JsonWebTokenError, NotBeforeError } = jwtPkg as any;
 export interface JwtPayload {
   id: number;
   email: string;
+  /** token version; must match User.tokenVersion */
+  tv?: number;
   // optional fields from JWT standard
   iat?: number;
   exp?: number;
@@ -26,7 +30,7 @@ declare global {
 
 export interface AuthRequest extends Request {}
 
-export function authenticateToken(
+export async function authenticateToken(
   req: Request,
   res: Response,
   next: NextFunction
@@ -37,12 +41,12 @@ export function authenticateToken(
       process.env.DEBUG_AUTH === "1";
     const raw = req.headers["authorization"];
     if (typeof raw !== "string") {
-      return res.status(401).json({ error: "Authorization required" });
+      return sendError(res, 401, "UNAUTHORIZED", "Authorization required");
     }
 
     const [scheme, token] = raw.split(" ");
     if (!token || (scheme ?? "").toLowerCase() !== "bearer") {
-      return res.status(401).json({ error: "Invalid token format" });
+      return sendError(res, 401, "TOKEN_INVALID", "Invalid token format");
     }
 
     const secret = process.env.JWT_SECRET;
@@ -57,7 +61,7 @@ export function authenticateToken(
       typeof verified === "string" ? ({} as any) : (verified as any);
 
     if (!payload || typeof payload.email !== "string") {
-      return res.status(401).json({ error: "Invalid token" });
+      return sendError(res, 401, "TOKEN_INVALID", "Invalid token");
     }
 
     // Некоторые клиенты могут сериализовать id как строку — пробуем привести
@@ -68,7 +72,20 @@ export function authenticateToken(
         ? Number(payload.id)
         : NaN;
     if (!Number.isFinite(idValue)) {
-      return res.status(401).json({ error: "Invalid token (id)" });
+      return sendError(res, 401, "TOKEN_INVALID", "Invalid token (id)");
+    }
+
+    // Reject sessions revoked by a password reset/change (tokenVersion bump) or deleted users.
+    const dbUser = await prisma.user.findUnique({
+      where: { id: idValue },
+      select: { tokenVersion: true },
+    });
+    if (!dbUser) {
+      return sendError(res, 401, "SESSION_REVOKED", "Session is no longer valid");
+    }
+    const tokenTv = typeof payload.tv === "number" ? payload.tv : 0;
+    if (tokenTv !== dbUser.tokenVersion) {
+      return sendError(res, 401, "SESSION_REVOKED", "Session expired, please log in again");
     }
 
     const userPayload: JwtPayload = { id: idValue, email: payload.email };
@@ -115,14 +132,14 @@ export function authenticateToken(
     }
 
     if (err instanceof TokenExpiredError) {
-      return res.status(401).json({ error: "Token expired" });
+      return sendError(res, 401, "TOKEN_EXPIRED", "Token expired");
     }
     if (err instanceof NotBeforeError) {
-      return res.status(401).json({ error: "Token not active yet (nbf)" });
+      return sendError(res, 401, "TOKEN_INVALID", "Token not active yet (nbf)");
     }
     if (err instanceof JsonWebTokenError) {
-      return res.status(401).json({ error: "Invalid token" });
+      return sendError(res, 401, "TOKEN_INVALID", "Invalid token");
     }
-    return res.status(401).json({ error: "Invalid or expired token" });
+    return sendError(res, 401, "TOKEN_INVALID", "Invalid or expired token");
   }
 }

@@ -2,6 +2,7 @@ module.exports = function (api) {
   api.cache(true);
   
   const isProduction = process.env.NODE_ENV === 'production';
+  const isTest = process.env.NODE_ENV === 'test';
   
   return {
     presets: ['babel-preset-expo'],
@@ -9,7 +10,7 @@ module.exports = function (api) {
       // removed deprecated 'expo-router/babel' (use 'babel-preset-expo' in SDK 50+)
       // Отключаем Tamagui babel plugin для production сборки
       // Это уберет оптимизацию, но решит проблему со сборкой
-      ...(!isProduction ? [
+      ...(!isProduction && !isTest ? [
         [
           '@tamagui/babel-plugin',
           {
