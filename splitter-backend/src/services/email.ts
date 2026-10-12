@@ -1,6 +1,5 @@
 import { Resend } from "resend";
-
-const EMAIL_FROM = process.env.EMAIL_FROM || "Receipt Splitter <onboarding@resend.dev>";
+import nodemailer, { type Transporter } from "nodemailer";
 
 let client: Resend | null = null;
 function getClient(): Resend | null {
@@ -8,6 +7,62 @@ function getClient(): Resend | null {
   if (!key) return null;
   if (!client) client = new Resend(key);
   return client;
+}
+
+/**
+ * SMTP (e.g. Gmail with an app password): sends to any address without owning a domain.
+ * Configured by SMTP_USER + SMTP_PASS; host/port default to Gmail.
+ */
+let smtp: Transporter | null = null;
+function getSmtp(): Transporter | null {
+  const user = (process.env.SMTP_USER || "").trim();
+  const pass = (process.env.SMTP_PASS || "").replace(/\s+/g, ""); // Gmail shows app passwords in groups of 4
+  if (!user || !pass) return null;
+  if (!smtp) {
+    const port = Number(process.env.SMTP_PORT || 465);
+    smtp = nodemailer.createTransport({
+      host: (process.env.SMTP_HOST || "smtp.gmail.com").trim(),
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
+  }
+  return smtp;
+}
+
+function emailFrom(): string {
+  const configured = (process.env.EMAIL_FROM || "").trim();
+  const smtpUser = (process.env.SMTP_USER || "").trim();
+  const viaSmtp = !!smtpUser && !(process.env.RESEND_API_KEY || "").trim();
+  // Gmail only sends as the signed-in account: the Resend test sender from .env.example would not fit
+  if (viaSmtp && (!configured || configured.includes("@resend.dev"))) return `Receipt Splitter <${smtpUser}>`;
+  return configured || "Receipt Splitter <onboarding@resend.dev>";
+}
+
+/** At startup: say where reset codes go, and check SMTP credentials early (a wrong app password shows here). */
+export async function logEmailMode(): Promise<void> {
+  const mode = emailMode();
+  if (mode === "console") {
+    console.log("[startup] Email: not configured, password reset codes are printed here ([DEV] Reset code ...)");
+    return;
+  }
+  if (mode === "resend") {
+    console.log("[startup] Email: Resend");
+    return;
+  }
+  try {
+    await getSmtp()!.verify();
+    console.log(`[startup] Email: SMTP ${process.env.SMTP_HOST || "smtp.gmail.com"} as ${process.env.SMTP_USER} (OK)`);
+  } catch (e) {
+    console.error(`[startup] Email: SMTP login failed (${(e as Error).message}). Check SMTP_USER / SMTP_PASS (Gmail: use an app password).`);
+  }
+}
+
+/** Which delivery the server will use. */
+export function emailMode(): "resend" | "smtp" | "console" {
+  if ((process.env.RESEND_API_KEY || "").trim()) return "resend";
+  if (getSmtp()) return "smtp";
+  return "console";
 }
 
 function resetEmailHtml(code: string): string {
@@ -31,23 +86,26 @@ function resetEmailHtml(code: string): string {
 }
 
 /**
- * Sends the password reset code. Without RESEND_API_KEY the code is printed to the console
- * (development fallback) so the flow can be tested without an email account.
+ * Sends the password reset code: Resend if RESEND_API_KEY is set, else SMTP if SMTP_USER/SMTP_PASS are set,
+ * else it is printed to the console (development fallback, no email account needed).
  */
 export async function sendPasswordResetCode(to: string, code: string): Promise<void> {
+  const subject = `${code} is your Receipt Splitter reset code`;
+  const html = resetEmailHtml(code);
+  const text = `Your Receipt Splitter password reset code is ${code}. It expires in 15 minutes.`;
+
   const resend = getClient();
-  if (!resend) {
-    console.log(`[DEV] Reset code for ${to}: ${code}`);
+  if (resend) {
+    const { error } = await resend.emails.send({ from: emailFrom(), to, subject, html, text });
+    if (error) throw new Error(`Email provider error: ${error.message}`);
     return;
   }
-  const { error } = await resend.emails.send({
-    from: EMAIL_FROM,
-    to,
-    subject: `${code} is your Receipt Splitter reset code`,
-    html: resetEmailHtml(code),
-    text: `Your Receipt Splitter password reset code is ${code}. It expires in 15 minutes.`,
-  });
-  if (error) {
-    throw new Error(`Email provider error: ${error.message}`);
+
+  const transport = getSmtp();
+  if (transport) {
+    await transport.sendMail({ from: emailFrom(), to, subject, html, text });
+    return;
   }
+
+  console.log(`[DEV] Reset code for ${to}: ${code}`);
 }

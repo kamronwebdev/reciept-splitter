@@ -1,7 +1,7 @@
 ## Multi-stage Dockerfile for splitter-backend (NodeNext ESM + Prisma)
 
 ### Stage 1: build
-FROM node:18-bullseye-slim AS builder
+FROM node:22-bullseye-slim AS builder
 WORKDIR /app
 
 # Install deps with caching
@@ -21,7 +21,7 @@ RUN npm run build
 RUN npm prune --production
 
 ### Stage 2: runtime
-FROM node:18-bullseye-slim
+FROM node:22-bullseye-slim
 WORKDIR /app
 ENV NODE_ENV=production
 

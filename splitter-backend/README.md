@@ -29,7 +29,7 @@ npm test   # node:test via ts-node (money/rounding helpers)
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 20+
 - PostgreSQL database
 
 ## Setup
@@ -56,7 +56,11 @@ Env variables (minimum):
 - `PORT` — HTTP port (defaults to `3001`)
 - `CORS_ORIGINS` — comma-separated allowlist for production (e.g. `http://localhost:5173,http://localhost:3000`)
 - `ALLOW_ALL_CORS=1` — permissive mode (`Access-Control-Allow-Origin: *`, credentials disabled)
-- `RESEND_API_KEY`, `EMAIL_FROM` — password reset emails via Resend. Without a key the 6-digit code is printed to the server console (`[DEV] Reset code for x@y.com: 123456`)
+- Password reset emails, first configured wins:
+  - `RESEND_API_KEY`, `EMAIL_FROM` — Resend (needs a verified domain to email other people; the `onboarding@resend.dev` test sender only reaches your own Resend address)
+  - `SMTP_USER`, `SMTP_PASS` (optional `SMTP_HOST`, `SMTP_PORT`; default Gmail `smtp.gmail.com:465`) — any SMTP account, e.g. Gmail with an app password. `EMAIL_FROM` defaults to `SMTP_USER`
+  - neither: the 6-digit code is printed to the server console (`[DEV] Reset code for x@y.com: 123456`)
+  - the startup log says which one is active (`[startup] Email: ...`) and checks the SMTP login
 - `DEBUG_AUTH=1` — verbose JWT verification logs
 - `DEBUG_ENV=1` — print env-presence summary on startup
 - `ENABLE_DEBUG_ROUTES=1` — mount `/debug/*` in production (always on outside production)

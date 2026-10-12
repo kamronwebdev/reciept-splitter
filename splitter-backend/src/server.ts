@@ -21,6 +21,7 @@ import debugRoutes from "./routes/debug.js";
 import landingRoutes from "./routes/landing.js";
 import notificationsRoutes from "./routes/notifications.js";
 import balancesRoutes from "./routes/balances.js";
+import { logEmailMode } from "./services/email.js";
 
 // Load .env
 dotenv.config();
@@ -174,5 +175,7 @@ prisma.$connect().then(
       err?.message ?? err
     )
 );
+
+void logEmailMode();
 
 void initReceiptParser().catch((e) => console.error("[receipt] init failed:", e?.message ?? e));

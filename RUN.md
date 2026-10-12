@@ -83,6 +83,26 @@ PostgreSQL Docker orqali ishlasa, `splitter-backend` papkasida:
 docker compose up -d postgres
 ```
 
+## Parolni tiklash kodi emailga borishi uchun (Gmail)
+
+Sozlanmagan bo'lsa, 6 xonali kod faqat backend terminaliga chiqadi (`[DEV] Reset code ...`).
+Kod foydalanuvchining emailiga borishi uchun Gmail orqali yuborishni yoqing:
+
+1. Gmail akkauntingizda 2 bosqichli tekshiruvni yoqing: https://myaccount.google.com/signinoptions/twosv
+2. App password yarating: https://myaccount.google.com/apppasswords (nomi: `Receipt Splitter`). Google 16 harfli parol beradi.
+3. `splitter-backend/.env` fayliga qo'shing:
+
+```bash
+SMTP_USER=sizning.gmail@gmail.com
+SMTP_PASS=abcd efgh ijkl mnop
+```
+
+4. Backendni qayta ishga tushiring (`Ctrl + C`, keyin `npm run dev`). Terminalda shunday qator chiqishi kerak:
+   `[startup] Email: SMTP smtp.gmail.com as sizning.gmail@gmail.com (OK)`
+
+Shundan keyin "Forgot Password?" kodni foydalanuvchi ro'yxatdan o'tgan emailga yuboradi. Xat Spam papkasiga tushishi mumkin.
+`SMTP login failed` chiqsa, oddiy Gmail parolini emas, aynan app password'ni yozganingizni tekshiring.
+
 ## Tekshirish (ixtiyoriy)
 
 Loyiha papkasidan:
