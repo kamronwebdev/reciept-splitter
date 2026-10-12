@@ -23,9 +23,8 @@ export const saveToken = async (token: string): Promise<void> => {
       // Use AsyncStorage on web or as fallback
       await AsyncStorage.setItem(TOKEN_KEY, token);
     }
-    console.log('✅ Token saved successfully');
   } catch (error) {
-    console.error('❌ Failed to save token:', error);
+    console.error('Failed to save token:', error);
     throw error;
   }
 };
@@ -38,7 +37,7 @@ export const getToken = async (): Promise<string | null> => {
       return await AsyncStorage.getItem(TOKEN_KEY);
     }
   } catch (error) {
-    console.error('❌ Failed to get token:', error);
+    console.error('Failed to get token:', error);
     return null;
   }
 };
@@ -50,9 +49,8 @@ export const removeToken = async (): Promise<void> => {
     } else {
       await AsyncStorage.removeItem(TOKEN_KEY);
     }
-    console.log('✅ Token removed successfully');
   } catch (error) {
-    console.error('❌ Failed to remove token:', error);
+    console.error('Failed to remove token:', error);
     throw error;
   }
 };

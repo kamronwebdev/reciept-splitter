@@ -1,28 +1,36 @@
 // src/application/providers/TamaguiProvider.tsx
-import React from 'react'
+import React, { useEffect } from 'react'
+import { View } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
+import * as SystemUI from 'expo-system-ui'
 import { TamaguiProvider as Provider } from '@tamagui/core'
 import { PortalProvider } from '@tamagui/portal'
-import { useFonts } from 'expo-font'
 import config from '../../../tamagui.config'
+import { useAppTheme, useSyncNativeAppearance } from '@/shared/theme/useAppTheme'
 
 interface TamaguiProviderProps {
   children: React.ReactNode
 }
 
+/**
+ * Applies the resolved theme (Light / Dark / System) to Tamagui, the status bar and the native root view.
+ * "System" follows the phone live, including while the app is open.
+ */
 export const TamaguiProvider: React.FC<TamaguiProviderProps> = ({ children }) => {
-  const [fontsLoaded] = useFonts({
-    Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
-    InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
-  })
+  const { scheme, isDark, colors } = useAppTheme()
+  useSyncNativeAppearance()
 
-  if (!fontsLoaded) {
-    return null
-  }
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(colors.background).catch(() => undefined)
+  }, [colors.background])
 
   return (
-    <Provider config={config} defaultTheme="light">
+    <Provider config={config} defaultTheme={scheme}>
       <PortalProvider>
-        {children}
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+          {children}
+        </View>
       </PortalProvider>
     </Provider>
   )

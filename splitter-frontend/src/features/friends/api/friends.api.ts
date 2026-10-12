@@ -16,13 +16,32 @@ const ZFriendLoose = z.object({
   user: ZUserLoose.optional(),
   uniqueId: z.string().optional(),
   username: z.string().optional(),
-  avatarUrl: z.string().optional(),
+  // the server sends null when a user has no photo (the app then shows initials)
+  avatarUrl: z.string().nullish(),
+  since: z.string().nullish(),
 }).transform((f) => ({
   uniqueId: f.uniqueId ?? f.user?.uniqueId,
   username: f.username ?? f.user?.username,
-  avatarUrl: f.avatarUrl ?? f.user?.avatarUrl ?? null,
+  avatarUrl: (f.avatarUrl ?? (f.user?.avatarUrl as string | null | undefined) ?? null) as string | null,
+  since: f.since ?? null,
   raw: f,
 }));
+
+const ZPublicFriend = z.object({
+  uniqueId: z.string(),
+  username: z.string(),
+  avatarUrl: z.string().nullish().transform((v) => v ?? null),
+});
+export type PublicFriend = z.infer<typeof ZPublicFriend>;
+
+export const FRIENDSHIP_STATUSES = ['none', 'pending_outgoing', 'pending_incoming', 'friends', 'self'] as const;
+export type FriendshipStatus = (typeof FRIENDSHIP_STATUSES)[number];
+
+const ZFriendCard = ZPublicFriend.extend({ friendshipStatus: z.enum(FRIENDSHIP_STATUSES) });
+export type FriendCard = z.infer<typeof ZFriendCard>;
+
+const ZMyCode = z.object({ code: z.string(), url: z.string(), deepLink: z.string() });
+export type MyFriendCode = z.infer<typeof ZMyCode>;
 
 export const FriendsApi = {
   /** GET /friends — список друзей */
@@ -67,16 +86,34 @@ export const FriendsApi = {
     return data as { success?: boolean; removed?: boolean };
   },
 
-  /** POST /friends/invite { expiresInSeconds } -> { token, url, expiresAt } */
-  async createInvite(expiresInSeconds: number) {
-    const { data } = await apiClient.post('/friends/invite', { expiresInSeconds });
-    return data as { token: string; url: string; expiresAt: string };
+  /** GET /friends/my-code -> my permanent friend QR ({ code, url (https landing page), deepLink }) */
+  async myCode(): Promise<MyFriendCode> {
+    const { data } = await apiClient.get('/friends/my-code');
+    return ZMyCode.parse(data);
   },
 
-  /** POST /friends/join { token } -> 200 OK (created/accepted/already exists) */
-  async joinByToken(token: string) {
+  /** POST /friends/my-code/reset -> new code; the old QR stops working */
+  async resetMyCode(): Promise<MyFriendCode> {
+    const { data } = await apiClient.post('/friends/my-code/reset');
+    return ZMyCode.parse(data);
+  },
+
+  /** GET /friends/code/:code -> owner card + friendship status (404 INVALID_CODE) */
+  async lookupCode(code: string): Promise<FriendCard> {
+    const { data } = await apiClient.get(`/friends/code/${encodeURIComponent(code)}`);
+    return ZFriendCard.parse(data);
+  },
+
+  /** POST /friends/code/:code/add -> accepted friendship (errors: SELF, ALREADY_FRIENDS, INVALID_CODE) */
+  async addByCode(code: string): Promise<{ action: string; friend: PublicFriend }> {
+    const { data } = await apiClient.post(`/friends/code/${encodeURIComponent(code)}/add`);
+    return z.object({ action: z.string(), friend: ZPublicFriend }).parse(data);
+  },
+
+  /** POST /friends/join { token } — old time-limited QR codes; returns the inviter card */
+  async joinByToken(token: string): Promise<{ action: string; friend?: PublicFriend }> {
     const { data } = await apiClient.post('/friends/join', { token });
-    return data;
+    return z.object({ action: z.string(), friend: ZPublicFriend.optional() }).parse(data);
   },
 };
 

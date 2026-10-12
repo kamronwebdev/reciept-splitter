@@ -3,7 +3,12 @@ import type { Response } from "express";
 import { prisma } from "../config/prisma.js";
 import type { Prisma } from "@prisma/client";
 import { authenticateToken, type AuthRequest } from "../middleware/auth.js";
-import { parseReceipt } from "../services/receiptParser.js";
+import { parseReceipt, ReceiptParseError } from "../services/receiptParser.js";
+import { computeSplit, currencyDecimals, fromMinor, toMinor, type FeeMode, type LineKind, type SplitLine } from "../utils/split.js";
+import { sendError, logRouteError } from "../utils/errors.js";
+import { resolveAvatarUrl } from "../utils/avatar.js";
+import { notify } from "../services/notifications.js";
+import { paymentState, sharesFromPayload } from "../services/settle.js";
 
 const router = Router();
 
@@ -90,55 +95,50 @@ router.post(
       if (!language || typeof language !== "string") {
         return res.status(400).json({ error: "language required" });
       }
-      if (
-        !image ||
-        typeof image !== "object" ||
-        !image.mimeType ||
-        !image.data
-      ) {
-        return res
-          .status(400)
-          .json({ error: "image { mimeType, data } required" });
+      if (!image || typeof image !== "object" || typeof image.mimeType !== "string" || typeof image.data !== "string") {
+        return res.status(400).json({ error: "image { mimeType, data } required", code: "IMAGE_UNREADABLE" });
+      }
+      if (!/^image\/(jpeg|jpg|png|webp|heic|heif)$/i.test(image.mimeType)) {
+        return res.status(400).json({ error: "Unsupported image type", code: "IMAGE_UNREADABLE" });
+      }
+      // strip an accidental data: prefix and sanity-check the base64 payload
+      const base64 = image.data.replace(/^data:[^;]+;base64,/, "");
+      if (base64.length < 200 || !/^[A-Za-z0-9+/=\s]+$/.test(base64.slice(0, 4000))) {
+        return res.status(400).json({ error: "The image data is not valid base64", code: "IMAGE_UNREADABLE" });
       }
 
-      // Create session (name field exists in schema but older DB may lack column; ignore until migration applied)
-      const session = await prisma.session.create({
-        data: {
-          creatorId: req.user.id,
-          status: "ACTIVE",
-        },
-        select: { id: true },
-      });
-
+      // Parse FIRST: a failed scan must not leave an orphan session behind.
       const parseResult = await parseReceipt({
         language,
         sessionName,
         mimeType: image.mimeType,
-        imageBase64: image.data,
+        imageBase64: base64,
       });
 
+      const session = await prisma.session.create({
+        data: { creatorId: req.user.id, status: "ACTIVE" },
+        select: { id: true },
+      });
+
+      console.log(
+        `[scan] user=${req.user.id} session=${session.id} source=${parseResult.source} items=${parseResult.items.length} mismatch=${parseResult.totalsMismatch}`
+      );
       return res.json({
         sessionId: session.id,
         sessionName,
         language,
         items: parseResult.items,
         summary: parseResult.summary,
+        totalsMismatch: parseResult.totalsMismatch,
         source: parseResult.source,
-        ...(process.env.DEBUG_PARSE === "1" && parseResult.rawModelText
-          ? {
-              _debug: {
-                model: parseResult.model,
-                durationMs: parseResult.durationMs,
-                usedModelVersion: parseResult.usedModelVersion,
-                modelsTried: parseResult.modelsTried,
-                raw: parseResult.rawModelText,
-              },
-            }
-          : {}),
+        isDemo: parseResult.source === "mock",
       });
     } catch (err) {
-      console.error("POST /sessions/scan error", err);
-      return res.status(500).json({ error: "Server error" });
+      if (err instanceof ReceiptParseError) {
+        return res.status(err.httpStatus).json({ error: err.message, code: err.code, retryable: err.retryable });
+      }
+      console.error("POST /sessions/scan error", (err as Error)?.message);
+      return res.status(500).json({ error: "Server error", code: "SERVER_ERROR" });
     }
   }
 );
@@ -411,213 +411,108 @@ router.post(
       if (!req.user) return res.status(401).json({ error: "Unauthorized" });
       const { sessionId, sessionName, participants, items } = req.body || {};
       const currency = normalizeCurrencyCode(req.body?.currency);
+      const decimals = currencyDecimals(currency);
+      const feeMode: FeeMode = req.body?.feeMode === "equal" ? "equal" : "proportional";
       if (!Number.isFinite(Number(sessionId))) {
-        return res.status(400).json({ error: "sessionId required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "sessionId required");
       }
       if (!Array.isArray(participants) || participants.length === 0) {
-        return res.status(400).json({ error: "participants array required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "participants array required");
       }
       if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ error: "items array required" });
+        return sendError(res, 400, "VALIDATION_ERROR", "items array required");
       }
 
       const session = await prisma.session.findUnique({
         where: { id: Number(sessionId) },
         select: { id: true, creatorId: true, createdAt: true },
       });
-      if (!session) return res.status(404).json({ error: "Session not found" });
+      if (!session) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
       if (session.creatorId !== req.user.id) {
-        return res.status(403).json({ error: "Forbidden" });
+        return sendError(res, 403, "SESSION_FORBIDDEN", "This receipt belongs to another account");
       }
 
-      interface ParticipantInfo {
-        uniqueId: string;
-        username: string;
-      }
-      interface ItemInput {
-        id: string;
-        name: string;
-        price?: number;
-        unitPrice?: number;
-        totalPrice?: number;
-        quantity: number;
-        kind?: string;
-        splitMode?: "equal" | "count";
-        perPersonCount?: Record<string, number>;
-        assignedTo?: string[];
-      }
-      const pList: ParticipantInfo[] = participants.map((p: any) => ({
-        uniqueId: String(p.uniqueId),
-        username: String(p.username || p.uniqueId),
-      }));
-      const participantIndex = new Map<string, ParticipantInfo>();
-      for (const p of pList) participantIndex.set(p.uniqueId, p);
-
-      const allocs: any[] = [];
-      // We'll derive totals AFTER generating allocations to have a single source of truth.
-      const itemMeta = new Map<string, { name: string; kind?: string }>();
-
-      function round2(n: number) {
-        return Math.round(n * 100) / 100;
-      }
-
-      if (process.env.DEBUG_PARSE === "1") {
-        console.log(
-          "[finalize] participants=",
-          pList.length,
-          "items=",
-          items.length
-        );
-      }
-
-      for (const raw of items as ItemInput[]) {
-        if (!raw || typeof raw !== "object") continue;
-        const { id, name, quantity } = raw;
-        // prefer explicit price/unitPrice; else derive from totalPrice/quantity
-        let unitPrice = Number(
-          raw.price ??
-            raw.unitPrice ??
-            (raw.totalPrice && quantity
-              ? Number(raw.totalPrice) / Number(quantity)
-              : NaN)
-        );
-        const qty = Number(quantity);
-        // infer splitMode if missing
-        let splitMode: "equal" | "count" | undefined = raw.splitMode;
-        if (!splitMode) {
-          if (raw.perPersonCount) splitMode = "count";
-          else splitMode = "equal";
-        }
-        if (
-          !id ||
-          !name ||
-          !Number.isFinite(unitPrice) ||
-          !Number.isFinite(qty) ||
-          qty <= 0
-        ) {
-          return res
-            .status(400)
-            .json({ error: `Invalid item fields for id=${id}` });
-        }
-        if (raw.kind != null) {
-          itemMeta.set(id, { name, kind: raw.kind });
-        } else {
-          itemMeta.set(id, { name });
-        }
-
-        if (splitMode === "count") {
-          const counts = raw.perPersonCount || {};
-          // Validate participants
-          let sumUnits = 0;
-          for (const [pid, units] of Object.entries(counts)) {
-            if (!participantIndex.has(pid)) {
-              return res.status(400).json({
-                error: `Unknown participant in perPersonCount: ${pid}`,
-              });
-            }
-            const u = Number(units) || 0;
-            if (u < 0)
-              return res
-                .status(400)
-                .json({ error: `Negative units for ${pid}` });
-            sumUnits += u;
-          }
-          if (sumUnits !== qty) {
-            return res.status(400).json({
-              error: `Sum of perPersonCount (${sumUnits}) must equal quantity (${qty}) for item ${id}`,
-            });
-          }
-          for (const [pid, units] of Object.entries(counts)) {
-            const u = Number(units) || 0;
-            const shareAmount = round2(u * unitPrice);
-            allocs.push({
-              itemId: id,
-              participantId: pid,
-              shareUnits: u,
-              shareAmount,
-            });
-            // participant totals will be derived later
-          }
-        } else if (splitMode === "equal") {
-          const assigned = Array.isArray(raw.assignedTo) ? raw.assignedTo : [];
-          if (assigned.length === 0) {
-            return res.status(400).json({
-              error: `assignedTo required for equal split item ${id}`,
-            });
-          }
-          const valid = assigned.filter((pid) => participantIndex.has(pid));
-          if (valid.length !== assigned.length) {
-            return res.status(400).json({
-              error: `Unknown participant in assignedTo for item ${id}`,
-            });
-          }
-          const ratio = 1 / valid.length;
-          let allocated = 0;
-          valid.forEach((pid, idx) => {
-            let shareAmount = unitPrice * qty * ratio; // raw
-            if (idx === valid.length - 1) {
-              // last one gets the remainder to avoid rounding drift
-              shareAmount = unitPrice * qty - allocated;
-            }
-            shareAmount = round2(shareAmount);
-            allocated = round2(allocated + shareAmount);
-            allocs.push({
-              itemId: id,
-              participantId: pid,
-              shareRatio: ratio,
-              shareAmount,
-            });
-            // participant totals will be derived later
-          });
-        } else {
-          return res.status(400).json({
-            error: `Unsupported splitMode '${splitMode}' for item ${id}`,
-          });
+      // canonical participant order (first occurrence wins): both the app and the server use it
+      const pList: { uniqueId: string; username: string }[] = [];
+      for (const p of participants) {
+        const uniqueId = String(p?.uniqueId ?? "");
+        if (uniqueId && !pList.some((x) => x.uniqueId === uniqueId)) {
+          pList.push({ uniqueId, username: String(p?.username || uniqueId) });
         }
       }
+      if (pList.length === 0) return sendError(res, 400, "VALIDATION_ERROR", "participants array required");
+      const known = new Set(pList.map((p) => p.uniqueId));
 
-      // Derive totals from allocations
-      const byItemMap = new Map<
-        string,
-        { itemId: string; name: string; total: number; kind?: string }
-      >();
-      const byParticipantTotals = new Map<string, number>();
-      for (const a of allocs) {
-        const itemId = a.itemId;
-        const shareAmount = Number(a.shareAmount) || 0;
-        if (!byItemMap.has(itemId)) {
-          const meta = itemMeta.get(itemId);
-          byItemMap.set(itemId, {
-            itemId,
-            name: meta?.name || itemId,
-            total: 0,
-            ...(meta?.kind ? { kind: meta.kind } : {}),
-          });
+      const lines: SplitLine[] = [];
+      for (const raw of items as any[]) {
+        const id = String(raw?.id ?? "");
+        const name = String(raw?.name ?? "");
+        const quantity = Number(raw?.quantity);
+        const kind: LineKind = ["item", "fee", "tax", "tip", "discount"].includes(raw?.kind) ? raw.kind : "item";
+        const unit = Number(raw?.unitPrice ?? raw?.price);
+        const total = Number(raw?.totalPrice ?? unit * quantity);
+        if (!id || !name || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(total)) {
+          return sendError(res, 400, "VALIDATION_ERROR", `Invalid item fields for id=${id}`);
         }
-        const entry = byItemMap.get(itemId)!;
-        entry.total = round2(entry.total + shareAmount);
-        const pid = a.participantId;
-        byParticipantTotals.set(
-          pid,
-          round2((byParticipantTotals.get(pid) || 0) + shareAmount)
-        );
+        if (kind !== "discount" && total < 0) {
+          return sendError(res, 400, "VALIDATION_ERROR", `Negative price for item ${id}`);
+        }
+        const splitMode = raw?.splitMode === "count" ? "count" : "equal";
+        const assignedTo: string[] = Array.isArray(raw?.assignedTo) ? raw.assignedTo.map(String) : [];
+        const perPersonCount: Record<string, number> = {};
+        for (const [pid, units] of Object.entries(raw?.perPersonCount ?? {})) {
+          const u = Number(units);
+          if (!Number.isFinite(u) || u < 0) return sendError(res, 400, "VALIDATION_ERROR", `Invalid count for ${pid}`);
+          perPersonCount[pid] = u;
+        }
+        for (const pid of [...assignedTo, ...Object.keys(perPersonCount)]) {
+          if (!known.has(pid)) return sendError(res, 400, "VALIDATION_ERROR", `Unknown participant ${pid} on item ${id}`);
+        }
+        lines.push({ id, name, kind, quantity, totalMinor: toMinor(total, decimals), splitMode, assignedTo, perPersonCount });
       }
-      const byItem = Array.from(byItemMap.values());
-      const grandTotal = round2(byItem.reduce((s, it) => s + it.total, 0));
-      const byParticipant = pList.map((p) => {
-        const amount = round2(byParticipantTotals.get(p.uniqueId) || 0);
+
+      const result = computeSplit(lines, pList.map((p) => p.uniqueId), feeMode);
+      if (!result.complete) {
+        return sendError(res, 400, "ITEM_NOT_ASSIGNED", "Every item must be fully assigned before finalizing", {
+          itemIds: result.incompleteItemIds,
+        });
+      }
+
+      const money = (minor: number) => fromMinor(minor, decimals);
+      const byParticipant = result.people.map((p) => {
+        const info = pList.find((x) => x.uniqueId === p.uniqueId)!;
         return {
           uniqueId: p.uniqueId,
-          username: p.username,
-          amountOwed: amount,
+          username: info.username,
+          amountOwed: money(p.totalMinor),
           participantId: p.uniqueId,
-          total: amount,
+          total: money(p.totalMinor),
+          itemsAmount: money(p.itemsMinor),
+          feesAmount: money(p.feesMinor),
+          lines: p.lines.map((l) => ({
+            itemId: l.lineId,
+            name: l.name,
+            kind: l.kind,
+            amount: money(l.amountMinor),
+            ...(l.units !== undefined ? { units: l.units } : {}),
+          })),
         };
       });
-      if (process.env.DEBUG_PARSE === "1") {
-        console.log("[finalize] derived byItem=", byItem);
-        console.log("[finalize] derived byParticipant=", byParticipant);
-      }
+      const byItem = lines.map((l) => ({
+        itemId: l.id,
+        name: l.name,
+        total: money(l.totalMinor),
+        ...(l.kind !== "item" ? { kind: l.kind } : {}),
+      }));
+      const allocations = result.people.flatMap((p) =>
+        p.lines.map((l) => ({
+          itemId: l.lineId,
+          participantId: p.uniqueId,
+          shareAmount: money(l.amountMinor),
+          ...(l.units !== undefined ? { shareUnits: l.units } : {}),
+        }))
+      );
+      const grandTotal = money(result.grandTotalMinor);
 
       const createdAtIso = session.createdAt.toISOString();
       const finalizedAt = new Date();
@@ -629,18 +524,13 @@ router.post(
         createdAt: createdAtIso,
         finalizedAt: finalizedAtIso,
         currency,
-        totals: {
-          currency,
-          grandTotal,
-          byParticipant,
-          byItem,
-        },
-        allocations: allocs,
+        feeMode,
+        totals: { currency, grandTotal, byParticipant, byItem },
+        allocations,
       } satisfies Record<string, unknown>;
 
-      const participantUniqueIds = Array.from(
-        new Set(byParticipant.map((p) => p.uniqueId))
-      ).sort();
+      const participantUniqueIds = Array.from(new Set(byParticipant.map((p) => p.uniqueId))).sort();
+      const firstFinalize = !(await prisma.sessionHistoryEntry.findUnique({ where: { sessionId: session.id }, select: { id: true } }));
 
       await prisma.sessionHistoryEntry.upsert({
         where: { sessionId: session.id },
@@ -663,11 +553,35 @@ router.post(
           finalizedAt,
         },
       });
+      await prisma.session.update({ where: { id: session.id }, data: { status: "CLOSED", total: grandTotal.toString() } });
+
+      // "You were included in a receipt" (once, not when the same receipt is finalized again)
+      if (firstFinalize) {
+        const creator = await prisma.user.findUnique({ where: { id: session.creatorId }, select: { uniqueId: true, username: true } });
+        const others = byParticipant.filter((p) => p.uniqueId !== creator?.uniqueId);
+        const users = others.length
+          ? await prisma.user.findMany({ where: { uniqueId: { in: others.map((p) => p.uniqueId) } }, select: { id: true, uniqueId: true } })
+          : [];
+        const idByUid = new Map(users.map((u) => [u.uniqueId, u.id]));
+        await Promise.all(
+          others
+            .filter((p) => idByUid.has(p.uniqueId))
+            .map((p) =>
+              notify(idByUid.get(p.uniqueId)!, "RECEIPT_INCLUDED", {
+                ...(creator ? { actor: creator } : {}),
+                sessionId: session.id,
+                sessionName: sessionName || null,
+                amount: p.amountOwed,
+                currency,
+              })
+            )
+        );
+      }
 
       return res.json(responsePayload);
     } catch (err) {
-      console.error("POST /sessions/finalize error:", err);
-      return res.status(500).json({ error: "Server error" });
+      logRouteError("POST /sessions/finalize error:", err);
+      return sendError(res, 500, "SERVER_ERROR", "Server error");
     }
   }
 );
@@ -742,7 +656,44 @@ router.get(
         ...(fetchAll ? {} : { take: limit }),
       });
 
+      // Profile photos change: resolve them NOW from the users table instead of trusting the snapshot.
+      const uniqueIds = Array.from(new Set(entries.flatMap((e) => e.participantUniqueIds)));
+      const users = uniqueIds.length
+        ? await prisma.user.findMany({ where: { uniqueId: { in: uniqueIds } }, select: { uniqueId: true, avatarUrl: true } })
+        : [];
+      const avatarByUid = new Map(users.map((u) => [u.uniqueId, resolveAvatarUrl(u.avatarUrl, req)]));
+      const withAvatars = (payload: any) => {
+        const bp = payload?.totals?.byParticipant;
+        if (!Array.isArray(bp)) return payload;
+        return {
+          ...payload,
+          totals: {
+            ...payload.totals,
+            byParticipant: bp.map((p: any) => ({ ...p, avatarUrl: avatarByUid.get(p.uniqueId) ?? null })),
+          },
+        };
+      };
+
+      const creators = await prisma.user.findMany({
+        where: { id: { in: Array.from(new Set(entries.map((e) => e.creatorId))) } },
+        select: { id: true, uniqueId: true },
+      });
+      const creatorUid = new Map(creators.map((c) => [c.id, c.uniqueId]));
+      const paidRows = entries.length
+        ? await prisma.sessionPayment.findMany({ where: { sessionId: { in: entries.map((e) => e.sessionId) }, paidAt: { not: null } } })
+        : [];
+      const paidBySession = new Map<number, Map<string, Date>>();
+      for (const p of paidRows) {
+        if (!paidBySession.has(p.sessionId)) paidBySession.set(p.sessionId, new Map());
+        paidBySession.get(p.sessionId)!.set(p.participantUniqueId, p.paidAt!);
+      }
+
       const response = entries.map((entry) => ({
+        creatorUniqueId: creatorUid.get(entry.creatorId) ?? null,
+        ...paymentState({
+          shares: sharesFromPayload(entry.payload, entry.currency, creatorUid.get(entry.creatorId) ?? ""),
+          paid: paidBySession.get(entry.sessionId) ?? new Map(),
+        }),
         sessionId: entry.sessionId,
         sessionName: entry.sessionName,
         finalizedAt: entry.finalizedAt.toISOString(),
@@ -750,7 +701,7 @@ router.get(
         currency: entry.currency,
         participantUniqueIds: entry.participantUniqueIds,
         isCreator: entry.creatorId === requesterId,
-        payload: entry.payload,
+        payload: withAvatars(entry.payload),
       }));
 
       return res.json({
@@ -765,5 +716,97 @@ router.get(
     }
   }
 );
+
+/**
+ * @swagger
+ * /sessions/{id}/payments:
+ *   post:
+ *     summary: Mark a participant's share of a finalized receipt as paid / unpaid
+ *     description: The receipt creator can mark anyone; a participant can mark only their own share.
+ *     tags: [Sessions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [uniqueId, paid]
+ *             properties:
+ *               uniqueId: { type: string }
+ *               paid: { type: boolean }
+ */
+router.post("/:id/payments", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const sessionId = Number(req.params.id);
+    const target = typeof req.body?.uniqueId === "string" ? req.body.uniqueId.trim() : "";
+    const paid = req.body?.paid;
+    if (!Number.isInteger(sessionId) || !target || typeof paid !== "boolean")
+      return sendError(res, 400, "VALIDATION_ERROR", "uniqueId and paid (boolean) are required");
+
+    const entry = await prisma.sessionHistoryEntry.findUnique({
+      where: { sessionId },
+      include: { creator: { select: { id: true, uniqueId: true, username: true } } },
+    });
+    if (!entry) return sendError(res, 404, "SESSION_NOT_FOUND", "Receipt not found or not finalized");
+    const me = await prisma.user.findUnique({ where: { id: req.user.id }, select: { id: true, uniqueId: true, username: true } });
+    if (!me) return sendError(res, 401, "UNAUTHORIZED", "Unauthorized");
+
+    const shares = sharesFromPayload(entry.payload, entry.currency, entry.creator.uniqueId);
+    const share = shares.find((s) => s.uniqueId === target);
+    if (!share) return sendError(res, 400, "VALIDATION_ERROR", "This person has nothing to pay on this receipt");
+    const isCreator = entry.creatorId === me.id;
+    if (!isCreator && target !== me.uniqueId)
+      return sendError(res, 403, "FORBIDDEN", "You can only mark your own share");
+
+    await prisma.sessionPayment.upsert({
+      where: { sessionId_participantUniqueId: { sessionId, participantUniqueId: target } },
+      create: { sessionId, participantUniqueId: target, paidAt: paid ? new Date() : null, markedById: me.id },
+      update: { paidAt: paid ? new Date() : null, markedById: me.id },
+    });
+
+    // tell the other side
+    const otherId = isCreator
+      ? (await prisma.user.findUnique({ where: { uniqueId: target }, select: { id: true } }))?.id
+      : entry.creatorId;
+    if (otherId && otherId !== me.id) {
+      await notify(otherId, "RECEIPT_PAID", {
+        actor: { uniqueId: me.uniqueId, username: me.username },
+        sessionId,
+        sessionName: entry.sessionName,
+        amount: fromMinor(share.minor, currencyDecimals(entry.currency)),
+        currency: entry.currency,
+        paid,
+        participantUniqueId: target,
+      });
+    }
+
+    const rows = await prisma.sessionPayment.findMany({ where: { sessionId, paidAt: { not: null } } });
+    return res.json({ sessionId, ...paymentState({ shares, paid: new Map(rows.map((r) => [r.participantUniqueId, r.paidAt!])) }) });
+  } catch (err) {
+    logRouteError("POST /sessions/:id/payments error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
+
+/**
+ * GET /sessions/:id — lightweight ownership/state check. The app uses it to detect a saved draft whose
+ * session was deleted or belongs to another account (404 SESSION_NOT_FOUND / 403 SESSION_FORBIDDEN).
+ */
+router.get("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
+    const session = await prisma.session.findUnique({ where: { id }, select: { id: true, creatorId: true, status: true } });
+    if (!session) return sendError(res, 404, "SESSION_NOT_FOUND", "Session not found");
+    if (session.creatorId !== req.user.id) return sendError(res, 403, "SESSION_FORBIDDEN", "This receipt belongs to another account");
+    return res.json({ id: session.id, status: session.status });
+  } catch (err) {
+    logRouteError("GET /sessions/:id error:", err);
+    return sendError(res, 500, "SERVER_ERROR", "Server error");
+  }
+});
 
 export default router;

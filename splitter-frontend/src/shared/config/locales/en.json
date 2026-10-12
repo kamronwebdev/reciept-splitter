@@ -5,190 +5,676 @@
   },
   "features": {
     "scan": "Scan",
-    "scanDesc": "Take photos of your receipts",
-    "split": "Split Bills", 
-    "splitDesc": "Divide costs with friends",
-    "calculate": "Calculate",
-    "calculateDesc": "Know who owes what"
-  },
-  "welcome": {
-    "message": "Welcome! Let's get started",
-    "newUser": "New to Receipt Splitter?",
-    "newUserDesc": "Create an account to start splitting bills",
-    "existingUser": "Already have an account?"
+    "split": "Split",
+    "calculate": "Calculate"
   },
   "auth": {
     "signIn": "Sign In",
-    "signInDesc": "Welcome back! Please sign in to continue",
     "createAccount": "Create Account",
-    "createAccountDesc": "Join us to start splitting bills with friends",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
-    "confirmPassword": "Confirm Password",
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
     "forgotPassword": "Forgot Password?",
-    "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?",
-    "loginError": "An error occurred during login",
-    "registerError": "An error occurred during registration"
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "clearEmail": "Clear email",
+    "didYouMeanPrefix": "Did you mean",
+    "didYouMean": "Did you mean {{email}}?",
+    "passwordRequirements": "Password requirements",
+    "ruleMet": "met",
+    "ruleNotMet": "not met",
+    "passwordRules": {
+      "length": "8+ characters",
+      "upper": "One uppercase letter",
+      "lower": "One lowercase letter",
+      "number": "One number",
+      "special": "One special character"
+    },
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Create a password",
+    "usernameRule": "2-30 characters",
+    "logInInstead": "Log in instead",
+    "backToLogin": "Back to Sign In",
+    "sessionExpired": "Your session expired, please log in again",
+    "logout": {
+      "title": "Log out?",
+      "message": "You will need to sign in again to use the app.",
+      "confirm": "Log out"
+    },
+    "forgot": {
+      "title": "Forgot password?",
+      "desc": "We'll email you a 6-digit code.",
+      "send": "Send code"
+    },
+    "reset": {
+      "codeTitle": "Enter the code",
+      "codeDesc": "Sent to {{email}}",
+      "codeLabel": "Verification code",
+      "codeSent": "A new code has been sent.",
+      "verify": "Continue",
+      "resend": "Resend code",
+      "resendIn": "Resend code in {{seconds}}s",
+      "changeEmail": "Change email",
+      "newPasswordTitle": "Choose a new password",
+      "submit": "Update password",
+      "success": "Password updated. You are now signed in.",
+      "startOver": "Start over"
+    },
+    "errors": {
+      "emailRequired": "Please enter your email",
+      "passwordRequired": "Please enter your password",
+      "NETWORK": "Can't reach the server. Check your internet connection and try again.",
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "VALIDATION_ERROR": "Please check the entered information.",
+      "INVALID_EMAIL": "Please enter a valid email",
+      "INVALID_USERNAME": "Username must be 2-30 characters",
+      "EMAIL_IN_USE": "This email is already registered",
+      "INVALID_CREDENTIALS": "Wrong email or password",
+      "WEAK_PASSWORD": "Password does not meet the requirements",
+      "INVALID_CODE": "The code is incorrect. Please try again.",
+      "CODE_EXPIRED": "The code has expired. Request a new one.",
+      "TOO_MANY_ATTEMPTS": "Too many wrong attempts. Request a new code.",
+      "INVALID_RESET_TOKEN": "This reset session has expired. Please start over.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHORIZED": "Please log in to continue.",
+      "TOKEN_EXPIRED": "Your session expired, please log in again",
+      "TOKEN_INVALID": "Your session expired, please log in again",
+      "SESSION_REVOKED": "Your session expired, please log in again",
+      "USER_NOT_FOUND": "Account not found",
+      "WRONG_CURRENT_PASSWORD": "Current password is incorrect",
+      "SERVER_ERROR": "Server error. Please try again later.",
+      "FILE_TOO_LARGE": "The photo is too large. Please choose a smaller one.",
+      "UNSUPPORTED_TYPE": "This photo format is not supported.",
+      "FILE_REQUIRED": "Please choose a photo.",
+      "INVALID_PASSWORD": "Password is incorrect"
+    }
   },
   "common": {
-    "welcome": "Welcome",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
     "cancel": "Cancel",
-    "confirm": "Confirm",
-    "continue": "Continue",
-    "back": "Back"
+    "back": "Back",
+    "retry": "Try again",
+    "close": "Close",
+    "done": "Done",
+    "clear": "Clear",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "search": "Search",
+    "noResults": "No results",
+    "save": "Save"
   },
   "friends": {
     "title": "Friends",
-    "requests": "Requests",
-    "add": "Add Friend",
-    "empty": "No friends yet. Tap + to add.",
-    "searchPlaceholder": "Enter uniqueId, e.g. USER#1234",
-    "send": "Send request",
+    "requests": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "accepted": "You and {{target}} are now friends",
+      "rejected": "Request from {{target}} declined",
+      "emptyIncoming": "No incoming requests",
+      "emptyOutgoing": "No outgoing requests",
+      "requestedLabel": "Pending",
+      "tabIncoming": "Incoming",
+      "tabOutgoing": "Sent"
+    },
+    "empty": "No friends yet",
     "remove": "Remove",
-    "loading": "Loading...",
-    "error": "Failed to load"
+    "qr": {
+      "scanQr": "Scan QR",
+      "myQr": "My QR",
+      "requestsLink": "Requests",
+      "my": {
+        "title": "My QR code",
+        "subtitle": "Scan to add me",
+        "share": "Share",
+        "save": "Save image",
+        "copy": "Copy link",
+        "copied": "Link copied",
+        "saved": "Saved to Photos",
+        "saveFailed": "Could not save the image. Please try again.",
+        "photosDenied": "Allow access to Photos in Settings to save the QR code.",
+        "shareMessage": "Add me on Receipt Splitter: {{url}}",
+        "shareTitle": "Add me on Receipt Splitter",
+        "reset": "Reset QR code",
+        "resetTitle": "Reset your QR code?",
+        "resetMessage": "Your old QR code, shared links and screenshots will stop working. Friends you already have stay.",
+        "resetConfirm": "Reset",
+        "resetDone": "Your new QR code is ready",
+        "loadError": "Could not load your QR code.",
+        "newFriend": "{{name}} added you as a friend",
+        "permanentNote": "This code doesn't expire. Reset it if you shared it by mistake.",
+        "aboutCode": "About this code"
+      },
+      "scan": {
+        "title": "Scan QR",
+        "hint": "Point at a QR code",
+        "fromPhotos": "From photos",
+        "light": "Light",
+        "checking": "Checking the code…",
+        "noQrInImage": "No QR code found in this picture. Try a clearer screenshot.",
+        "permissionTitle": "Camera access is needed",
+        "permissionBody": "Only used to scan QR codes.",
+        "allowCamera": "Allow camera",
+        "openSettings": "Open Settings"
+      },
+      "card": {
+        "add": "Add friend",
+        "alreadyFriends": "Friends",
+        "self": "That's you",
+        "accept": "Accept request",
+        "addedTitle": "Friends!",
+        "done": "Done",
+        "scanAnother": "Scan another"
+      },
+      "group": {
+        "joining": "Joining the group…",
+        "joined": "You joined {{name}}",
+        "joinedGeneric": "You joined the group",
+        "alreadyMember": "You're already in this group",
+        "owner": "This is your own group",
+        "friendsToo": "You're now friends with the owner.",
+        "open": "Open groups"
+      },
+      "errors": {
+        "NOT_OUR_QR": "Not a Receipt Splitter QR code",
+        "NOT_OUR_QR_body": "Not a friend or group invite.",
+        "INVALID_CODE": "This QR code is no longer valid",
+        "INVALID_CODE_body": "Ask them to show their code again.",
+        "NETWORK": "No connection",
+        "NETWORK_body": "Check your internet connection and try again.",
+        "RATE_LIMITED": "Too many attempts",
+        "RATE_LIMITED_body": "Please wait a moment and try again.",
+        "UNKNOWN": "Something went wrong",
+        "UNKNOWN_body": "Please try again.",
+        "tryAgain": "Try again",
+        "scanAgain": "Scan again"
+      },
+      "expiresAt": "Expires {{time}}"
+    },
+    "addById": "Add by ID",
+    "addTitle": "Add friend",
+    "common": {
+      "unknownUser": "Unknown user"
+    },
+    "listHeader_one": "{{count}} friend",
+    "listHeader_other": "{{count}} friends",
+    "removeTitle": "Remove {{name}}?",
+    "removeMessage": "You can add each other again later.",
+    "removed": "{{name}} was removed",
+    "swipeHint": "Swipe left or touch and hold to remove",
+    "search": {
+      "inviteSent": "Request sent to {{target}}",
+      "noResults": "Not found",
+      "orInPerson": "In person",
+      "placeholder": "Friend's ID, e.g. USER#1234"
+    },
+    "status": {
+      "add": "Add",
+      "friend": "Friend",
+      "incoming": "Incoming",
+      "requested": "Requested",
+      "you": "You"
+    }
   },
   "home": {
     "header": {
-      "greeting": "Hi, {{name}}!",
       "friendFallback": "friend"
     },
-    "scan": {
-      "cta": "Scan invite"
+    "recent": "Recent",
+    "greetingSmall": "Hello,",
+    "scanReceipt": "Scan receipt",
+    "enterManually": "Enter manually",
+    "attention": "To do",
+    "friendRequests_one": "{{count}} friend request",
+    "friendRequests_other": "{{count}} friend requests",
+    "youOwe": "You owe {{name}}",
+    "seeAll": "See all",
+    "empty": {
+      "title": "No receipts yet"
     },
-    "actions": {
-      "friends": "Friends",
-      "groups": "Groups"
-    },
-    "recent": {
-      "title": "Recent bills",
-      "showMore": "Show more",
-      "loading": "Loading recent bills...",
-      "empty": "No bills yet",
-      "summary": "{{date}} • {{participants}}",
-      "fallbackName": "Bill",
-      "participants": "{{count}} participants",
-      "participants_one": "{{count}} participant",
-      "participants_other": "{{count}} participants",
-      "amount": "{{currency}} {{amount}}"
-    },
-    "features": {
-      "title": "What you can do"
-    }
+    "myGroups": "My groups",
+    "newGroup": "New group",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "yourShare": "you: {{amount}}",
+    "requests": "Requests"
   },
   "profile": {
     "title": "Profile",
-    "status": {
-      "saved": "Saved"
-    },
-    "actions": {
-      "copy": "Copy"
-    },
     "labels": {
-      "guest": "Guest",
-      "notAvailable": "N/A"
+      "guest": "Guest"
+    },
+    "header": {
+      "copyId": "Copy ID",
+      "copied": "Copied",
+      "shareQr": "My QR",
+      "idLabel": "ID"
     },
     "avatar": {
-      "title": "Avatar",
-      "hint": "Uploaded avatars are delivered via our CDN and refresh instantly.",
-      "upload": "Upload from phone",
-      "uploading": "Uploading...",
-      "reset": "Reset avatar",
-      "resetting": "Resetting..."
+      "change": "Change profile photo",
+      "sheetTitle": "Profile photo",
+      "takePhoto": "Take photo",
+      "chooseLibrary": "Choose from library",
+      "remove": "Remove photo",
+      "cancel": "Cancel",
+      "uploading": "Uploading…",
+      "updated": "Profile photo updated",
+      "removed": "Profile photo removed",
+      "cameraBlockedTitle": "Camera access is off",
+      "photosBlockedTitle": "Photo access is off",
+      "blockedBody": "Allow access in your phone's Settings, then try again.",
+      "openSettings": "Open Settings",
+      "pickFailed": "Could not read the photo. Please try another one."
     },
-    "info": {
-      "title": "User information",
-      "usernameLabel": "Username",
-      "usernamePlaceholder": "Enter a new username",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Enter a new email",
-      "userId": "User ID"
+    "stats": {
+      "sessions": "Bills",
+      "friends": "Friends",
+      "groups": "Groups"
+    },
+    "username": {
+      "label": "Username",
+      "edit": "Edit username",
+      "save": "Save",
+      "cancel": "Cancel",
+      "rule": "2-30 characters",
+      "updated": "Username updated"
+    },
+    "email": {
+      "title": "Email",
+      "newEmail": "New email",
+      "currentPassword": "Current password",
+      "submit": "Update email",
+      "updated": "Email updated",
+      "same": "This is already your email"
     },
     "password": {
-      "title": "Change password",
-      "currentLabel": "Current password",
-      "currentPlaceholder": "Enter current password",
-      "newLabel": "New password",
-      "newPlaceholder": "Enter new password",
-      "confirmLabel": "Confirm new password",
-      "confirmPlaceholder": "Confirm new password",
-      "requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special symbol.",
-      "submit": "Change password",
-      "updating": "Updating..."
+      "title": "Password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Update password",
+      "updated": "Password updated. Other devices were signed out.",
+      "same": "Choose a different password"
+    },
+    "danger": {
+      "title": "Danger zone",
+      "delete": "Delete account",
+      "warning": "Deletes your account, the bills you created, your groups and friends. This can't be undone.",
+      "passwordLabel": "Type your password to confirm",
+      "confirm": "Delete my account"
     },
     "logout": "Log out",
-    "copy": {
-      "successTitle": "Copied",
-      "successMessage": "{{field}} copied to the clipboard.",
-      "unavailableMessage": "{{field}} is not available yet."
-    },
-    "alerts": {
-      "permissionTitle": "Permission needed",
-      "permissionMessage": "Please allow access to your photo library to pick an avatar.",
-      "unavailableTitle": "Unavailable",
-      "avatarLoginRequired": "Sign in to update your avatar.",
-      "profileLoginRequired": "Sign in to update your profile.",
-      "passwordLoginRequired": "Sign in to change your password.",
-      "avatarUpdateFailed": "Could not update the avatar.",
-      "avatarResetFailed": "Could not reset the avatar.",
-      "usernameUpdateFailed": "Could not update the username.",
-      "emailUpdateFailed": "Could not update the email.",
-      "passwordChangeFailed": "Could not change the password.",
-      "logoutFailed": "Could not log out. Please try again.",
-      "imageMissing": "Image file is missing a URI.",
-      "uploadReadFailed": "Unable to read the selected file for upload."
-    },
-    "validation": {
-      "usernameRequired": "Username cannot be empty",
-      "usernameMin": "Username must be at least 2 characters",
-      "emailRequired": "Email cannot be empty",
-      "emailInvalid": "Enter a valid email address",
-      "passwordCurrent": "Enter your current password",
-      "passwordLength": "New password must be at least 8 characters",
-      "passwordComplexity": "Password must include uppercase, lowercase, number, and special character",
-      "passwordMismatch": "Passwords do not match",
-      "passwordDifferent": "Choose a different password"
-    }
+    "refreshFailed": "Could not refresh your profile. Pull down to try again.",
+    "change": "Change"
   },
   "navigation": {
-    "mainMenu": "Main menu",
-    "tabs": {
-      "home": "Home",
-      "settings": "Settings",
-      "profile": "Profile"
-    },
     "groups": {
       "title": "Groups",
       "create": "New group",
       "details": "Group"
     },
-    "scanInvite": "Scan Invite",
-    "friendQr": "My Friend QR",
     "groupQr": "Group QR",
-    "scanReceipt": "Scan Receipt",
-    "participants": "Participants",
-    "itemsSplit": "Items Split",
-    "finish": "Finish",
-    "history": "Recent bills",
-    "historyDetails": "Bill details"
+    "history": "Bills",
+    "historyDetails": "Bill"
   },
   "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "title": "Theme",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "font": {
+        "title": "Font",
+        "preview": "Receipt Splitter",
+        "inter": "Inter",
+        "interDesc": "Clean",
+        "nunito": "Nunito",
+        "nunitoDesc": "Soft & rounded",
+        "manrope": "Manrope",
+        "manropeDesc": "Modern & geometric",
+        "japaneseNote": "Japanese uses the system font."
+      },
+      "textSize": {
+        "title": "Text size",
+        "small": "Small",
+        "default": "Default",
+        "large": "Large",
+        "sample": "The quick brown fox"
+      }
+    },
     "language": {
       "title": "Language",
-      "description": "Choose the language used across the app.",
       "options": {
         "en": "English",
         "ja": "Japanese",
         "uz": "Uzbek"
       }
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "support": "Support & feedback",
+      "supportSubject": "Receipt Splitter feedback",
+      "mailFailed": "Could not open your mail app. Write to {{email}}."
+    }
+  },
+  "receipt": {
+    "titles": {
+      "items": "Items",
+      "people": "People",
+      "split": "Split",
+      "summary": "Summary"
+    },
+    "steps": {
+      "scan": "Scan",
+      "items": "Items",
+      "people": "People",
+      "split": "Split",
+      "summary": "Done"
+    },
+    "demoBanner": "Demo data: this is not your receipt.",
+    "kinds": {
+      "item": "Item",
+      "fee": "Service / fees",
+      "tax": "Tax",
+      "discount": "Discount"
+    },
+    "discard": {
+      "title": "Discard this receipt?",
+      "message": "The items and the split you entered will be lost.",
+      "confirm": "Discard",
+      "keep": "Keep editing"
+    },
+    "resume": {
+      "title": "Continue your receipt?",
+      "message": "You have an unfinished receipt.",
+      "continue": "Continue",
+      "startNew": "Start new"
+    },
+    "errorTitles": {
+      "GEMINI_NOT_CONFIGURED": "Scanning is unavailable",
+      "PARSE_FAILED": "Could not read the receipt",
+      "NOT_A_RECEIPT": "This is not a receipt",
+      "IMAGE_UNREADABLE": "The photo is not readable",
+      "ITEM_NOT_ASSIGNED": "Some items are not assigned",
+      "RATE_LIMITED": "Too many requests",
+      "UNAUTHORIZED": "Please sign in again",
+      "SESSION_REVOKED": "Please sign in again",
+      "NETWORK": "No connection",
+      "CANCELLED": "Cancelled",
+      "SERVER_ERROR": "Something went wrong",
+      "UNKNOWN": "Something went wrong"
+    },
+    "errors": {
+      "GEMINI_NOT_CONFIGURED": "Receipt scanning is not set up on the server yet. You can enter the items manually.",
+      "PARSE_FAILED": "The receipt reader is not available right now. Try again, choose another photo, or enter the items manually.",
+      "NOT_A_RECEIPT": "We could not find a receipt in this photo. Retake it so the whole receipt is in the frame.",
+      "IMAGE_UNREADABLE": "We could not read any items. Retake the photo in better light, closer and without glare.",
+      "ITEM_NOT_ASSIGNED": "Assign every item to at least one person.",
+      "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+      "UNAUTHORIZED": "Your session expired. Please sign in again.",
+      "SESSION_REVOKED": "Your session expired. Please sign in again.",
+      "NETWORK": "Check your internet connection and try again.",
+      "CANCELLED": "Cancelled.",
+      "SERVER_ERROR": "The server had a problem. Please try again in a moment.",
+      "UNKNOWN": "Something went wrong. Please try again.",
+      "SESSION_NOT_FOUND": "This receipt no longer exists on the server (it may be an old draft). Start a new receipt.",
+      "SESSION_FORBIDDEN": "This receipt belongs to another account. Start a new receipt."
+    },
+    "scan": {
+      "hint": "Fit the whole receipt",
+      "lightOn": "Light on",
+      "lightOff": "Light off",
+      "zoomTo": "Zoom {{level}}",
+      "gallery": "Choose from gallery",
+      "shutter": "Take photo",
+      "captureFailed": "Could not take the photo. Please try again.",
+      "previewLabel": "Receipt photo preview",
+      "rotate": "Rotate",
+      "crop": "Crop",
+      "applyCrop": "Apply crop",
+      "retake": "Retake",
+      "usePhoto": "Use photo",
+      "phase": {
+        "preparing": "Preparing the photo…",
+        "uploading": "Uploading…",
+        "reading": "Reading items…"
+      },
+      "tryAgain": "Try again",
+      "chooseAnother": "Other photo",
+      "chooseFromGallery": "Gallery",
+      "manual": "Type items",
+      "permissionTitle": "Camera access is needed",
+      "permissionBody": "Only used to read your receipt.",
+      "allowCamera": "Allow camera"
+    },
+    "review": {
+      "billName": "Bill name",
+      "viewPhoto": "View receipt photo",
+      "items": "Items",
+      "empty": "No items yet. Add what was bought.",
+      "addItem": "Add item",
+      "editItem": "Edit item",
+      "deleteItem": "Delete item",
+      "delete": "Delete",
+      "tapToEdit": "Tap to edit",
+      "extras": "Fees & tax",
+      "addExtra": "Add fee",
+      "totals": "Totals",
+      "itemsSubtotal": "Items",
+      "calculated": "Calculated total",
+      "receiptTotal": "Total on the receipt",
+      "mismatchLess": "{{amount}} less than the receipt",
+      "mismatchMore": "{{amount}} more than the receipt",
+      "useCalculated": "Use calculated total",
+      "currency": "Currency",
+      "changeCurrency": "Change",
+      "name": "Name",
+      "quantity": "Quantity",
+      "unitPrice": "Price per unit",
+      "amount": "Amount",
+      "lineTotal": "Line total",
+      "discountHint": "Enter the discount as a positive number",
+      "save": "Save",
+      "needItem": "Add an item",
+      "next": "Next",
+      "errors": {
+        "name": "Enter a name",
+        "price": "Enter a price greater than zero"
+      },
+      "nextA11y": "Next: choose people"
+    },
+    "people": {
+      "you": "You",
+      "groups": "Groups",
+      "friends": "Friends",
+      "remove": "Remove {{name}}",
+      "needTwo": "Pick 2+ people",
+      "next": "Next · {{count}}",
+      "emptyTitle": "No friends yet",
+      "addFriends": "Add friends",
+      "inviteQr": "Invite by QR",
+      "searchA11y": "Search people and groups",
+      "nextA11y": "Next: split items ({{count}} people)"
+    },
+    "split": {
+      "equalAll": "Split equally",
+      "clear": "Clear",
+      "single": "One portion",
+      "notAssigned": "Not assigned",
+      "mode": {
+        "equal": "Equally",
+        "count": "By count"
+      },
+      "remaining": "Remaining: {{count}}",
+      "allUnits": "All units assigned",
+      "extras": "Fees & tax",
+      "feeMode": {
+        "proportional": "Proportional",
+        "equal": "Equally"
+      },
+      "feeModeHint": {
+        "proportional": "Everyone pays a share of fees and tax based on what they ordered.",
+        "equal": "Fees and tax are split equally between everyone."
+      },
+      "unassigned": "Unassigned: {{amount}}",
+      "allAssigned": "All assigned",
+      "finishHint": "assign every item first ({{count}} left)",
+      "finish": "Finish",
+      "newReceipt": "Start a new receipt",
+      "itemsLeft": "Assign the highlighted items",
+      "feeModeInfo": "How fees are split",
+      "left_one": "{{count}} left",
+      "left_other": "{{count}} left"
+    },
+    "summary": {
+      "total": "Total",
+      "untitled": "Bill",
+      "addsUp": "Adds up",
+      "mismatch": "Doesn't add up",
+      "show": "What they had",
+      "hide": "Hide details",
+      "share": "Share",
+      "done": "Done",
+      "copied": "Summary copied",
+      "saved": "Saved"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "groups": "Groups",
+    "scan": "Scan",
+    "friends": "Friends",
+    "profile": "Profile"
+  },
+  "errors": {
+    "NETWORK": "No connection. Check your internet and try again.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment.",
+    "FORBIDDEN": "You can't do this.",
+    "NOT_FOUND": "It no longer exists.",
+    "SERVER_ERROR": "Something went wrong on our side. Please try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "time": {
+    "now": "now",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "days_one": "{{count}} d",
+    "days_other": "{{count}} d"
+  },
+  "balances": {
+    "title": "Balance",
+    "none": "—",
+    "allSettled": "All settled",
+    "owedToMe": "You are owed",
+    "iOwe": "You owe",
+    "loadError": "Couldn't load balances.",
+    "emptyPeople": "Nobody owes anything right now.",
+    "owesYou": "owes you {{amount}}",
+    "youOweThem": "you owe {{amount}}",
+    "owesYouChip": "Owes you",
+    "receiptHint": "Opens the receipt, where shares are marked as paid"
+  },
+  "settle": {
+    "settled": "Settled",
+    "notFound": "This receipt was not found.",
+    "allPaid": "Everyone has paid",
+    "people": "Shares",
+    "footerCreator": "Turn on \"Paid\" when someone has paid you back.",
+    "footerParticipant": "Turn on \"Paid\" after you've paid your share.",
+    "paidTheBill": "Payer",
+    "paid": "Paid",
+    "notPaid": "Not paid",
+    "paidA11y": "{{name}} paid"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadA11y_one": "{{count}} unread",
+    "unreadA11y_other": "{{count}} unread",
+    "today": "Today",
+    "earlier": "Earlier",
+    "markRead": "Mark as read",
+    "markAllRead": "Read all",
+    "delete": "Delete",
+    "unread": "Unread",
+    "empty": "You're all caught up.",
+    "someone": "Someone",
+    "types": {
+      "FRIEND_REQUEST": "{{name}} sent you a friend request",
+      "FRIEND_ACCEPTED": "{{name}} accepted your friend request",
+      "FRIEND_ADDED": "{{name}} added you as a friend",
+      "GROUP_ADDED": "{{name}} added you to {{group}}",
+      "GROUP_JOIN_REQUEST": "{{name}} wants to join {{group}}",
+      "GROUP_JOIN_APPROVED": "You joined {{group}}",
+      "GROUP_ROLE_ADMIN": "You are now an admin of {{group}}",
+      "GROUP_ROLE_MEMBER": "You are no longer an admin of {{group}}",
+      "GROUP_REMOVED": "You were removed from {{group}}",
+      "RECEIPT_INCLUDED": "{{name}} added you to “{{receipt}}”. Your share: {{amount}}",
+      "RECEIPT_PAID": "{{name}} paid {{amount}} for “{{receipt}}”",
+      "RECEIPT_UNPAID": "{{name}} marked their share of “{{receipt}}” as not paid",
+      "RECEIPT_PAID_YOURS": "{{name}} marked your share of “{{receipt}}” as paid",
+      "RECEIPT_UNPAID_YOURS": "{{name}} marked your share of “{{receipt}}” as not paid",
+      "UNKNOWN": "New notification"
+    }
+  },
+  "groups": {
+    "actions": {
+      "scanInvite": "Join group"
+    },
+    "common": {
+      "untitled": "Group"
+    },
+    "emptyTitle": "No groups yet",
+    "list": {
+      "members_one": "{{count}} member",
+      "members_other": "{{count}} members"
+    },
+    "roles": {
+      "owner": "Owner"
+    },
+    "create": {
+      "action": "Create",
+      "inGroup": "in the group",
+      "notInGroup": "not in the group",
+      "manageMembers": "Members",
+      "namePlaceholder": "Group name",
+      "noFriends": "No friends yet",
+      "notice": {
+        "success": "Group created"
+      }
+    },
+    "detail": {
+      "addFromFriends": "Add friends",
+      "added": "{{name}} added",
+      "delete": "Delete group",
+      "deleteTitle": "Delete this group?",
+      "deleteMessage": "The group will be deleted for everyone. This can't be undone.",
+      "leave": "Leave group",
+      "leaveTitle": "Leave this group?",
+      "leaveMessage": "You can join again with an invite.",
+      "members": "Members",
+      "nameTitle": "Group name",
+      "noFriendsToAdd": "No one to add",
+      "remove": "Remove",
+      "removeTitle": "Remove {{name}}?",
+      "removeMessage": "They will no longer see this group.",
+      "removed": "{{name}} was removed",
+      "renamed": "Group renamed",
+      "showQr": "Invite with a QR code",
+      "swipeHint": "Swipe left or touch and hold to remove",
+      "addA11y": "Add {{name}}"
+    },
+    "invite": {
+      "description": "Scan to join",
+      "error": "Couldn't create the invite.",
+      "invalid": "Group not found.",
+      "new": "New code"
     }
   }
 }

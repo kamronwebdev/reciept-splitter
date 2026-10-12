@@ -1,7 +1,11 @@
 // src/shared/ui/InviteQR.tsx
 import React from 'react';
-import { YStack, Paragraph, Card, Text } from 'tamagui';
+import { XStack, YStack, Card } from 'tamagui';
+import AppIcon from '@/shared/ui/AppIcon';
+import { Text } from '@/shared/ui/typography';
 import QRCode from 'react-native-qrcode-svg';
+import { useTranslation } from 'react-i18next';
+import { dateTime } from '@/shared/lib/utils/time';
 
 type Props = {
   url: string;
@@ -11,12 +15,13 @@ type Props = {
 };
 
 export function InviteQR({ url, title, expiresAt, caption }: Props) {
+  const { t, i18n } = useTranslation();
   return (
     <YStack ai="center" gap="$3">
       {!!title && (
-        <Paragraph fow="700" fos="$6">
+        <Text variant="headline" ta="center">
           {title}
-        </Paragraph>
+        </Text>
       )}
 
       <Card
@@ -26,21 +31,20 @@ export function InviteQR({ url, title, expiresAt, caption }: Props) {
         bc="$gray5"
         br="$4"
         p="$4"
-        bg="$color1"
+        bg="#FFFFFF"
       >
-        <QRCode value={url} size={260} ecl="M" />
+        <QRCode value={url} size={260} ecl="M" color="#000000" backgroundColor="#FFFFFF" />
       </Card>
 
-      <YStack ai="center" gap="$1">
-        <Paragraph col="$gray10" size="$2">
-          {caption ?? 'Valid for a limited time'}
-        </Paragraph>
-        {!!expiresAt && (
-          <Text color="$gray10" fontSize={12}>
-            Expires: {new Date(expiresAt).toLocaleString()}
+      {/* when it stops working: a clock and the time, no sentence */}
+      {(!!caption || !!expiresAt) && (
+        <XStack ai="center" gap="$1.5">
+          {!!expiresAt && <AppIcon name="clock" size={14} color="$textMuted" />}
+          <Text variant="footnote" color="$textMuted">
+            {caption ?? t('friends.qr.expiresAt', { time: dateTime(expiresAt!, i18n.language) })}
           </Text>
-        )}
-      </YStack>
+        </XStack>
+      )}
     </YStack>
   );
 }

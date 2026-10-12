@@ -145,3 +145,9 @@ vite.config.ts.timestamp-*
 .node_modules/
 
 /src/generated/prisma
+
+# IDE
+.idea/
+
+# locally stored uploads (dev fallback when R2 is not configured)
+/public/
