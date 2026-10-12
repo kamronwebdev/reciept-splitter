@@ -43,28 +43,37 @@ npx expo start -c
 
 ## Hammasi bitta qatorda
 
-Ikki terminalda ishlatish uchun:
+Ikki terminalda ishlatish uchun. Ikkalasi ham loyiha papkasidan (`reciept-splitter`) boshlanadi.
+
+1-terminal, backend:
 
 ```bash
-# 1-terminal: backend
 git pull && cd splitter-backend && npm install && npx prisma migrate deploy && npm run dev
 ```
 
+2-terminal, frontend:
+
 ```bash
-# 2-terminal: frontend
 cd splitter-frontend && npm install && npx expo start -c
 ```
 
+Kod bloklarini aynan shu holicha nusxa ko'chiring. Mac terminali (zsh) `#` bilan boshlanadigan izohni buyruqning bir qismi deb o'qiydi va xato beradi.
+
 ## Faqat birinchi marta
 
+Backend sozlamalari:
+
 ```bash
-# backend sozlamalari
 cd splitter-backend
 cp .env.example .env
-# .env ichida DATABASE_URL va JWT_SECRET ni to'ldiring
+```
 
-# frontend sozlamalari (ixtiyoriy)
-cd ../splitter-frontend
+Keyin `.env` ichida `DATABASE_URL` va `JWT_SECRET` ni to'ldiring.
+
+Frontend sozlamalari (ixtiyoriy), loyiha papkasidan:
+
+```bash
+cd splitter-frontend
 cp .env.example .env
 ```
 
@@ -76,12 +85,17 @@ docker compose up -d postgres
 
 ## Tekshirish (ixtiyoriy)
 
+Loyiha papkasidan:
+
 ```bash
-cd splitter-frontend && npm run typecheck && npm test
-cd splitter-backend && npm test
+cd splitter-frontend && npm run typecheck && npm test && cd ..
+cd splitter-backend && npm test && cd ..
 ```
 
 ## Muammo bo'lsa
+
+- **`cd: no such file or directory: splitter-backend`:** siz allaqachon `splitter-backend` ichidasiz. `cd ..` qiling yoki `cd` qatorini o'tkazib yuboring.
+- **`zsh: number expected` yoki `zsh: no matches found`:** buyruq bilan birga `#` izoh ham nusxa ko'chirilgan. Faqat buyruqning o'zini qo'ying.
 
 - **Port band (3001):** oldingi backend hali ishlayapti. Uning terminalini yoping yoki `Ctrl + C` bosing.
 - **Telefon backendga ulanmayapti:** telefon brauzerida `http://192.168.x.x:3001/health` ni oching (IP backend konsolida chiqadi).
